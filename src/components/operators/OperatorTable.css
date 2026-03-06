@@ -1,0 +1,14 @@
+.operatorTable{
+
+  width:100%;
+  border-collapse:collapse;
+
+}
+
+.operatorTable th,
+.operatorTable td{
+
+  border:1px solid #ddd;
+  padding:8px;
+
+}

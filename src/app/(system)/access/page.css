@@ -1,0 +1,25 @@
+.page{
+  padding:20px;
+}
+
+.createUser{
+  margin-bottom:40px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.permissions{
+  display:flex;
+  gap:10px;
+}
+
+table{
+  border-collapse:collapse;
+  width:100%;
+}
+
+td,th{
+  border:1px solid #ddd;
+  padding:8px;
+}

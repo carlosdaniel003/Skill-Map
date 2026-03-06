@@ -1,0 +1,10 @@
+.sidebarItem{
+  display:block;
+  padding:10px;
+  text-decoration:none;
+  color:white;
+}
+
+.sidebarItem:hover{
+  background:#333;
+}

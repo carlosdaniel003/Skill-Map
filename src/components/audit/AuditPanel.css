@@ -1,0 +1,28 @@
+.auditPanel{
+
+  margin-top:40px;
+
+}
+
+.auditHeader{
+
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:10px;
+
+}
+
+.auditTable{
+
+  width:100%;
+  border-collapse:collapse;
+
+}
+
+.auditTable th,
+.auditTable td{
+
+  border:1px solid #ddd;
+  padding:8px;
+
+}

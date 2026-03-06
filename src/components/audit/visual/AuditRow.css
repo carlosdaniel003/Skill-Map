@@ -1,0 +1,7 @@
+tr{
+  transition:background 0.15s ease;
+}
+
+tr:hover{
+  background:#f5f5f5;
+}
