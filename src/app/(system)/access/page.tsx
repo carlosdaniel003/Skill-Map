@@ -317,7 +317,7 @@ export default function AccessPage(){
                 <button
                   onClick={()=>removeUser(user.id)}
                 >
-                  Remover
+                  Desativar
                 </button>
 
               </td>

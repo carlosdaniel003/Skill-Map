@@ -4,13 +4,14 @@
 import "./page.css"
 
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 
 import OperatorTable from "@/components/operators/OperatorTable"
 
 import {
   getOperators,
   addOperator,
-  removeOperator,
+  deactivateOperator,
   getProductionLines,
   getWorkstations,
   changeOperatorPosition
@@ -18,8 +19,9 @@ import {
 
 export default function OperatorsPage(){
 
-  const [operators,setOperators] = useState<any[]>([])
+  const router = useRouter()
 
+  const [operators,setOperators] = useState<any[]>([])
   const [lines,setLines] = useState<any[]>([])
   const [workstations,setWorkstations] = useState<any[]>([])
 
@@ -96,9 +98,9 @@ export default function OperatorsPage(){
 
   async function handleRemoveOperator(id:string){
 
-    if(!confirm("Remover operador?")) return
+    if(!confirm("Desativar operador?")) return
 
-    await removeOperator(id)
+    await deactivateOperator(id)
 
     loadOperators()
 
@@ -174,7 +176,18 @@ export default function OperatorsPage(){
 
     <div className="page">
 
-      <h1>Operadores</h1>
+      <div className="pageHeader">
+
+        <h1>Operadores</h1>
+
+        <button
+          className="secondaryButton"
+          onClick={()=>router.push("/operators/inactive")}
+        >
+          Ver Desativados
+        </button>
+
+      </div>
 
       {/* KPIs */}
 

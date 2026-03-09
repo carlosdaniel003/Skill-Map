@@ -1,7 +1,9 @@
+// src/components/operators/visual/OperatorRow.tsx
 "use client"
 
 import "./OperatorRow.css"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 interface Props{
 
@@ -24,6 +26,8 @@ export default function OperatorRow({
   onChangePosto
 }:Props){
 
+  const router = useRouter()
+
   const [editing,setEditing] = useState(false)
 
   const [linha,setLinha] = useState(operator.linha_atual || "")
@@ -43,6 +47,18 @@ export default function OperatorRow({
     setPosto(operator.posto_atual || "")
 
     setEditing(false)
+
+  }
+
+  function openHistory(){
+
+    router.push(`/operators/history/${operator.id}`)
+
+  }
+
+  function openSkills(){
+
+    router.push(`/operators/skills/${operator.id}`)
 
   }
 
@@ -124,16 +140,20 @@ export default function OperatorRow({
 
           <>
 
-            <button
-              onClick={()=>setEditing(true)}
-            >
+            <button onClick={()=>setEditing(true)}>
               Editar
             </button>
 
-            <button
-              onClick={()=>onRemove(operator.id)}
-            >
-              Remover
+            <button onClick={openHistory}>
+              Histórico
+            </button>
+
+            <button onClick={openSkills}>
+              Skills
+            </button>
+
+            <button onClick={()=>onRemove(operator.id)}>
+              Desativar
             </button>
 
           </>
