@@ -1,6 +1,7 @@
-// src\app\(system)\layout.tsx
+// src/app/(system)/layout.tsx
 "use client"
 
+import "./layout.css"
 import { useEffect } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import Sidebar from "@/components/sidebar/Sidebar"
@@ -17,47 +18,34 @@ export default function SystemLayout({
 
   useEffect(()=>{
 
-  const user = getSession()
+    const user = getSession()
 
-  if(!user){
+    if(!user){
+      /* Dica da Alice: No futuro, podemos trocar esse alert por um Toast elegante! */
+      alert("Sessão expirada. Faça login novamente.")
+      router.push("/login")
+      return
+    }
 
-    alert("Sessão expirada. Faça login novamente.")
+    const allowed =
+      user.role === "admin" ||
+      user.allowedPages.some(page => pathname.startsWith(page))
 
-    router.push("/login")
-    return
+    if(!allowed){
+      alert("Você não tem acesso a esta página")
+      router.push("/dashboard")
+    }
 
-  }
-
-  const allowed =
-    user.role === "admin" ||
-    user.allowedPages.some(page =>
-      pathname.startsWith(page)
-    )
-
-  if(!allowed){
-
-    alert("Você não tem acesso a esta página")
-
-    router.push("/dashboard")
-
-  }
-
-},[pathname])
+  },[pathname, router])
 
   return (
 
-    <div style={{display:"flex"}}>
+    <div className="systemLayout">
 
       <Sidebar />
 
-      <main style={{
-        marginLeft:"220px",
-        width:"100%",
-        padding:"30px"
-      }}>
-
+      <main className="systemMain">
         {children}
-
       </main>
 
     </div>

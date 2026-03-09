@@ -1,10 +1,48 @@
-.sidebarItem{
-  display:block;
-  padding:10px;
-  text-decoration:none;
-  color:white;
+/* src/components/sidebar/visual/SidebarItem.css */
+
+.sidebarItem {
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  text-decoration: none;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  white-space: nowrap;
+  
+  /* Cores executivas para o tema claro da Sidebar */
+  color: #555555;
 }
 
-.sidebarItem:hover{
-  background:#333;
+/* Efeito de Hover executivo */
+.sidebarItem:hover {
+  background: #f5f5f5;
+  color: #111111;
+  transform: translateX(2px);
+}
+
+/* Barra lateral indicadora vermelha no Hover */
+.sidebarItem::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 15%;
+  width: 4px;
+  height: 70%;
+  border-radius: 0 4px 4px 0;
+  background: #d40000;
+  opacity: 0;
+  transition: 0.2s ease;
+}
+
+.sidebarItem:hover::before {
+  opacity: 0.5;
+}
+
+/* Tipografia */
+.sidebarItemText {
+  font-size: 14px;
+  font-weight: 500;
 }

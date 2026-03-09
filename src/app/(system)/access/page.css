@@ -1,25 +1,287 @@
-.page{
-  padding:20px;
+/* src/app/(system)/access/page.css */
+
+.accessPage {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: pageFadeIn 0.4s ease-out;
 }
 
-.createUser{
-  margin-bottom:40px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
+/* HEADER DA PÁGINA */
+.pageHeader {
+  margin-bottom: 8px;
 }
 
-.permissions{
-  display:flex;
-  gap:10px;
+.accessTitle {
+  margin: 0 0 4px 0;
+  font-size: 28px;
+  font-weight: 800;
+  color: #111111;
+  letter-spacing: -0.5px;
 }
 
-table{
-  border-collapse:collapse;
-  width:100%;
+.accessSubtitle {
+  margin: 0;
+  color: #666666;
+  font-size: 14px;
 }
 
-td,th{
-  border:1px solid #ddd;
-  padding:8px;
+/* GRID PRINCIPAL */
+.accessGrid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* CARDS CORPORATIVOS */
+.accessCard {
+  background: #ffffff;
+  border-top: 6px solid #d40000;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.accessCard h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111111;
+}
+
+/* FORMULÁRIOS */
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.corporateInput {
+  padding: 12px 14px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  background: #f9f9f9;
+  color: #333333;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.corporateInput:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: #d40000;
+  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
+}
+
+/* CHECKBOXES */
+.permissionsGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.groupLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555555;
+}
+
+.permissionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inlinePermissions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.corporateCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #333333;
+  cursor: pointer;
+}
+
+.corporateCheckbox input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: #d40000;
+  width: 16px;
+  height: 16px;
+}
+
+.smallCheckbox {
+  font-size: 13px;
+  color: #555555;
+}
+
+/* TABELA CORPORATIVA */
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.usersTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.usersTable th {
+  background: #f9f9f9;
+  color: #555555;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 12px 16px;
+  border-bottom: 2px solid #e0e0e0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.usersTable td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333333;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.usersTable tr:last-child td {
+  border-bottom: none;
+}
+
+.usersTable tr:hover td {
+  background: #fafafa;
+}
+
+.fontWeight600 {
+  font-weight: 600;
+}
+
+.alignRight {
+  text-align: right;
+}
+
+/* CÉLULA DE SENHA */
+.passwordCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pwdText {
+  font-family: monospace;
+  font-size: 14px;
+  color: #666666;
+  min-width: 70px;
+}
+
+/* BOTÕES */
+.primaryButton {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #d40000;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: #b30000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
+}
+
+.primaryButton.fullWidth {
+  width: 100%;
+}
+
+.primaryButton:disabled, .dangerButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.actionsCell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.secondaryButton {
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #333333;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.secondaryButton:hover {
+  background: #f9f9f9;
+  border-color: #cccccc;
+}
+
+.dangerButton {
+  padding: 8px 12px;
+  border: 1px solid #ffcccc;
+  border-radius: 6px;
+  background: #fff0f0;
+  color: #d40000;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dangerButton:hover:not(:disabled) {
+  background: #d40000;
+  color: #ffffff;
+}
+
+.iconButton {
+  background: transparent;
+  border: none;
+  color: #888888;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.iconButton:hover {
+  color: #d40000;
+  background: #fff0f0;
+}
+
+/* O card de auditoria ocupa a linha toda em baixo */
+.auditCard {
+  grid-column: 1 / -1; 
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 1024px) {
+  .accessGrid {
+    grid-template-columns: 1fr;
+  }
 }

@@ -1,3 +1,4 @@
+// src/app/(system)/access/page.tsx
 "use client"
 
 import "./page.css"
@@ -14,7 +15,6 @@ import AuditPanel from "@/components/audit/AuditPanel"
 const ALL_PAGES = [
   "/dashboard",
   "/operators",
-  "/validation",
   "/access"
 ]
 
@@ -26,56 +26,39 @@ export default function AccessPage(){
   const [password,setPassword] = useState("")
   const [allowedPages,setAllowedPages] = useState<string[]>([])
 
-  const [visiblePasswords,setVisiblePasswords] =
-    useState<Record<string,boolean>>({})
+  const [visiblePasswords,setVisiblePasswords] = useState<Record<string,boolean>>({})
 
   const sessionUser = getSession()
 
   useEffect(()=>{
-
     setUsers(getUsers())
-
   },[])
 
   function togglePage(page:string){
-
     if(allowedPages.includes(page)){
-
-      setAllowedPages(
-        allowedPages.filter(p=>p !== page)
-      )
-
+      setAllowedPages(allowedPages.filter(p=>p !== page))
     }else{
-
       setAllowedPages([...allowedPages,page])
-
     }
-
   }
 
   function createUser(){
-
     if(!username || !password){
-
       alert("Preencha usuário e senha")
       return
-
     }
 
     const newUser:User = {
-
       id: Date.now().toString(),
       username,
       password,
       role:"user",
       allowedPages
-
     }
 
     const updated = [...users,newUser]
 
     saveUsers(updated)
-
     setUsers(updated)
 
     logAction(
@@ -87,33 +70,24 @@ export default function AccessPage(){
     setUsername("")
     setPassword("")
     setAllowedPages([])
-
   }
 
   function removeUser(id:string){
-
     const user = users.find(u => u.id === id)
 
     if(user?.role === "master"){
-
       alert("O usuário MASTER não pode ser removido")
       return
-
     }
 
     if(user?.role === "admin"){
-
       alert("Admins não podem ser removidos por aqui")
       return
-
     }
 
-    const updated = users.filter(
-      u => u.id !== id
-    )
+    const updated = users.filter(u => u.id !== id)
 
     saveUsers(updated)
-
     setUsers(updated)
 
     logAction(
@@ -121,22 +95,16 @@ export default function AccessPage(){
       "remove_user",
       user?.username
     )
-
   }
 
   function togglePassword(userId:string){
-
     setVisiblePasswords(prev=>({
-
       ...prev,
       [userId]: !prev[userId]
-
     }))
-
   }
 
   function changePassword(userId:string){
-
     const newPassword = prompt("Nova senha:")
 
     if(!newPassword) return
@@ -144,24 +112,16 @@ export default function AccessPage(){
     const user = users.find(u=>u.id===userId)
 
     const updated = users.map(user=>{
-
       if(user.id === userId){
-
         return {
-
           ...user,
           password:newPassword
-
         }
-
       }
-
       return user
-
     })
 
     saveUsers(updated)
-
     setUsers(updated)
 
     logAction(
@@ -169,13 +129,10 @@ export default function AccessPage(){
       "change_password",
       user?.username
     )
-
   }
 
   function toggleUserPage(userId:string,page:string){
-
     const updated = users.map(user=>{
-
       if(user.id !== userId) return user
 
       const hasPage = user.allowedPages.includes(page)
@@ -185,16 +142,12 @@ export default function AccessPage(){
         : [...user.allowedPages,page]
 
       return {
-
         ...user,
         allowedPages:pages
-
       }
-
     })
 
     saveUsers(updated)
-
     setUsers(updated)
 
     logAction(
@@ -202,137 +155,163 @@ export default function AccessPage(){
       "update_permissions",
       userId
     )
-
   }
 
   return(
 
-    <div className="page">
+    <div className="accessPage">
 
-      <h1>Gerenciamento de Acesso</h1>
+      <div className="pageHeader">
+        <h1 className="accessTitle">Gerenciamento de Acesso</h1>
+        <p className="accessSubtitle">Controle os usuários, permissões e monitore as ações do sistema.</p>
+      </div>
 
-      <div className="createUser">
+      <div className="accessGrid">
 
-        <input
-          placeholder="Usuário"
-          value={username}
-          onChange={e=>setUsername(e.target.value)}
-        />
+        {/* CARD CRIAR USUÁRIO */}
+        <div className="accessCard createUserCard">
 
-        <input
-          placeholder="Senha"
-          value={password}
-          onChange={e=>setPassword(e.target.value)}
-        />
+          <h2>Criar Usuário</h2>
 
-        <div className="permissions">
+          <div className="formGroup">
+            <input
+              className="corporateInput"
+              placeholder="Nome de Usuário"
+              value={username}
+              onChange={e=>setUsername(e.target.value)}
+            />
 
-          {ALL_PAGES.map(page=>(
+            <input
+              className="corporateInput"
+              placeholder="Senha"
+              type="password"
+              value={password}
+              onChange={e=>setPassword(e.target.value)}
+            />
+          </div>
 
-            <label key={page}>
+          <div className="permissionsGroup">
+            <span className="groupLabel">Permissões de Acesso:</span>
+            <div className="permissionsList">
+              {ALL_PAGES.map(page=>(
+                <label key={page} className="corporateCheckbox">
+                  <input
+                    type="checkbox"
+                    checked={allowedPages.includes(page)}
+                    onChange={()=>togglePage(page)}
+                  />
+                  <span>{page}</span>
+                </label>
+              ))}
+            </div>
+          </div>
 
-              <input
-                type="checkbox"
-                checked={allowedPages.includes(page)}
-                onChange={()=>togglePage(page)}
-              />
-
-              {page}
-
-            </label>
-
-          ))}
+          <button
+            className="primaryButton fullWidth"
+            onClick={createUser}
+            disabled={!username || !password}
+          >
+            Criar Usuário
+          </button>
 
         </div>
 
-        <button onClick={createUser}>
-          Criar Usuário
-        </button>
+        {/* CARD USUÁRIOS */}
+        <div className="accessCard usersCard">
+
+          <h2>Usuários Ativos</h2>
+
+          <div className="tableWrapper">
+            <table className="usersTable">
+
+              <thead>
+                <tr>
+                  <th>Usuário</th>
+                  <th>Senha</th>
+                  <th>Páginas Permitidas</th>
+                  <th className="alignRight">Ações</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {users.map(user=>(
+                  <tr key={user.id}>
+
+                    <td className="fontWeight600">{user.username}</td>
+
+                    <td className="passwordCell">
+                      <span className="pwdText">
+                        {visiblePasswords[user.id] ? user.password : "••••••••"}
+                      </span>
+                      <button
+                        className="iconButton"
+                        onClick={()=>togglePassword(user.id)}
+                        title={visiblePasswords[user.id] ? "Ocultar senha" : "Mostrar senha"}
+                      >
+                        {visiblePasswords[user.id] ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/>
+                            <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/>
+                            <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/>
+                            <line x1="2" x2="22" y1="2" y2="22"/>
+                          </svg>
+                        ) : (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                          </svg>
+                        )}
+                      </button>
+                    </td>
+
+                    <td>
+                      <div className="inlinePermissions">
+                        {ALL_PAGES.map(page=>(
+                          <label key={page} className="corporateCheckbox smallCheckbox">
+                            <input
+                              type="checkbox"
+                              checked={user.allowedPages.includes(page)}
+                              onChange={()=>toggleUserPage(user.id,page)}
+                              disabled={user.role === "admin"}
+                            />
+                            <span>{page.replace("/", "")}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </td>
+
+                    <td className="actionsCell">
+                      <button
+                        className="secondaryButton"
+                        onClick={()=>changePassword(user.id)}
+                      >
+                        Nova Senha
+                      </button>
+                      <button
+                        className="dangerButton"
+                        onClick={()=>removeUser(user.id)}
+                        disabled={user.role === "admin" || user.role === "master"}
+                      >
+                        Desativar
+                      </button>
+                    </td>
+
+                  </tr>
+                ))}
+              </tbody>
+
+            </table>
+          </div>
+
+        </div>
+
+        {/* AUDITORIA */}
+        <div className="accessCard auditCard">
+          <h2>Painel de Auditoria</h2>
+          <AuditPanel />
+        </div>
 
       </div>
-
-      <h2>Usuários</h2>
-
-      <table>
-
-        <thead>
-          <tr>
-            <th>Usuário</th>
-            <th>Senha</th>
-            <th>Páginas</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-
-        <tbody>
-
-          {users.map(user=>(
-
-            <tr key={user.id}>
-
-              <td>{user.username}</td>
-
-              <td>
-
-                {visiblePasswords[user.id]
-                  ? user.password
-                  : "••••••••"}
-
-                <button
-                  onClick={()=>togglePassword(user.id)}
-                >
-                  👁
-                </button>
-
-              </td>
-
-              <td>
-
-                {ALL_PAGES.map(page=>(
-
-                  <label key={page} style={{marginRight:10}}>
-
-                    <input
-                      type="checkbox"
-                      checked={user.allowedPages.includes(page)}
-                      onChange={()=>toggleUserPage(user.id,page)}
-                    />
-
-                    {page}
-
-                  </label>
-
-                ))}
-
-              </td>
-
-              <td>
-
-                <button
-                  onClick={()=>changePassword(user.id)}
-                >
-                  Alterar Senha
-                </button>
-
-                <button
-                  onClick={()=>removeUser(user.id)}
-                >
-                  Desativar
-                </button>
-
-              </td>
-
-            </tr>
-
-          ))}
-
-        </tbody>
-
-      </table>
-
-      {/* Painel de Auditoria Modular */}
-
-      <AuditPanel />
 
     </div>
 

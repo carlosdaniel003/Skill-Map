@@ -1,69 +1,247 @@
-.sidebar{
+/* src/components/sidebar/Sidebar.css */
 
-  width:220px;
-  height:100vh;
-
-  position:fixed;
-  left:0;
-  top:0;
-
-  background:#1f1f1f;
-  color:white;
-
-  padding:20px;
-
+.sidebar {
+  width: 240px;
+  height: 100vh;
+  
+  position: fixed;
+  left: 0;
+  top: 0;
+  
+  display: flex;
+  flex-direction: column;
+  padding: 26px 18px;
+  
+  /* Tema Executivo: Sidebar Branca */
+  background: #ffffff;
+  border-right: 1px solid #e0e0e0;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.03);
+  
+  color: #333333;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  
+  transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  z-index: 100;
 }
 
-.sidebar h2{
-
-  margin-bottom:30px;
-
+/* COLLAPSED */
+.sidebar.collapsed {
+  width: 76px;
 }
 
-.logoutArea{
-
-  margin-top:40px;
-
+/* HEADER */
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-.logoutButton{
-
-  width:100%;
-  padding:8px;
-
-  background:#b91c1c;
-  color:white;
-
-  border:none;
-  cursor:pointer;
-
+.sidebarHeader h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #d40000; /* Destaque no logo da sidebar */
+  min-width: 40px;
+  text-align: center;
 }
 
-.logoutButton:hover{
-
-  background:#991b1b;
-
+.sidebarHeader span {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111111;
 }
 
-.sessionInfo{
-
-  margin-bottom:25px;
-  padding-bottom:10px;
-
-  border-bottom:1px solid #444;
-
+/* SESSION CARD */
+.sessionCard {
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  padding: 14px;
+  border-radius: 8px;
+  margin-bottom: 26px;
+  min-height: 80px; /* Evita pulos de layout quando minimizado */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-.userName{
-
-  font-weight:bold;
-  margin-bottom:4px;
-
+.sidebar.collapsed .sessionCard {
+  padding: 0;
+  border: none;
+  background: transparent;
+  min-height: 0;
+  margin-bottom: 16px;
 }
 
-.sessionTimer{
+.userName {
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: 4px;
+  font-size: 14px;
+}
 
-  font-size:12px;
-  opacity:0.8;
+.sessionTimer, .sessionRemaining {
+  font-size: 12px;
+  color: #666666;
+}
 
+/* MENU AREA */
+.menuArea {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+/* MENU ITEM */
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  white-space: nowrap;
+  color: #555555;
+}
+
+/* HOVER */
+.menuItem:hover {
+  background: #f5f5f5;
+  color: #111111;
+}
+
+/* HOVER BAR */
+.menuItem::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 15%;
+  width: 4px;
+  height: 70%;
+  border-radius: 0 4px 4px 0;
+  background: #d40000;
+  opacity: 0;
+  transition: 0.2s ease;
+}
+
+.menuItem:hover::before {
+  opacity: 0.5;
+}
+
+/* ACTIVE */
+.menuItem.active {
+  background: #fff0f0; /* Fundo avermelhado super leve */
+  color: #d40000;
+  font-weight: 600;
+}
+
+.menuItem.active::before {
+  opacity: 1;
+}
+
+/* ICON */
+.menuIcon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.menuIcon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: #666666;
+  stroke-width: 2;
+  transition: all 0.2s ease;
+}
+
+.menuItem:hover svg {
+  stroke: #111111;
+}
+
+.menuItem.active svg {
+  stroke: #d40000;
+}
+
+/* LABEL */
+.menuItem span {
+  font-size: 14px;
+}
+
+/* LOGOUT */
+.logoutArea {
+  margin-top: auto;
+}
+
+.logoutButton {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background: #d40000;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.logoutButton:hover {
+  background: #b30000;
+  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
+}
+
+.logoutButton.collapsedBtn {
+  padding: 12px 0;
+}
+
+/* TRANSITION LOADER DA PÁGINA INTERNA (Translúcido e elegante) */
+.pageTransition {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  /* Fundo branco translúcido com leve embaçado */
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(4px);
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.pageLoader {
+  width: 40px;
+  height: 40px;
+  /* Anel de fundo vermelho bem fraquinho */
+  border: 3px solid rgba(212, 0, 0, 0.1); 
+  /* Parte que gira em vermelho sólido */
+  border-top: 3px solid #d40000; 
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

@@ -1,9 +1,253 @@
-.loginPage{
+/* src/app/login/page.css */
+  
+.loginPage {
+  height: 100vh;
+  width: 100%;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Fundo escuro e sóbrio corporativo */
+  background: #0a0a0a; 
+  background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #0a0a0a 70%);
+  
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
 
-  display:flex;
-  flex-direction:column;
-  width:250px;
-  margin:200px auto;
-  gap:10px;
+/* CARD EM BRANCO COM DETALHE VERMELHO */
+.loginCard {
+  width: 380px;
+  
+  /* Card Branco */
+  background: #ffffff; 
+  
+  /* Detalhe executivo superior vermelho */
+  border-top: 6px solid #d40000; 
+  border-radius: 8px;
+  
+  padding: 40px;
+  
+  /* Sombra elegante para destacar do fundo preto */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  
+  animation: cardEnter 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
 
+@keyframes cardEnter {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* HEADER */
+.loginHeader {
+  text-align: center;
+}
+
+.loginHeader h1 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #111111; /* Preto para contraste no branco */
+}
+
+.loginHeader span {
+  font-size: 13px;
+  color: #666666; /* Cinza médio executivo */
+  font-weight: 500;
+}
+
+/* FORM E INPUTS */
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.loginForm input {
+  padding: 14px 16px;
+  border-radius: 6px;
+  
+  /* Inputs com fundo cinza super claro */
+  border: 1px solid #e0e0e0;
+  background: #f9f9f9;
+  color: #333333;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.loginForm input::placeholder {
+  color: #a0a0a0;
+}
+
+/* Efeito de foco em vermelho */
+.loginForm input:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: #d40000;
+  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
+}
+
+/* PASSWORD FIELD (Agrupa input + botão) */
+.passwordField {
+  display: flex;
+  align-items: center;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #f9f9f9;
+  transition: all 0.2s ease;
+}
+
+.passwordField:focus-within {
+  background: #ffffff;
+  border-color: #d40000;
+  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
+}
+
+.passwordField input {
+  border: none;
+  flex: 1;
+  background: transparent;
+  box-shadow: none;
+}
+
+.passwordField input:focus {
+  box-shadow: none;
+}
+
+.togglePassword {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 10px 14px;
+  color: #888888;
+  font-size: 16px;
+  transition: color 0.2s;
+}
+
+.togglePassword:hover {
+  color: #d40000;
+}
+
+/* ERROR */
+.loginError {
+  color: #d40000;
+  font-size: 13px;
+  font-weight: 600;
+  background: #fff0f0;
+  padding: 10px;
+  border-radius: 6px;
+  border-left: 3px solid #d40000;
+}
+
+/* OPTIONS */
+.loginOptions {
+  display: flex;
+  justify-content: flex-start;
+  font-size: 13px;
+  color: #555555;
+}
+
+.loginOptions label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.loginOptions input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: #d40000; /* Checkbox vermelho */
+}
+
+/* BUTTON */
+.loginButton {
+  margin-top: 8px;
+  padding: 14px;
+  border: none;
+  border-radius: 6px;
+  
+  /* Botão Vermelho Executivo */
+  background: #d40000;
+  color: white;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.loginButton:hover:not(:disabled) {
+  background: #b30000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
+}
+
+.loginButton:disabled {
+  background: #e0e0e0;
+  color: #999999;
+  cursor: not-allowed;
+}
+
+/* FOOTER */
+.loginFooter {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #999999;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 16px;
+}
+
+/* TRANSITION SCREEN */
+.loginTransition {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  background: #0a0a0a;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.loginLoader {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid #d40000;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Remove o ícone de revelar senha padrão do Edge/Navegadores */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+/* Garante que o botão do SVG fique alinhado perfeitamente */
+.togglePassword {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

@@ -7,8 +7,7 @@
       "role": "admin",
       "allowedPages": [
         "/dashboard",
-        "/operators",
-        "/validation"
+        "/operators"
       ]
     },
     {

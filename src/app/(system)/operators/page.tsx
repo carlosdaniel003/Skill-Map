@@ -31,60 +31,43 @@ export default function OperatorsPage(){
   const [posto,setPosto] = useState("")
 
   /* filtros */
-
   const [searchMatricula,setSearchMatricula] = useState("")
   const [searchNome,setSearchNome] = useState("")
   const [filterLinha,setFilterLinha] = useState("")
   const [filterPosto,setFilterPosto] = useState("")
 
   async function loadOperators(){
-
     const data = await getOperators()
-
     setOperators(data)
-
   }
 
   async function loadLines(){
-
     const data = await getProductionLines()
-
     setLines(data)
-
   }
 
   async function loadWorkstations(){
-
     const data = await getWorkstations()
-
     setWorkstations(data)
-
   }
 
   useEffect(()=>{
-
     loadOperators()
     loadLines()
     loadWorkstations()
-
   },[])
 
   async function handleCreateOperator(){
-
     if(!nome || !matricula){
-
       alert("Preencha nome e matrícula")
       return
-
     }
 
     await addOperator({
-
       nome,
       matricula,
       linha_atual:linha,
       posto_atual:posto
-
     })
 
     setNome("")
@@ -93,17 +76,13 @@ export default function OperatorsPage(){
     setPosto("")
 
     loadOperators()
-
   }
 
   async function handleRemoveOperator(id:string){
-
-    if(!confirm("Desativar operador?")) return
+    if(!confirm("Tem certeza que deseja desativar este operador?")) return
 
     await deactivateOperator(id)
-
     loadOperators()
-
   }
 
   async function handleChangePosition(
@@ -111,241 +90,150 @@ export default function OperatorsPage(){
     linha:string,
     posto:string
   ){
-
     await changeOperatorPosition(
       operatorId,
       linha,
       posto
     )
-
     loadOperators()
-
   }
 
   /* aplicar filtros */
-
   const filteredOperators = operators.filter(op => {
+    const matchMatricula = op.matricula?.toLowerCase().includes(searchMatricula.toLowerCase())
+    const matchNome = op.nome?.toLowerCase().includes(searchNome.toLowerCase())
+    const matchLinha = filterLinha === "" || op.linha_atual === filterLinha
+    const matchPosto = filterPosto === "" || op.posto_atual === filterPosto
 
-    const matchMatricula =
-      op.matricula
-        ?.toLowerCase()
-        .includes(searchMatricula.toLowerCase())
-
-    const matchNome =
-      op.nome
-        ?.toLowerCase()
-        .includes(searchNome.toLowerCase())
-
-    const matchLinha =
-      filterLinha === "" ||
-      op.linha_atual === filterLinha
-
-    const matchPosto =
-      filterPosto === "" ||
-      op.posto_atual === filterPosto
-
-    return (
-      matchMatricula &&
-      matchNome &&
-      matchLinha &&
-      matchPosto
-    )
-
-  })
-
-  /* KPIs */
-
-  const totalOperators = operators.length
-
-  const operatorsWithoutLine =
-    operators.filter(op => !op.linha_atual).length
-
-  const operatorsByLine = lines.map(line => {
-
-    const count =
-      operators.filter(op => op.linha_atual === line.nome).length
-
-    return {
-      line:line.nome,
-      count
-    }
-
+    return matchMatricula && matchNome && matchLinha && matchPosto
   })
 
   return(
 
-    <div className="page">
+    <div className="operatorsPage">
 
       <div className="pageHeader">
-
-        <h1>Operadores</h1>
-
+        <div>
+          <h1 className="pageTitle">Gestão de Operadores</h1>
+          <p className="pageSubtitle">Cadastre, filtre e gerencie a alocação de operadores nas linhas de produção.</p>
+        </div>
         <button
           className="secondaryButton"
           onClick={()=>router.push("/operators/inactive")}
         >
           Ver Desativados
         </button>
-
       </div>
 
-      {/* KPIs */}
+      <div className="actionPanels">
+        
+        {/* FORM CADASTRO */}
+        <div className="corporateCard formCard">
+          <h2>Novo Operador</h2>
+          
+          <div className="formGrid">
+            <input
+              className="corporateInput"
+              placeholder="Matrícula"
+              value={matricula}
+              onChange={e=>setMatricula(e.target.value)}
+            />
 
-      <div className="kpiPanel">
+            <input
+              className="corporateInput"
+              placeholder="Nome completo"
+              value={nome}
+              onChange={e=>setNome(e.target.value)}
+            />
 
-        <div className="kpiCard">
-          Operadores totais
-          <strong>{totalOperators}</strong>
-        </div>
+            <select
+              className="corporateInput"
+              value={linha}
+              onChange={e=>setLinha(e.target.value)}
+            >
+              <option value="">Selecionar linha (Opcional)</option>
+              {lines.map(line => (
+                <option key={line.id} value={line.nome}>{line.nome}</option>
+              ))}
+            </select>
 
-        {operatorsByLine.map(line => (
-
-          <div key={line.line} className="kpiCard">
-
-            {line.line}
-
-            <strong>{line.count}</strong>
-
+            <select
+              className="corporateInput"
+              value={posto}
+              onChange={e=>setPosto(e.target.value)}
+            >
+              <option value="">Selecionar posto (Opcional)</option>
+              {workstations.map(ws => (
+                <option key={ws.id} value={ws.nome}>{ws.nome}</option>
+              ))}
+            </select>
           </div>
 
-        ))}
-
-        <div className="kpiCard warning">
-
-          ⚠ Sem linha
-
-          <strong>{operatorsWithoutLine}</strong>
-
+          <button 
+            className="primaryButton fullWidth mt-3" 
+            onClick={handleCreateOperator}
+            disabled={!nome || !matricula}
+          >
+            Cadastrar Operador
+          </button>
         </div>
 
-      </div>
+        {/* FILTROS */}
+        <div className="corporateCard filterCard">
+          <h2>Filtros e Busca</h2>
+          
+          <div className="formGrid">
+            <input
+              className="corporateInput"
+              placeholder="Buscar matrícula"
+              value={searchMatricula}
+              onChange={e=>setSearchMatricula(e.target.value)}
+            />
 
-      {/* FORM CADASTRO */}
+            <input
+              className="corporateInput"
+              placeholder="Buscar nome"
+              value={searchNome}
+              onChange={e=>setSearchNome(e.target.value)}
+            />
 
-      <div className="operatorForm">
+            <select
+              className="corporateInput"
+              value={filterLinha}
+              onChange={e=>setFilterLinha(e.target.value)}
+            >
+              <option value="">Todas as linhas</option>
+              {lines.map(line => (
+                <option key={line.id} value={line.nome}>{line.nome}</option>
+              ))}
+            </select>
 
-        <input
-          placeholder="Matrícula"
-          value={matricula}
-          onChange={e=>setMatricula(e.target.value)}
-        />
-
-        <input
-          placeholder="Nome"
-          value={nome}
-          onChange={e=>setNome(e.target.value)}
-        />
-
-        <select
-          value={linha}
-          onChange={e=>setLinha(e.target.value)}
-        >
-
-          <option value="">
-            Selecionar linha
-          </option>
-
-          {lines.map(line => (
-
-            <option key={line.id} value={line.nome}>
-              {line.nome}
-            </option>
-
-          ))}
-
-        </select>
-
-        <select
-          value={posto}
-          onChange={e=>setPosto(e.target.value)}
-        >
-
-          <option value="">
-            Selecionar posto
-          </option>
-
-          {workstations.map(ws => (
-
-            <option key={ws.id} value={ws.nome}>
-              {ws.nome}
-            </option>
-
-          ))}
-
-        </select>
-
-        <button onClick={handleCreateOperator}>
-          Cadastrar Operador
-        </button>
-
-      </div>
-
-      {/* FILTROS */}
-
-      <div className="operatorFilters">
-
-        <input
-          placeholder="Buscar matrícula"
-          value={searchMatricula}
-          onChange={e=>setSearchMatricula(e.target.value)}
-        />
-
-        <input
-          placeholder="Buscar nome"
-          value={searchNome}
-          onChange={e=>setSearchNome(e.target.value)}
-        />
-
-        <select
-          value={filterLinha}
-          onChange={e=>setFilterLinha(e.target.value)}
-        >
-
-          <option value="">
-            Filtrar por linha
-          </option>
-
-          {lines.map(line => (
-
-            <option key={line.id} value={line.nome}>
-              {line.nome}
-            </option>
-
-          ))}
-
-        </select>
-
-        <select
-          value={filterPosto}
-          onChange={e=>setFilterPosto(e.target.value)}
-        >
-
-          <option value="">
-            Filtrar por posto
-          </option>
-
-          {workstations.map(ws => (
-
-            <option key={ws.id} value={ws.nome}>
-              {ws.nome}
-            </option>
-
-          ))}
-
-        </select>
+            <select
+              className="corporateInput"
+              value={filterPosto}
+              onChange={e=>setFilterPosto(e.target.value)}
+            >
+              <option value="">Todos os postos</option>
+              {workstations.map(ws => (
+                <option key={ws.id} value={ws.nome}>{ws.nome}</option>
+              ))}
+            </select>
+          </div>
+        </div>
 
       </div>
 
       {/* TABELA */}
-
-      <OperatorTable
-        operators={filteredOperators}
-        lines={lines}
-        workstations={workstations}
-        onRemove={handleRemoveOperator}
-        onChangeLine={handleChangePosition}
-        onChangePosto={handleChangePosition}
-      />
+      <div className="corporateCard tableCard">
+        <OperatorTable
+          operators={filteredOperators}
+          lines={lines}
+          workstations={workstations}
+          onRemove={handleRemoveOperator}
+          onChangeLine={handleChangePosition}
+          onChangePosto={handleChangePosition}
+        />
+      </div>
 
     </div>
 

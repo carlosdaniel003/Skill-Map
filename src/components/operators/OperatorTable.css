@@ -1,14 +1,135 @@
-.operatorTable{
+/* src/components/operators/OperatorTable.css */
 
-  width:100%;
-  border-collapse:collapse;
-
+.operatorTableWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
 }
 
-.operatorTable th,
-.operatorTable td{
+.tableContainer {
+  overflow-x: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #ffffff;
+}
 
-  border:1px solid #ddd;
-  padding:8px;
+.corporateTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
 
+/* CABEÇALHO */
+.corporateTable th {
+  background: #f9f9f9;
+  color: #555555;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 12px 16px;
+  border-bottom: 2px solid #e0e0e0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.sortableTh {
+  cursor: pointer;
+  transition: background-color 0.2s;
+  user-select: none;
+}
+
+.sortableTh:hover {
+  background: #f0f0f0;
+  color: #111111;
+}
+
+.thContent {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sortIcon {
+  color: #d40000;
+}
+
+/* LINHAS DA TABELA */
+.corporateTable td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333333;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+/* Oculta a borda inferior da última linha se for o fim da tabela */
+.corporateTable tr:last-child td {
+  border-bottom: none;
+}
+
+.corporateTable tr:hover td {
+  background: #fafafa;
+}
+
+/* UTILITÁRIOS DENTRO DA TABELA */
+.alignRight {
+  text-align: right;
+}
+
+.actionColumn {
+  text-align: right;
+  width: 260px;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px !important;
+  color: #888888 !important;
+  font-style: italic;
+  background: #fafafa;
+}
+
+/* PAGINAÇÃO CORPORATIVA */
+.corporatePagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.paginationInfo {
+  font-size: 13px;
+  color: #555555;
+}
+
+.paginationInfo strong {
+  color: #111111;
+}
+
+.paginationBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #333333;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.paginationBtn:hover:not(:disabled) {
+  background: #f9f9f9;
+  border-color: #cccccc;
+  color: #d40000;
+}
+
+.paginationBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #f5f5f5;
 }

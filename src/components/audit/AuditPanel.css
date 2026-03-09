@@ -1,28 +1,97 @@
-.auditPanel{
+/* src/components/audit/AuditPanel.css */
 
-  margin-top:40px;
-
+.auditPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
 }
 
-.auditHeader{
-
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:10px;
-
+/* HEADER DO PAINEL */
+.auditHeader {
+  display: flex;
+  justify-content: flex-end; /* Alinha o botão de limpar sempre à direita */
+  align-items: center;
 }
 
-.auditTable{
-
-  width:100%;
-  border-collapse:collapse;
-
+/* TABELA CORPORATIVA */
+.tableContainer {
+  overflow-x: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #ffffff;
 }
 
-.auditTable th,
-.auditTable td{
+.corporateTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
 
-  border:1px solid #ddd;
-  padding:8px;
+.corporateTable th {
+  background: #f9f9f9;
+  color: #555555;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 12px 16px;
+  border-bottom: 2px solid #e0e0e0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
 
+/* Como as linhas da tabela são renderizadas pelo componente <AuditRow>, 
+  podemos injetar a formatação no "td" de forma global para a tabela de auditoria. 
+*/
+.corporateTable tbody tr td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333333;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.corporateTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.corporateTable tbody tr:hover td {
+  background: #fafafa;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px !important;
+  color: #888888 !important;
+  font-style: italic;
+  background: #fafafa;
+}
+
+/* BOTÃO DE DELETAR/LIMPAR */
+.dangerButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid #ffcccc;
+  border-radius: 6px;
+  background: #fff0f0;
+  color: #d40000;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dangerButton:hover:not(:disabled) {
+  background: #d40000;
+  color: #ffffff;
+}
+
+.dangerButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f5f5f5;
+  border-color: #e0e0e0;
+  color: #999999;
 }

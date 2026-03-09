@@ -24,7 +24,6 @@ export function initializeUsers(){
       allowedPages:[
         "/dashboard",
         "/operators",
-        "/validation",
         "/access"
       ]
     },
@@ -38,7 +37,6 @@ export function initializeUsers(){
       allowedPages:[
         "/dashboard",
         "/operators",
-        "/validation"
       ]
     }
 
