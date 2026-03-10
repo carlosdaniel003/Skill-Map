@@ -43,6 +43,7 @@ export default function LineSkillsRadar(){
   },[filters.linha,mode])
 
   async function loadData(){
+
     if(!filters.linha){
       setData([])
       return
@@ -73,7 +74,7 @@ export default function LineSkillsRadar(){
     }
 
     /* ------------------------------------------------ */
-    /* 2️⃣ BUSCAR DADOS DA LINHA (MODELO / CATEGORIA)    */
+    /* 2️⃣ BUSCAR DADOS DA LINHA                        */
     /* ------------------------------------------------ */
     const { data:line,error:lineError } = await supabase
       .from("production_lines")
@@ -139,8 +140,7 @@ export default function LineSkillsRadar(){
     /* MODO MODELOS                                     */
     /* ------------------------------------------------ */
     if(mode === "models"){
-      /* BUSCAR TODOS OS MODELOS DO BANCO */
-      const { data:models, error:modelError } = await supabase
+      const { data:models,error:modelError } = await supabase
         .from("production_lines")
         .select("nome")
 
@@ -154,14 +154,12 @@ export default function LineSkillsRadar(){
         return
       }
 
-      /* MAPA DE MODELOS */
       const map:Record<string,{total:number,count:number}> = {}
 
       models.forEach((m:any)=>{
         map[m.nome] = { total:0,count:0 }
       })
 
-      /* SOMAR SKILLS APENAS PARA A LINHA ATUAL */
       skills.forEach((row:any)=>{
         const model = line?.nome
         if(!model) return
@@ -169,7 +167,6 @@ export default function LineSkillsRadar(){
         map[model].count++
       })
 
-      /* GERAR RESULTADO */
       const result:Skill[] = Object.keys(map).map(model=>({
         label:model,
         value: map[model].count > 0 ? Number((map[model].total / map[model].count).toFixed(2)) : 0
@@ -192,30 +189,31 @@ export default function LineSkillsRadar(){
           <polyline points="2 15.5 12 8.5 22 15.5"/>
           <line x1="12" y1="2" x2="12" y2="8.5"/>
         </svg>
-        <p>Selecione um modelo de produção no filtro acima para visualizar o radar de skills coletivo.</p>
+        <p>Selecione uma linha de produção no filtro acima para visualizar o radar de skills coletivo.</p>
       </div>
     )
   }
 
   /* ----------------------------- */
-  /* RENDER DO GRÁFICO             */
+  /* CORES DO GRÁFICO              */
   /* ----------------------------- */
-  
-  // Define a cor do gráfico com base no modo ativo para dar feedback visual
   const getChartColor = () => {
-    if(mode === "skills") return "#d40000" // Vermelho da marca
+    if(mode === "skills") return "#d40000" // Vermelho corporativo
     if(mode === "categories") return "#3b82f6" // Azul
     return "#f59e0b" // Laranja
   }
 
   const chartColor = getChartColor()
 
+  /* ----------------------------- */
+  /* RENDER                        */
+  /* ----------------------------- */
   return(
     <div className="corporateCard radarCard">
-      
+
       <div className="radarHeader">
-        <h3>Radar de Modelo — <span>{filters.linha}</span></h3>
-        
+        <h3>Radar da Linha — <span>{filters.linha}</span></h3>
+
         <div className="radarModeToggle">
           <button
             className={`toggleBtn ${mode === "skills" ? "active red" : ""}`}
@@ -223,14 +221,14 @@ export default function LineSkillsRadar(){
           >
             Habilidades
           </button>
-          
+
           <button
             className={`toggleBtn ${mode === "categories" ? "active blue" : ""}`}
             onClick={()=>setMode("categories")}
           >
             Categorias
           </button>
-          
+
           <button
             className={`toggleBtn ${mode === "models" ? "active orange" : ""}`}
             onClick={()=>setMode("models")}
@@ -244,14 +242,18 @@ export default function LineSkillsRadar(){
         <ResponsiveContainer width="100%" height="100%">
           <RadarChart data={data}>
             <PolarGrid stroke="#e0e0e0" />
-            <PolarAngleAxis 
-              dataKey="label" 
-              tick={{fill: "#555555", fontSize: 12, fontWeight: 600}} 
+            <PolarAngleAxis
+              dataKey="label"
+              tick={{
+                fill:"#555555",
+                fontSize:12,
+                fontWeight:600
+              }}
             />
-            <PolarRadiusAxis 
-              angle={30} 
-              domain={[0,5]} 
-              tick={{fill: "#888888"}}
+            <PolarRadiusAxis
+              angle={30}
+              domain={[0,5]}
+              tick={{fill:"#888888"}}
             />
             <Radar
               name="Média"
@@ -264,6 +266,33 @@ export default function LineSkillsRadar(){
             />
           </RadarChart>
         </ResponsiveContainer>
+      </div>
+
+      {/* ----------------------------- */}
+      
+      {/* ----------------------------- */}
+      <div className="skillsAverageTable">
+        <h4>Média de Habilidades</h4>
+
+        <div className="skillsList">
+          {data.map(skill=>{
+            
+            // Cores de status de performance para os números
+            let color = "#2e7d32" // Verde (bom)
+            if(skill.value < 2) color = "#d40000" // Vermelho (crítico)
+            else if(skill.value < 3) color = "#f59e0b" // Amarelo (atenção)
+
+            return(
+              <div key={skill.label} className="skillRow">
+                <span className="skillName">{skill.label}</span>
+                <span className="skillValue" style={{color}}>
+                  {skill.value}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+
       </div>
 
     </div>

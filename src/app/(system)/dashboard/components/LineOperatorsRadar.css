@@ -1,0 +1,164 @@
+/* src/app/(system)/dashboard/components/LineOperatorsRadar.css */
+
+/* CARD CORPORATIVO */
+.lineRadarCard {
+  background: #ffffff;
+  border-top: 6px solid #d40000;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  min-height: 480px;
+  box-sizing: border-box;
+}
+
+/* EMPTY STATE */
+.emptyRadarCard {
+  border-top: 6px solid #e0e0e0;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  background: #f9f9f9;
+}
+
+.emptyIcon {
+  color: #cccccc;
+}
+
+.emptyRadarCard p {
+  color: #888888;
+  font-size: 14px;
+  max-width: 320px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* HEADER DO CARD */
+.lineRadarHeader {
+  margin-bottom: 24px;
+}
+
+.lineRadarHeader h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111111;
+}
+
+.lineRadarHeader h3 span {
+  color: #d40000;
+}
+
+/* CORPO DO CARD (Grid Layout) */
+.lineRadarBody {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 32px;
+  flex: 1;
+}
+
+/* LISTA DE OPERADORES */
+.operatorsListWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-right: 1px solid #f0f0f0;
+  padding-right: 16px;
+}
+
+.listTitle {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #888888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.operatorsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 360px; /* Impede a quebra de layout se houver muitos operadores */
+  overflow-y: auto;
+  padding-right: 8px; /* Respiro para a barra de rolagem */
+}
+
+/* Customização da scrollbar da lista */
+.operatorsList::-webkit-scrollbar {
+  width: 4px;
+}
+.operatorsList::-webkit-scrollbar-track {
+  background: transparent;
+}
+.operatorsList::-webkit-scrollbar-thumb {
+  background-color: #cccccc;
+  border-radius: 10px;
+}
+
+/* BOTÃO DO OPERADOR */
+.operatorButton {
+  text-align: left;
+  padding: 10px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #555555;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.operatorButton:hover:not(.active) {
+  background: #f9f9f9;
+  border-color: #cccccc;
+  color: #111111;
+}
+
+.operatorButton.active {
+  background: #d40000;
+  color: #ffffff;
+  border-color: #d40000;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.2);
+}
+
+.noOperatorsMsg {
+  font-size: 13px;
+  color: #a0a0a0;
+  font-style: italic;
+  padding: 16px 0;
+}
+
+/* GRÁFICO DE RADAR */
+.lineRadarChart {
+  flex: 1;
+  min-height: 360px;
+  width: 100%;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+  .lineRadarBody {
+    grid-template-columns: 1fr; /* No mobile, empilha a lista e o gráfico */
+    border-right: none;
+    padding-right: 0;
+  }
+  
+  .operatorsListWrapper {
+    border-right: none;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 16px;
+    padding-right: 0;
+  }
+  
+  .operatorsList {
+    max-height: 160px; /* Menor no mobile para não ocupar a tela toda */
+  }
+}

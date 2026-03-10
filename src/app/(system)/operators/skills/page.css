@@ -1,0 +1,464 @@
+/* src/app/(system)/operators/skills/page.css */
+
+.manageSkillsPage {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: pageFadeIn 0.4s ease-out;
+}
+
+/* HEADER DA PÁGINA */
+.manageSkillsPage .pageHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #333333;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.backButton:hover {
+  background: #f9f9f9;
+  border-color: #cccccc;
+  color: #d40000;
+}
+
+.headerTitle {
+  display: flex;
+  flex-direction: column;
+}
+
+.manageSkillsPage .pageTitle {
+  margin: 0 0 4px 0;
+  font-size: 28px;
+  font-weight: 800;
+  color: #111111;
+  letter-spacing: -0.5px;
+}
+
+.manageSkillsPage .pageSubtitle {
+  margin: 0;
+  color: #666666;
+  font-size: 14px;
+}
+
+/* GRID PRINCIPAL */
+.skillsGrid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* CARDS CORPORATIVOS */
+.manageSkillsPage .corporateCard {
+  background: #ffffff;
+  border-top: 6px solid #d40000;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.corporateCard h2 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111111;
+}
+
+/* FORMULÁRIO */
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGroup label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555555;
+}
+
+.manageSkillsPage .corporateInput {
+  padding: 12px 14px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  background: #f9f9f9;
+  color: #333333;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.corporateInput:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: #d40000;
+  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
+}
+
+.mt-3 { margin-top: 24px; }
+
+/* BOTÕES GERAIS */
+.manageSkillsPage .primaryButton {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #d40000;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: #b30000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
+}
+
+.primaryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.primaryButton.fullWidth {
+  width: 100%;
+}
+
+/* TABELA E DRAG/DROP */
+.tableContainer {
+  overflow-x: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+}
+
+.corporateTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.corporateTable th {
+  background: #f9f9f9;
+  color: #555555;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 12px 16px;
+  border-bottom: 2px solid #e0e0e0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.corporateTable td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333333;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.corporateTable tr:last-child td {
+  border-bottom: none;
+}
+
+/* Row hover e efeito de arrastar */
+.dragRow {
+  cursor: grab;
+  transition: background-color 0.2s ease;
+}
+
+.dragRow:active {
+  cursor: grabbing;
+  opacity: 0.6;
+  background-color: #f5f5f5;
+}
+
+.dragRow:hover td {
+  background: #fafafa;
+}
+
+.dragCol {
+  width: 60px;
+  text-align: center;
+}
+
+.dragHandle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #888888;
+  font-weight: 600;
+  user-select: none;
+}
+
+.dragHandle svg {
+  color: #cccccc;
+}
+
+/* Lógica de linhas inativas */
+.inactiveRow td {
+  background: #fafafa;
+  color: #a0a0a0;
+}
+
+.fontWeight600 {
+  font-weight: 600;
+  color: #111111;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px !important;
+  color: #888888 !important;
+  font-style: italic;
+  background: #fafafa;
+}
+
+/* BADGES DE STATUS (Ativo/Inativo) */
+.statusBadge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.badge-active {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.badge-inactive {
+  background: #ffebee;
+  color: #c62828;
+}
+
+/* AÇÕES DA TABELA */
+.actionColumn {
+  text-align: right;
+  width: 1%;
+  white-space: nowrap;
+}
+
+.actionGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* BOTÕES DE ÍCONE (Edição) */
+.actionIconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.saveBtn {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+.saveBtn:hover {
+  background: #c8e6c9;
+  color: #1b5e20;
+}
+
+.cancelBtn {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  color: #666666;
+}
+.cancelBtn:hover {
+  background: #f5f5f5;
+  color: #333333;
+}
+
+/* Botões Pequenos (Editar / Desativar) */
+.smallButton {
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.manageSkillsPage .secondaryButton {
+  border: 1px solid #e0e0e0;
+  background: #ffffff;
+  color: #333333;
+}
+.secondaryButton:hover {
+  background: #f9f9f9;
+  border-color: #cccccc;
+}
+
+.dangerButton {
+  border: 1px solid #ffcccc;
+  background: #fff0f0;
+  color: #d40000;
+}
+.dangerButton:hover {
+  background: #d40000;
+  color: #ffffff;
+}
+
+.successButton {
+  border: 1px solid #c8e6c9;
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+.successButton:hover {
+  background: #2e7d32;
+  color: #ffffff;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 900px) {
+  .skillsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================
+   MODAIS CORPORATIVOS
+   ========================================= */
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.corporateModal {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-top: 6px solid #d40000;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  animation: modalEnter 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.modalIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.modalIcon.warningIcon {
+  background: #fff0f0;
+  color: #d40000;
+}
+
+.modalIcon.successIcon {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.modalHeader h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #111111;
+}
+
+.modalBody {
+  margin-bottom: 24px;
+}
+
+.modalBody p {
+  margin: 0;
+  font-size: 14px;
+  color: #555555;
+  line-height: 1.5;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.dangerButtonSolid {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #d40000;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dangerButtonSolid:hover {
+  background: #b30000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalEnter {
+  from {
+    transform: translateY(20px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}

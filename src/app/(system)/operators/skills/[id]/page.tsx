@@ -7,6 +7,7 @@ import { useParams, useRouter } from "next/navigation"
 
 import { supabase } from "@/services/database/supabaseClient"
 import { getOperators } from "@/services/database/operatorRepository"
+import { recalculateOperatorSkills } from "@/services/database/operatorRepository"
 
 export default function OperatorSkillsPage(){
 
@@ -26,9 +27,17 @@ export default function OperatorSkillsPage(){
   const [showConfirmLeave, setShowConfirmLeave] = useState(false)
 
   useEffect(()=>{
-    loadOperator()
-    loadSkills()
-  },[])
+  initializePage()
+},[])
+
+async function initializePage(){
+
+  await recalculateOperatorSkills(operatorId)
+
+  await loadOperator()
+  await loadSkills()
+
+}
 
   async function loadOperator(){
     const operators = await getOperators()
