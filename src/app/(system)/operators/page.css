@@ -8,14 +8,14 @@
 }
 
 /* HEADER DA PÁGINA */
-.pageHeader {
+.operatorsPage .pageHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 8px;
 }
 
-.pageTitle {
+.operatorsPage .pageTitle {
   margin: 0 0 4px 0;
   font-size: 28px;
   font-weight: 800;
@@ -23,14 +23,14 @@
   letter-spacing: -0.5px;
 }
 
-.pageSubtitle {
+.operatorsPage .pageSubtitle {
   margin: 0;
   color: #666666;
   font-size: 14px;
 }
 
 /* CARDS CORPORATIVOS */
-.corporateCard {
+.operatorsPage .corporateCard {
   background: #ffffff;
   border-top: 6px solid #d40000;
   border-radius: 8px;
@@ -79,7 +79,7 @@
 }
 
 /* BOTÕES */
-.primaryButton {
+.operatorsPage .primaryButton {
   padding: 12px 16px;
   border: none;
   border-radius: 6px;
@@ -108,7 +108,7 @@
   width: 100%;
 }
 
-.secondaryButton {
+.operatorsPage .secondaryButton {
   padding: 10px 16px;
   border: 1px solid #e0e0e0;
   border-radius: 6px;
