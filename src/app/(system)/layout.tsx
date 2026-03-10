@@ -2,7 +2,7 @@
 "use client"
 
 import "./layout.css"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import Sidebar from "@/components/sidebar/Sidebar"
 import { getSession } from "@/services/auth/sessionService"
@@ -16,14 +16,19 @@ export default function SystemLayout({
   const router = useRouter()
   const pathname = usePathname()
 
+  // Estado para controlar nosso Modal de Alerta Customizado
+  const [alertConfig, setAlertConfig] = useState<{title: string, message: string, redirectPath: string} | null>(null)
+
   useEffect(()=>{
 
     const user = getSession()
 
     if(!user){
-      /* Dica da Alice: No futuro, podemos trocar esse alert por um Toast elegante! */
-      alert("Sessão expirada. Faça login novamente.")
-      router.push("/login")
+      setAlertConfig({
+        title: "Sessão Expirada",
+        message: "Sua sessão expirou. Por favor, faça login novamente para continuar.",
+        redirectPath: "/login"
+      })
       return
     }
 
@@ -32,11 +37,21 @@ export default function SystemLayout({
       user.allowedPages.some(page => pathname.startsWith(page))
 
     if(!allowed){
-      alert("Você não tem acesso a esta página")
-      router.push("/dashboard")
+      setAlertConfig({
+        title: "Acesso Restrito",
+        message: "Você não tem permissão para acessar esta página. Redirecionando para o início...",
+        redirectPath: "/dashboard"
+      })
     }
 
   },[pathname, router])
+
+  function handleAlertConfirm() {
+    if(alertConfig){
+      router.push(alertConfig.redirectPath)
+      setAlertConfig(null) // Esconde o modal após o clique
+    }
+  }
 
   return (
 
@@ -47,6 +62,36 @@ export default function SystemLayout({
       <main className="systemMain">
         {children}
       </main>
+
+      {/* NOSSO MODAL DE SISTEMA (Substitui os alerts nativos) */}
+      {alertConfig && (
+        <div className="layoutModalOverlay">
+          <div className="layoutCorporateModal">
+            
+            <div className="layoutModalHeader">
+              <div className="layoutModalIcon warningIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" x2="12" y1="8" y2="12"/>
+                  <line x1="12" x2="12.01" y1="16" y2="16"/>
+                </svg>
+              </div>
+              <h3>{alertConfig.title}</h3>
+            </div>
+            
+            <div className="layoutModalBody">
+              <p>{alertConfig.message}</p>
+            </div>
+            
+            <div className="layoutModalFooter">
+              <button className="layoutPrimaryButton" onClick={handleAlertConfirm}>
+                Entendi
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
 
     </div>
 

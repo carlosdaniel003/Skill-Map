@@ -1,0 +1,152 @@
+/* src/app/(system)/dashboard/components/OperatorSkillGrade.css */
+
+/* CARD CORPORATIVO */
+.gradeCard {
+  background: #ffffff;
+  border-top: 6px solid #d40000;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  height: 480px; /* Alinhado com a altura do Radar */
+  box-sizing: border-box;
+}
+
+/* EMPTY STATE */
+.emptyGradeCard {
+  border-top: 6px solid #e0e0e0;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  background: #f9f9f9;
+}
+
+.emptyIcon {
+  color: #cccccc;
+}
+
+.emptyGradeCard p {
+  color: #888888;
+  font-size: 14px;
+  max-width: 280px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* HEADER */
+.gradeHeader {
+  margin-bottom: 24px;
+}
+
+.gradeHeader h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111111;
+}
+
+/* GRID DE ESTATÍSTICAS (Mini-cards internos) */
+.gradeStatsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.statBox {
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  padding: 16px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.statLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statValue {
+  font-size: 32px;
+  font-weight: 800;
+  color: #111111;
+  line-height: 1;
+}
+
+/* CAIXA DE CLASSIFICAÇÃO */
+.classificationBox {
+  background: #f5f5f5;
+  padding: 16px 20px;
+  border-radius: 6px;
+  border-left: 4px solid transparent; /* Cor injetada via JS */
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: auto; /* Empurra a barra de progresso pro final do card */
+}
+
+.classLabel {
+  font-size: 13px;
+  color: #666666;
+}
+
+.classValue {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* BARRA DE PROGRESSO (PROGRESS BAR) */
+.progressSection {
+  margin-top: 32px;
+}
+
+.progressLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  color: #888888;
+  margin-bottom: 8px;
+}
+
+.progressBarContainer {
+  height: 14px;
+  background: #f0f0f0;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.progressBarFill {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.8s ease;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Marcador da meta (Min SR: 80%) */
+.goalMarker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #111111;
+  opacity: 0.3;
+  z-index: 10;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 400px) {
+  .gradeStatsGrid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,176 @@
+/* src/app/(system)/dashboard/components/DashboardFilters.css */
+
+/* CARD CORPORATIVO */
+.filtersCard {
+  background: #ffffff;
+  border-top: 6px solid #d40000;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  margin-bottom: 24px;
+}
+
+.filtersHeader {
+  margin-bottom: 20px;
+}
+
+.filtersHeader h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111111;
+}
+
+/* GRID DOS FILTROS */
+.filtersGrid {
+  display: flex;
+  align-items: flex-end; /* Alinha o botão "Buscar" na mesma linha base dos inputs */
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 250px;
+}
+
+.filterGroup label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555555;
+}
+
+/* INPUTS E SELECTS CORPORATIVOS */
+.corporateInput {
+  padding: 12px 14px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  background: #f9f9f9;
+  color: #333333;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.corporateInput:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: #d40000;
+  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
+}
+
+select.corporateInput {
+  cursor: pointer;
+}
+
+/* COMPORTAMENTO DO DROPDOWN DE BUSCA */
+.searchGroup {
+  position: relative;
+}
+
+.searchInputWrapper {
+  position: relative;
+}
+
+.dropdownResults {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  margin-top: 8px;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 100; /* Fica acima de outros elementos do Dashboard */
+  padding: 8px;
+}
+
+/* Customização da barra de rolagem do dropdown */
+.dropdownResults::-webkit-scrollbar {
+  width: 6px;
+}
+.dropdownResults::-webkit-scrollbar-track {
+  background: transparent;
+}
+.dropdownResults::-webkit-scrollbar-thumb {
+  background-color: #cccccc;
+  border-radius: 10px;
+}
+
+.dropdownItem {
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dropdownItem:hover {
+  background: #f9f9f9;
+  color: #d40000;
+}
+
+.dropdownItem strong {
+  color: #111111;
+}
+
+/* BOTÃO BUSCAR */
+.filterAction {
+  display: flex;
+  align-items: center;
+}
+
+.searchButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  height: 44px; /* Mesma altura dos inputs */
+  border: none;
+  border-radius: 6px;
+  background: #d40000;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.searchButton:hover:not(:disabled) {
+  background: #b30000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
+}
+
+.searchButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+  .filtersGrid {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filterAction {
+    margin-top: 8px;
+  }
+  
+  .searchButton {
+    width: 100%;
+  }
+}

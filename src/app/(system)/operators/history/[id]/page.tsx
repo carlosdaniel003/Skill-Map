@@ -39,6 +39,10 @@ export default function OperatorHistoryPage(){
   const [dataFim,setDataFim] = useState("")
   const [skill,setSkill] = useState(1)
 
+  // ESTADOS PARA OS MODAIS CORPORATIVOS
+  const [alertConfig, setAlertConfig] = useState<{title: string, message: string} | null>(null)
+  const [confirmConfig, setConfirmConfig] = useState<{title: string, message: string, onConfirm: () => void} | null>(null)
+
   useEffect(()=>{
     loadOperator()
     loadLines()
@@ -46,18 +50,24 @@ export default function OperatorHistoryPage(){
     loadHistory()
   },[])
 
-  async function handleDeactivate(id:string, origem:string){
-    if(!confirm("Deseja realmente desativar esta experiência?")) return
-
-    if(origem === "movimentacao"){
-      await deactivateOperatorHistory(id)
-    }else{
-      await deactivateOperatorExperience(id)
-    }
-    loadHistory()
+  function handleDeactivate(id:string, origem:string){
+    setConfirmConfig({
+      title: "Desativar Experiência",
+      message: "Deseja realmente desativar esta experiência do histórico do operador?",
+      onConfirm: async () => {
+        if(origem === "movimentacao"){
+          await deactivateOperatorHistory(id)
+        }else{
+          await deactivateOperatorExperience(id)
+        }
+        loadHistory()
+      }
+    })
   }
 
   async function handleActivate(id:string, origem:string){
+    // Mantido sem confirm pois a ação é direta e reversível, 
+    // mas se quiser podemos adicionar o modal verde aqui no futuro!
     if(origem === "movimentacao"){
       await activateOperatorHistory(id)
     }else{
@@ -107,22 +117,34 @@ export default function OperatorHistoryPage(){
     const today = new Date().toISOString().split("T")[0]
 
     if(!linha || !posto || !dataInicio){
-      alert("Preencha linha, posto e data de início")
+      setAlertConfig({
+        title: "Atenção",
+        message: "Por favor, preencha modelo, posto e data de início para registrar."
+      })
       return
     }
 
     if(dataInicio > today){
-      alert("A data de início não pode ser no futuro")
+      setAlertConfig({
+        title: "Data Inválida",
+        message: "A data de início não pode ser no futuro."
+      })
       return
     }
 
     if(dataFim && dataFim < dataInicio){
-      alert("A data final não pode ser menor que a data de início")
+      setAlertConfig({
+        title: "Data Inválida",
+        message: "A data final não pode ser menor que a data de início."
+      })
       return
     }
 
     if(dataFim && dataFim > today){
-      alert("A data final não pode ser no futuro")
+      setAlertConfig({
+        title: "Data Inválida",
+        message: "A data final não pode ser no futuro."
+      })
       return
     }
 
@@ -135,7 +157,10 @@ export default function OperatorHistoryPage(){
       const overlap = inicioNovo <= fimExistente && fimNovo >= inicioExistente
 
       if(overlap){
-        alert("Já existe uma experiência registrada neste período")
+        setAlertConfig({
+          title: "Conflito de Datas",
+          message: "Já existe uma experiência registrada neste período para este operador."
+        })
         return
       }
     }
@@ -158,10 +183,15 @@ export default function OperatorHistoryPage(){
     loadHistory()
   }
 
-  async function handleRemove(id:string){
-    if(!confirm("Tem certeza que deseja remover esta experiência?")) return
-    await deleteOperatorExperience(id)
-    loadHistory()
+  function handleRemove(id:string){
+    setConfirmConfig({
+      title: "Remover Experiência",
+      message: "Tem certeza que deseja remover esta experiência permanentemente?",
+      onConfirm: async () => {
+        await deleteOperatorExperience(id)
+        loadHistory()
+      }
+    })
   }
 
   function handleBack(){
@@ -197,9 +227,9 @@ export default function OperatorHistoryPage(){
           <div className="formGrid">
             
             <div className="inputGroup">
-              <label>Linha</label>
+              <label>Modelo</label>
               <select className="corporateInput" value={linha} onChange={e=>setLinha(e.target.value)}>
-                <option value="">Selecionar linha</option>
+                <option value="">Selecionar modelo</option>
                 {lines.map(line => (
                   <option key={line.id} value={line.nome}>{line.nome}</option>
                 ))}
@@ -272,7 +302,7 @@ export default function OperatorHistoryPage(){
             <table className="corporateTable">
               <thead>
                 <tr>
-                  <th>Linha</th>
+                  <th>Modelo</th>
                   <th>Posto</th>
                   <th>Início</th>
                   <th>Fim</th>
@@ -351,6 +381,71 @@ export default function OperatorHistoryPage(){
         </div>
 
       </div>
+
+      {/* =========================================
+          MODAIS CORPORATIVOS
+          ========================================= */}
+
+      {/* 1. ALERT MODAL (Avisos de Validação de Data e Preenchimento) */}
+      {alertConfig && (
+        <div className="modalOverlay">
+          <div className="corporateModal">
+            <div className="modalHeader">
+              <div className="modalIcon warningIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" x2="12" y1="8" y2="12"/>
+                  <line x1="12" x2="12.01" y1="16" y2="16"/>
+                </svg>
+              </div>
+              <h3>{alertConfig.title}</h3>
+            </div>
+            <div className="modalBody">
+              <p>{alertConfig.message}</p>
+            </div>
+            <div className="modalFooter">
+              <button className="primaryButton" onClick={() => setAlertConfig(null)}>
+                Entendi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. CONFIRM MODAL (Para Desativar/Remover) */}
+      {confirmConfig && (
+        <div className="modalOverlay">
+          <div className="corporateModal">
+            <div className="modalHeader">
+              <div className="modalIcon warningIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+              </div>
+              <h3>{confirmConfig.title}</h3>
+            </div>
+            <div className="modalBody">
+              <p>{confirmConfig.message}</p>
+            </div>
+            <div className="modalFooter">
+              <button className="secondaryButton" onClick={() => setConfirmConfig(null)}>
+                Cancelar
+              </button>
+              <button 
+                className="dangerButtonSolid" 
+                onClick={() => {
+                  confirmConfig.onConfirm();
+                  setConfirmConfig(null);
+                }}
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
 

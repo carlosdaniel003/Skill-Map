@@ -28,6 +28,12 @@ export default function AccessPage(){
 
   const [visiblePasswords,setVisiblePasswords] = useState<Record<string,boolean>>({})
 
+  // Estados para modais e alertas
+  const [alertConfig, setAlertConfig] = useState<{title: string, message: string} | null>(null)
+  const [confirmConfig, setConfirmConfig] = useState<{title: string, message: string, onConfirm: () => void} | null>(null)
+  const [promptConfig, setPromptConfig] = useState<{title: string, onConfirm: (val: string) => void} | null>(null)
+  const [promptValue, setPromptValue] = useState("")
+
   const sessionUser = getSession()
 
   useEffect(()=>{
@@ -44,7 +50,10 @@ export default function AccessPage(){
 
   function createUser(){
     if(!username || !password){
-      alert("Preencha usuário e senha")
+      setAlertConfig({
+        title: "Atenção",
+        message: "Preencha usuário e senha."
+      })
       return
     }
 
@@ -76,25 +85,35 @@ export default function AccessPage(){
     const user = users.find(u => u.id === id)
 
     if(user?.role === "master"){
-      alert("O usuário MASTER não pode ser removido")
+      setAlertConfig({
+        title: "Ação não permitida",
+        message: "O usuário MASTER não pode ser removido."
+      })
       return
     }
 
     if(user?.role === "admin"){
-      alert("Admins não podem ser removidos por aqui")
+      setAlertConfig({
+        title: "Ação não permitida",
+        message: "Admins não podem ser removidos por aqui."
+      })
       return
     }
 
-    const updated = users.filter(u => u.id !== id)
-
-    saveUsers(updated)
-    setUsers(updated)
-
-    logAction(
-      sessionUser?.username || "unknown",
-      "remove_user",
-      user?.username
-    )
+    setConfirmConfig({
+      title: "Desativar Usuário",
+      message: `Tem certeza que deseja desativar o usuário ${user?.username}?`,
+      onConfirm: () => {
+        const updated = users.filter(u => u.id !== id)
+        saveUsers(updated)
+        setUsers(updated)
+        logAction(
+          sessionUser?.username || "unknown",
+          "remove_user",
+          user?.username
+        )
+      }
+    })
   }
 
   function togglePassword(userId:string){
@@ -105,30 +124,33 @@ export default function AccessPage(){
   }
 
   function changePassword(userId:string){
-    const newPassword = prompt("Nova senha:")
-
-    if(!newPassword) return
-
     const user = users.find(u=>u.id===userId)
 
-    const updated = users.map(user=>{
-      if(user.id === userId){
-        return {
-          ...user,
-          password:newPassword
-        }
+    setPromptConfig({
+      title: `Nova senha para ${user?.username}`,
+      onConfirm: (newPassword) => {
+        if(!newPassword) return
+
+        const updated = users.map(u=>{
+          if(u.id === userId){
+            return {
+              ...u,
+              password:newPassword
+            }
+          }
+          return u
+        })
+
+        saveUsers(updated)
+        setUsers(updated)
+
+        logAction(
+          sessionUser?.username || "unknown",
+          "change_password",
+          user?.username
+        )
       }
-      return user
     })
-
-    saveUsers(updated)
-    setUsers(updated)
-
-    logAction(
-      sessionUser?.username || "unknown",
-      "change_password",
-      user?.username
-    )
   }
 
   function toggleUserPage(userId:string,page:string){
@@ -312,6 +334,120 @@ export default function AccessPage(){
         </div>
 
       </div>
+
+      {/* =========================================
+          MODAIS CORPORATIVOS 
+          ========================================= */}
+
+      {/* ALERT MODAL */}
+      {alertConfig && (
+        <div className="modalOverlay">
+          <div className="corporateModal">
+            <div className="modalHeader">
+              <div className="modalIcon warningIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" x2="12" y1="8" y2="12"/>
+                  <line x1="12" x2="12.01" y1="16" y2="16"/>
+                </svg>
+              </div>
+              <h3>{alertConfig.title}</h3>
+            </div>
+            <div className="modalBody">
+              <p>{alertConfig.message}</p>
+            </div>
+            <div className="modalFooter">
+              <button className="primaryButton" onClick={() => setAlertConfig(null)}>
+                Entendi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CONFIRM MODAL */}
+      {confirmConfig && (
+        <div className="modalOverlay">
+          <div className="corporateModal">
+            <div className="modalHeader">
+              <div className="modalIcon warningIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+              </div>
+              <h3>{confirmConfig.title}</h3>
+            </div>
+            <div className="modalBody">
+              <p>{confirmConfig.message}</p>
+            </div>
+            <div className="modalFooter">
+              <button className="secondaryButton" onClick={() => setConfirmConfig(null)}>
+                Cancelar
+              </button>
+              <button 
+                className="dangerButtonSolid" 
+                onClick={() => {
+                  confirmConfig.onConfirm();
+                  setConfirmConfig(null);
+                }}
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* PROMPT MODAL */}
+      {promptConfig && (
+        <div className="modalOverlay">
+          <div className="corporateModal">
+            <div className="modalHeader">
+              <div className="modalIcon infoIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </div>
+              <h3>{promptConfig.title}</h3>
+            </div>
+            <div className="modalBody">
+              <input
+                autoFocus
+                className="corporateInput"
+                type="text"
+                placeholder="Digite aqui..."
+                value={promptValue}
+                onChange={e => setPromptValue(e.target.value)}
+              />
+            </div>
+            <div className="modalFooter">
+              <button 
+                className="secondaryButton" 
+                onClick={() => {
+                  setPromptConfig(null);
+                  setPromptValue("");
+                }}
+              >
+                Cancelar
+              </button>
+              <button 
+                className="primaryButton" 
+                onClick={() => {
+                  promptConfig.onConfirm(promptValue);
+                  setPromptConfig(null);
+                  setPromptValue("");
+                }}
+                disabled={!promptValue}
+              >
+                Salvar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
 

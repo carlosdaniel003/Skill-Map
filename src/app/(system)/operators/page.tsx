@@ -36,6 +36,10 @@ export default function OperatorsPage(){
   const [filterLinha,setFilterLinha] = useState("")
   const [filterPosto,setFilterPosto] = useState("")
 
+  // ESTADOS PARA OS MODAIS CORPORATIVOS
+  const [alertConfig, setAlertConfig] = useState<{title: string, message: string} | null>(null)
+  const [confirmConfig, setConfirmConfig] = useState<{title: string, message: string, onConfirm: () => void} | null>(null)
+
   async function loadOperators(){
     const data = await getOperators()
     setOperators(data)
@@ -59,7 +63,10 @@ export default function OperatorsPage(){
 
   async function handleCreateOperator(){
     if(!nome || !matricula){
-      alert("Preencha nome e matrícula")
+      setAlertConfig({
+        title: "Campos Obrigatórios",
+        message: "Por favor, preencha o nome e a matrícula do operador."
+      })
       return
     }
 
@@ -78,11 +85,16 @@ export default function OperatorsPage(){
     loadOperators()
   }
 
-  async function handleRemoveOperator(id:string){
-    if(!confirm("Tem certeza que deseja desativar este operador?")) return
-
-    await deactivateOperator(id)
-    loadOperators()
+  function handleRemoveOperator(id:string){
+    // Substituindo o confirm nativo pelo modal customizado
+    setConfirmConfig({
+      title: "Desativar Operador",
+      message: "Tem certeza que deseja desativar este operador? Ele será movido para a lista de inativos.",
+      onConfirm: async () => {
+        await deactivateOperator(id)
+        loadOperators()
+      }
+    })
   }
 
   async function handleChangePosition(
@@ -115,7 +127,7 @@ export default function OperatorsPage(){
       <div className="pageHeader">
         <div>
           <h1 className="pageTitle">Gestão de Operadores</h1>
-          <p className="pageSubtitle">Cadastre, filtre e gerencie a alocação de operadores nas linhas de produção.</p>
+          <p className="pageSubtitle">Cadastre, filtre e gerencie a alocação de operadores nos modelos de produção.</p>
         </div>
         <button
           className="secondaryButton"
@@ -151,7 +163,7 @@ export default function OperatorsPage(){
               value={linha}
               onChange={e=>setLinha(e.target.value)}
             >
-              <option value="">Selecionar linha (Opcional)</option>
+              <option value="">Selecionar modelo (Opcional)</option>
               {lines.map(line => (
                 <option key={line.id} value={line.nome}>{line.nome}</option>
               ))}
@@ -202,7 +214,7 @@ export default function OperatorsPage(){
               value={filterLinha}
               onChange={e=>setFilterLinha(e.target.value)}
             >
-              <option value="">Todas as linhas</option>
+              <option value="">Todas os modelos</option>
               {lines.map(line => (
                 <option key={line.id} value={line.nome}>{line.nome}</option>
               ))}
@@ -234,6 +246,71 @@ export default function OperatorsPage(){
           onChangePosto={handleChangePosition}
         />
       </div>
+
+      {/* =========================================
+          MODAIS CORPORATIVOS 
+          ========================================= */}
+
+      {/* 1. ALERT MODAL (Avisos simples) */}
+      {alertConfig && (
+        <div className="modalOverlay">
+          <div className="corporateModal">
+            <div className="modalHeader">
+              <div className="modalIcon warningIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" x2="12" y1="8" y2="12"/>
+                  <line x1="12" x2="12.01" y1="16" y2="16"/>
+                </svg>
+              </div>
+              <h3>{alertConfig.title}</h3>
+            </div>
+            <div className="modalBody">
+              <p>{alertConfig.message}</p>
+            </div>
+            <div className="modalFooter">
+              <button className="primaryButton" onClick={() => setAlertConfig(null)}>
+                Entendi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. CONFIRM MODAL (Para deletar/desativar) */}
+      {confirmConfig && (
+        <div className="modalOverlay">
+          <div className="corporateModal">
+            <div className="modalHeader">
+              <div className="modalIcon warningIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+              </div>
+              <h3>{confirmConfig.title}</h3>
+            </div>
+            <div className="modalBody">
+              <p>{confirmConfig.message}</p>
+            </div>
+            <div className="modalFooter">
+              <button className="secondaryButton" onClick={() => setConfirmConfig(null)}>
+                Cancelar
+              </button>
+              <button 
+                className="dangerButtonSolid" 
+                onClick={() => {
+                  confirmConfig.onConfirm();
+                  setConfirmConfig(null);
+                }}
+              >
+                Sim, desativar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
 

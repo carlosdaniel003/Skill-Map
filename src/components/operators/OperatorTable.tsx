@@ -92,7 +92,7 @@ export default function OperatorTable({
               </th>
 
               <th onClick={()=>toggleSort("linha_atual")} className="sortableTh">
-                <div className="thContent">Linha {renderSortIndicator("linha_atual")}</div>
+                <div className="thContent">Modelo {renderSortIndicator("linha_atual")}</div>
               </th>
 
               <th onClick={()=>toggleSort("posto_atual")} className="sortableTh">

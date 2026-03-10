@@ -22,6 +22,9 @@ export default function OperatorSkillsPage(){
 
   const [hasChanges,setHasChanges] = useState(false)
 
+  // ESTADO PARA O MODAL DE CONFIRMAÇÃO DE SAÍDA (UNSAVED CHANGES)
+  const [showConfirmLeave, setShowConfirmLeave] = useState(false)
+
   useEffect(()=>{
     loadOperator()
     loadSkills()
@@ -128,13 +131,16 @@ export default function OperatorSkillsPage(){
     setHasChanges(false)
   }
 
-  function handleBack(){
+  function handleBackClick(){
     if(hasChanges){
-      const confirmLeave = confirm(
-        "Existem alterações não salvas. Deseja sair sem salvar?"
-      )
-      if(!confirmLeave) return
+      setShowConfirmLeave(true) // Mostra o modal customizado em vez do confirm() nativo
+    } else {
+      router.push("/operators")
     }
+  }
+
+  function confirmLeavePage(){
+    setShowConfirmLeave(false)
     router.push("/operators")
   }
 
@@ -143,7 +149,7 @@ export default function OperatorSkillsPage(){
     <div className="skillsPage">
 
       <div className="pageHeader">
-        <button className="backButton" onClick={handleBack}>
+        <button className="backButton" onClick={handleBackClick}>
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="m15 18-6-6 6-6"/>
           </svg>
@@ -236,6 +242,42 @@ export default function OperatorSkillsPage(){
         )}
 
       </div>
+
+      {/* =========================================
+          MODAL CORPORATIVO (Sair sem salvar)
+          ========================================= */}
+      {showConfirmLeave && (
+        <div className="modalOverlay">
+          <div className="corporateModal warningModal">
+            
+            <div className="modalHeader">
+              <div className="modalIcon warningIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+              </div>
+              <h3>Atenção: Alterações não salvas!</h3>
+            </div>
+            
+            <div className="modalBody">
+              <p>Você tem alterações de Nível de Habilidade que ainda não foram salvas. Se você sair agora, <strong>todas as suas modificações serão perdidas</strong>.</p>
+              <p>Deseja sair mesmo assim?</p>
+            </div>
+            
+            <div className="modalFooter">
+              <button className="secondaryButton" onClick={() => setShowConfirmLeave(false)}>
+                Ficar e Salvar
+              </button>
+              <button className="dangerButtonSolid" onClick={confirmLeavePage}>
+                Sair sem Salvar
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
 
     </div>
 

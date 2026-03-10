@@ -1,174 +1,151 @@
+// src/app/(system)/dashboard/components/OperatorSkillGrade.tsx
 "use client"
 
+import "./OperatorSkillGrade.css"
 import { useEffect, useState } from "react"
 import { supabase } from "@/services/database/supabaseClient"
 import { useDashboardFilters } from "../context/DashboardFilterContext"
 
 export default function OperatorSkillGrade(){
 
-const { filters } = useDashboardFilters()
+  const { filters } = useDashboardFilters()
 
-const [totalPoints,setTotalPoints] = useState(0)
-const [maxPoints,setMaxPoints] = useState(0)
-const [ratio,setRatio] = useState(0)
-const [grade,setGrade] = useState("")
-const [color,setColor] = useState("#ef4444")
+  const [totalPoints,setTotalPoints] = useState(0)
+  const [maxPoints,setMaxPoints] = useState(0)
+  const [ratio,setRatio] = useState(0)
+  const [grade,setGrade] = useState("")
+  const [color,setColor] = useState("#ef4444") // vermelho padrão
 
-useEffect(()=>{
+  useEffect(()=>{
+    loadData()
+  },[filters.operatorId])
 
-loadData()
+  async function loadData(){
+    if(!filters.operatorId){
+      setTotalPoints(0)
+      setMaxPoints(0)
+      setRatio(0)
+      setGrade("")
+      return
+    }
 
-},[filters.operatorId])
+    const { data,error } = await supabase
+      .from("operator_skills")
+      .select("skill_level")
+      .eq("operator_id",filters.operatorId)
 
-async function loadData(){
+    if(error){
+      console.error(error)
+      return
+    }
 
-if(!filters.operatorId){
+    if(!data) return
 
-setTotalPoints(0)
-setMaxPoints(0)
-setRatio(0)
-setGrade("")
-return
+    const total = data.reduce(
+      (acc,row)=> acc + row.skill_level,
+      0
+    )
 
-}
+    const max = data.length * 5
 
-const { data,error } = await supabase
-.from("operator_skills")
-.select("skill_level")
-.eq("operator_id",filters.operatorId)
+    const sr = max > 0
+      ? Math.round((total / max) * 100)
+      : 0
 
-if(error){
+    setTotalPoints(total)
+    setMaxPoints(max)
+    setRatio(sr)
 
-console.error(error)
-return
+    /* classificação executiva e dinâmica */
+    let gradeText = ""
+    let barColor = "#d40000" // vermelho da marca
 
-}
+    if(sr <= 30){
+      gradeText = "Iniciante"
+      barColor = "#d40000" // vermelho
+    }else if(sr <= 60){
+      gradeText = "Em Desenvolvimento"
+      barColor = "#f59e0b" // laranja/amarelo
+    }else if(sr <= 80){
+      gradeText = "Especialista"
+      barColor = "#3b82f6" // azul executivo
+    }else{
+      gradeText = "Instrutor"
+      barColor = "#2e7d32" // verde sucesso
+    }
 
-if(!data) return
+    setGrade(gradeText)
+    setColor(barColor)
+  }
 
-const total = data.reduce(
-(acc,row)=> acc + row.skill_level,
-0
-)
+  /* ----------------------------- */
+  /* ESTADO SEM OPERADOR (EMPTY)   */
+  /* ----------------------------- */
+  if(!filters.operatorId){
+    return(
+      <div className="corporateCard gradeCard emptyGradeCard">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="emptyIcon">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        <p>Selecione um operador no filtro acima para visualizar o seu Skill Grade e nível de progresso.</p>
+      </div>
+    )
+  }
 
-const max = data.length * 5
+  /* ----------------------------- */
+  /* RENDERIZAÇÃO DO CARD ATIVO    */
+  /* ----------------------------- */
+  return(
 
-const sr = max > 0
-? Math.round((total / max) * 100)
-: 0
+    <div className="corporateCard gradeCard">
 
-setTotalPoints(total)
-setMaxPoints(max)
-setRatio(sr)
+      <div className="gradeHeader">
+        <h3>Classificação de Habilidade</h3>
+      </div>
 
-/* classificação */
+      <div className="gradeStatsGrid">
+        
+        <div className="statBox">
+          <span className="statLabel">Total de Pontos</span>
+          <span className="statValue">{totalPoints}</span>
+        </div>
 
-let gradeText = ""
-let barColor = "#ef4444"
+        <div className="statBox">
+          <span className="statLabel">Skill Ratio</span>
+          <span className="statValue" style={{color: color}}>{ratio}%</span>
+        </div>
 
-if(sr <= 30){
+      </div>
 
-gradeText = "Operador Iniciante"
-barColor = "#ef4444"
+      <div className="classificationBox" style={{borderLeftColor: color}}>
+        <span className="classLabel">Nível Atual:</span>
+        <strong className="classValue" style={{color: color}}>{grade}</strong>
+      </div>
 
-}else if(sr <= 60){
+      <div className="progressSection">
+        <div className="progressLabels">
+          <span>Progresso de Habilidades</span>
+          <span>Meta SR: 80%</span>
+        </div>
+        
+        <div className="progressBarContainer">
+          <div
+            className="progressBarFill"
+            style={{
+              width: `${ratio}%`,
+              backgroundColor: color
+            }}
+          />
+          {/* Marcador visual da meta de 80% */}
+          <div className="goalMarker" style={{left: "80%"}} title="Meta de Especialista (80%)" />
+        </div>
+      </div>
 
-gradeText = "Operador em Desenvolvimento"
-barColor = "#f59e0b"
+    </div>
 
-}else if(sr <= 80){
-
-gradeText = "Operador Especialista"
-barColor = "#22c55e"
-
-}else{
-
-gradeText = "Operador Instrutor"
-barColor = "#16a34a"
-
-}
-
-setGrade(gradeText)
-setColor(barColor)
-
-}
-
-if(!filters.operatorId){
-
-return(
-
-<div
-style={{
-padding:20,
-background:"rgba(255,255,255,0.03)",
-borderRadius:12
-}}
->
-
-Selecione um operador para visualizar o Skill Grade
-
-</div>
-
-)
-
-}
-
-return(
-
-<div
-style={{
-padding:20,
-background:"rgba(255,255,255,0.03)",
-borderRadius:12,
-maxWidth:350
-}}
->
-
-<h3 style={{marginBottom:15}}>
-Skill Level Grade
-</h3>
-
-<div style={{fontSize:14,marginBottom:15}}>
-
-<div>Total Points: {totalPoints}</div>
-
-<div>Skill Ratio: {ratio}%</div>
-
-<div>Classificação: {grade}</div>
-
-<div>Min SR: 80%</div>
-
-</div>
-
-{/* BARRA DE PROGRESSO */}
-
-<div
-style={{
-height:12,
-background:"#1f2937",
-borderRadius:6,
-overflow:"hidden",
-marginBottom:10
-}}
->
-
-<div
-style={{
-width:`${ratio}%`,
-height:"100%",
-background:color,
-transition:"width 0.4s ease"
-}}
-/>
-
-</div>
-
-<div style={{fontSize:12,color:"#9ca3af"}}>
-Progresso de desenvolvimento de habilidades
-</div>
-
-</div>
-
-)
+  )
 
 }

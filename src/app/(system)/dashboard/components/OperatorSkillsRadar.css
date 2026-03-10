@@ -1,0 +1,59 @@
+/* src/app/(system)/dashboard/components/OperatorSkillsRadar.css */
+
+/* CARD CORPORATIVO PARA O RADAR */
+.radarCard {
+  background: #ffffff;
+  border-top: 6px solid #d40000;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  height: 480px; /* Alinhado com a altura do Skill Grade e Line Radar */
+  box-sizing: border-box;
+}
+
+/* EMPTY STATE (Quando não tem operador selecionado) */
+.emptyRadarCard {
+  border-top: 6px solid #e0e0e0;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  background: #f9f9f9;
+}
+
+.emptyIcon {
+  color: #cccccc;
+}
+
+.emptyRadarCard p {
+  color: #888888;
+  font-size: 14px;
+  max-width: 280px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* HEADER DO GRÁFICO */
+.radarHeader {
+  margin-bottom: 20px;
+}
+
+.radarHeader h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111111;
+}
+
+.radarHeader h3 span {
+  color: #d40000; /* Destaca o nome do operador em vermelho */
+}
+
+/* CONTAINER DO GRÁFICO */
+.radarChartContainer {
+  flex: 1;
+  width: 100%;
+  min-height: 0; /* Ajuda o Recharts a calcular a altura correta no Flexbox */
+}

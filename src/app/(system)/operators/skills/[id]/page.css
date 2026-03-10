@@ -232,3 +232,127 @@
   background: #f9f9f9;
   border-color: #cccccc;
 }
+
+
+/* =========================================
+   MODAIS CORPORATIVOS (Substituindo alertas nativos)
+   ========================================= */
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.corporateModal {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-top: 6px solid #d40000; /* Mantém o padrão de atenção/perigo */
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  animation: modalEnter 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Variante de warning (Pode ser alaranjada se preferir, mas vamos manter o vermelho da marca) */
+.corporateModal.warningModal {
+  border-top-color: #d40000; 
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.modalIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.modalIcon.warningIcon {
+  background: #fff0f0;
+  color: #d40000;
+}
+
+.modalHeader h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #111111;
+}
+
+.modalBody {
+  margin-bottom: 24px;
+}
+
+.modalBody p {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: #555555;
+  line-height: 1.5;
+}
+
+.modalBody p:last-child {
+  margin-bottom: 0;
+}
+
+.modalBody strong {
+  color: #d40000;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.dangerButtonSolid {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #fff0f0;
+  color: #d40000;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dangerButtonSolid:hover {
+  background: #ffe0e0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalEnter {
+  from {
+    transform: translateY(20px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
