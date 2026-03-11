@@ -33,8 +33,6 @@ export default function AccessPage(){
   const [password,setPassword] = useState("")
   const [allowedPages,setAllowedPages] = useState<string[]>([])
 
-  const [visiblePasswords,setVisiblePasswords] = useState<Record<string,boolean>>({})
-
   // ESTADOS PARA OS NOSSOS MODAIS CORPORATIVOS
   const [alertConfig, setAlertConfig] = useState<{title: string, message: string} | null>(null)
   const [confirmConfig, setConfirmConfig] = useState<{title: string, message: string, onConfirm: () => void} | null>(null)
@@ -77,7 +75,8 @@ export default function AccessPage(){
     })
 
     if (success) {
-      await logAction(sessionUser?.username || "unknown", "create_user", username)
+      // REGRA: Log de criação
+      await logAction(sessionUser?.username || "sistema", "create_user", `Conta criada para: ${username}`)
       
       setUsername("")
       setPassword("")
@@ -97,61 +96,56 @@ export default function AccessPage(){
   }
 
   function handleRemoveUser(id:string){
-    const user = users.find(u => u.id === id)
+    const targetUser = users.find(u => u.id === id)
 
-    if(user?.role === "master"){
+    if(targetUser?.role === "master"){
       setAlertConfig({
-        title: "Ação Não Permitida",
-        message: "O usuário de sistema MASTER não pode ser desativado ou removido."
+        title: "Ação Bloqueada",
+        message: "A conta MASTER não pode ser removida do sistema."
       })
       return
     }
 
-    if(user?.role === "admin"){
+    // REGRA: Administrador não pode remover outro administrador (Apenas Master pode)
+    if(sessionUser?.role === "admin" && targetUser?.role === "admin"){
       setAlertConfig({
-        title: "Ação Não Permitida",
-        message: "Administradores não podem ser removidos por esta interface."
+        title: "Ação Bloqueada",
+        message: "Um Administrador não tem privilégios para remover outro Administrador."
       })
       return
     }
 
     setConfirmConfig({
       title: "Remover Usuário",
-      message: `Tem certeza que deseja remover o acesso de "${user?.username}" permanentemente do sistema?`,
+      message: `Tem certeza que deseja excluir permanentemente o acesso de "${targetUser?.username}"?`,
       onConfirm: async () => {
         const success = await deleteUser(id)
         if (success) {
-          await logAction(sessionUser?.username || "unknown", "remove_user", user?.username)
+          // REGRA: Log de remoção
+          await logAction(sessionUser?.username || "sistema", "remove_user", `Conta removida: ${targetUser?.username}`)
           await loadData()
         }
       }
     })
   }
 
-  function togglePassword(userId:string){
-    setVisiblePasswords(prev=>({
-      ...prev,
-      [userId]: !prev[userId]
-    }))
-  }
-
   function handleChangePassword(userId:string){
-    const user = users.find(u=>u.id===userId)
+    const targetUser = users.find(u=>u.id===userId)
 
     setPromptConfig({
-      title: `Nova senha para ${user?.username}`,
+      title: `Nova senha para ${targetUser?.username}`,
       onConfirm: async (newPassword) => {
         if(!newPassword) return
 
         const success = await updateUserPassword(userId, newPassword)
         
         if (success) {
-          await logAction(sessionUser?.username || "unknown", "change_password", user?.username)
+          // REGRA: Log de alteração de senha
+          await logAction(sessionUser?.username || "sistema", "change_password", `Definiu nova senha para: ${targetUser?.username}`)
           setAlertConfig({
             title: "Sucesso",
             message: "Senha atualizada com sucesso."
           })
-          // Nota: Não precisamos dar loadData() aqui porque a senha não aparece na listagem (por segurança)
         } else {
           setAlertConfig({
             title: "Erro",
@@ -163,13 +157,13 @@ export default function AccessPage(){
   }
 
   async function handleToggleUserPage(userId:string, page:string){
-    const user = users.find(u => u.id === userId)
-    if (!user) return
+    const targetUser = users.find(u => u.id === userId)
+    if (!targetUser) return
 
-    const hasPage = user.allowedPages.includes(page)
+    const hasPage = targetUser.allowedPages.includes(page)
     const newPages = hasPage
-      ? user.allowedPages.filter(p=>p !== page)
-      : [...user.allowedPages, page]
+      ? targetUser.allowedPages.filter(p=>p !== page)
+      : [...targetUser.allowedPages, page]
 
     // Atualização otimista na tela
     setUsers(users.map(u => u.id === userId ? { ...u, allowedPages: newPages } : u))
@@ -178,7 +172,9 @@ export default function AccessPage(){
     const success = await updateUserPermissions(userId, newPages)
     
     if (success) {
-      await logAction(sessionUser?.username || "unknown", "update_permissions", `${user.username}: ${page}`)
+      // REGRA: Log de alteração de permissão
+      const actionDesc = hasPage ? `Removeu acesso à ${page}` : `Concedeu acesso à ${page}`
+      await logAction(sessionUser?.username || "sistema", "update_permissions", `${actionDesc} para ${targetUser.username}`)
     } else {
       // Reverte em caso de erro
       await loadData()
@@ -248,7 +244,7 @@ export default function AccessPage(){
         <div className="accessCard usersCard">
           <h2>Usuários Ativos</h2>
           <div className="tableWrapper">
-            <table className="usersTable">
+            <table className="usersTable corporateTable">
               <thead>
                 <tr>
                   <th>Usuário</th>
@@ -258,50 +254,61 @@ export default function AccessPage(){
                 </tr>
               </thead>
               <tbody>
-                {users.map(user=>(
-                  <tr key={user.id}>
-                    <td className="fontWeight600">{user.username}</td>
+                {users.map(user=>{
+                  
+                  // Verifica se o botão de remover deve ser desabilitado
+                  const isRemoveDisabled = 
+                    user.role === "master" || 
+                    (sessionUser?.role === "admin" && user.role === "admin");
 
-                    <td className="passwordCell">
-                      <span className="pwdText">
-                        {/* Como não trazemos mais a senha do BD por segurança, exibimos oculto por padrão */}
-                        ••••••••
-                      </span>
-                    </td>
+                  return(
+                    <tr key={user.id}>
+                      <td className="fontWeight600">
+                        {user.username}
+                        {user.role === "master" && <span className="statusBadge badge-active" style={{marginLeft: 8}}>Master</span>}
+                        {user.role === "admin" && <span className="statusBadge badge-active" style={{marginLeft: 8}}>Admin</span>}
+                      </td>
 
-                    <td>
-                      <div className="inlinePermissions">
-                        {ALL_PAGES.map(page=>(
-                          <label key={page} className="corporateCheckbox smallCheckbox">
-                            <input
-                              type="checkbox"
-                              checked={user.allowedPages.includes(page)}
-                              onChange={()=>handleToggleUserPage(user.id,page)}
-                              disabled={user.role === "admin" || user.role === "master"}
-                            />
-                            <span>{page.replace("/", "")}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </td>
+                      <td className="passwordCell">
+                        <span className="pwdText">
+                          ••••••••
+                        </span>
+                      </td>
 
-                    <td className="actionsCell">
-                      <button
-                        className="secondaryButton"
-                        onClick={()=>handleChangePassword(user.id)}
-                      >
-                        Nova Senha
-                      </button>
-                      <button
-                        className="dangerButton"
-                        onClick={()=>handleRemoveUser(user.id)}
-                        disabled={user.role === "admin" || user.role === "master"}
-                      >
-                        Remover
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                      <td>
+                        <div className="inlinePermissions">
+                          {ALL_PAGES.map(page=>(
+                            <label key={page} className="corporateCheckbox smallCheckbox">
+                              <input
+                                type="checkbox"
+                                checked={user.allowedPages.includes(page)}
+                                onChange={()=>handleToggleUserPage(user.id,page)}
+                                disabled={user.role === "admin" || user.role === "master"}
+                              />
+                              <span>{page.replace("/", "")}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </td>
+
+                      <td className="actionsCell">
+                        <button
+                          className="secondaryButton smallButton"
+                          onClick={()=>handleChangePassword(user.id)}
+                        >
+                          Nova Senha
+                        </button>
+                        <button
+                          className="dangerButton smallButton"
+                          onClick={()=>handleRemoveUser(user.id)}
+                          disabled={isRemoveDisabled}
+                        >
+                          Remover
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
@@ -315,7 +322,7 @@ export default function AccessPage(){
 
       </div>
 
-      {/* MODAIS CORPORATIVOS (ALERT, CONFIRM, PROMPT) - O mesmo que criámos anteriormente! */}
+      {/* MODAIS CORPORATIVOS */}
       
       {alertConfig && (
         <div className="modalOverlay">

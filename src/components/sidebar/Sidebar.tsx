@@ -72,11 +72,10 @@ export default function Sidebar(){
     setNavigating(false)
   },[pathname])
 
-  // ...
+  // Substitua o useEffect do cronômetro no seu src/components/sidebar/Sidebar.tsx
   useEffect(()=>{
 
     const sessionData = getSessionData()
-
     if(!sessionData) return
 
     setSession(sessionData)
@@ -86,12 +85,13 @@ export default function Sidebar(){
 
       const now = Date.now()
       
-      // O expiresAt agora vem direto do sessionData
+      // Calcula o tempo restante com base na data de expiração real da sessão
       const remaining = sessionData.expiresAt - now
-
-      // Tempo percorrido desde a criação (Assumindo que a duração era 8h = 28800000ms)
-      const elapsed = 28800000 - remaining 
       
+      // O tempo total da sessão é 30 minutos (1.800.000 ms)
+      const SESSION_DURATION = 30 * 60 * 1000
+      const elapsed = SESSION_DURATION - remaining
+
       setSessionTime(formatTime(elapsed > 0 ? elapsed : 0))
 
       if(remaining <= 0){
@@ -102,6 +102,7 @@ export default function Sidebar(){
 
       setRemainingTime(formatTime(remaining))
 
+      // Avisa quando faltarem menos de 2 minutos
       if(remaining < 2 * 60 * 1000){
         setIsWarning(true)
       }else{
@@ -113,7 +114,6 @@ export default function Sidebar(){
     return ()=>clearInterval(interval)
 
   },[])
-// ...
 
   function handleNavigate(path:string){
     if(path === pathname) return

@@ -2,10 +2,12 @@
 import { User } from "@/core/auth/authTypes";
 
 const SESSION_KEY = "skillmap_session";
-const SESSION_DURATION_MS = 8 * 60 * 60 * 1000; // 8 horas de sessão
+
+// REGRA 4: Tempo de expiração de 30 minutos
+const SESSION_DURATION_MS = 30 * 60 * 1000; 
 
 export interface SessionData {
-  user: User; // Agora o User nunca carrega a senha
+  user: User;
   expiresAt: number;
 }
 
@@ -26,7 +28,6 @@ export function getSessionData(): SessionData | null {
   try {
     const session: SessionData = JSON.parse(data);
     
-    // Verifica se a sessão já expirou
     if (Date.now() > session.expiresAt) {
       clearSession();
       return null;
