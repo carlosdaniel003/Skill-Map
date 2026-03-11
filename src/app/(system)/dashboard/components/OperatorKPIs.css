@@ -125,3 +125,7 @@
     height: 14px;
   }
 }
+
+.kpi-inactive{
+  border-top:4px solid #ff9800;
+}

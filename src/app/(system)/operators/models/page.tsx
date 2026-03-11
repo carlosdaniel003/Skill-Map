@@ -14,6 +14,8 @@ import {
 } from "@/services/database/operatorRepository"
 
 export default function ModelsPage(){
+  const [categories,setCategories] = useState<string[]>([])
+  const [categorySuggestions,setCategorySuggestions] = useState<string[]>([])
 
   const router = useRouter()
 
@@ -37,10 +39,41 @@ export default function ModelsPage(){
   },[])
 
   async function loadLines(){
-    const data = await getAllProductionLines()
-    const sorted = [...data].sort((a,b)=>(a.ordem ?? 0) - (b.ordem ?? 0))
-    setLines(sorted)
+
+  const data = await getAllProductionLines()
+
+  const sorted = [...data].sort((a,b)=>(a.ordem ?? 0) - (b.ordem ?? 0))
+
+  setLines(sorted)
+
+  const uniqueCategories = Array.from(
+    new Set(
+      sorted
+        .map(l=>l.categoria)
+        .filter(Boolean)
+    )
+  )
+
+  setCategories(uniqueCategories)
+
+}
+
+function handleCategoryChange(value:string){
+
+  setNewCategory(value)
+
+  if(!value){
+    setCategorySuggestions([])
+    return
   }
+
+  const filtered = categories.filter(cat =>
+    cat.toLowerCase().includes(value.toLowerCase())
+  )
+
+  setCategorySuggestions(filtered)
+
+}
 
   async function handleCreateModel(){
     if(!newModel){
@@ -178,21 +211,46 @@ export default function ModelsPage(){
             <label>Nome do Modelo (Linha)</label>
             <input
               className="corporateInput"
-              placeholder="Ex: Linha A, Montagem X..."
+              placeholder="Ex: BX-18, D-14..."
               value={newModel}
               onChange={e=>setNewModel(e.target.value)}
             />
           </div>
 
           <div className="formGroup mt-2">
-            <label>Categoria (Opcional)</label>
-            <input
-              className="corporateInput"
-              placeholder="Ex: Eletrônicos, Embalagem..."
-              value={newCategory}
-              onChange={e=>setNewCategory(e.target.value)}
-            />
-          </div>
+  <label>Categoria (Opcional)</label>
+
+  <input
+    className="corporateInput"
+    placeholder="Ex: DVD, NBX..."
+    value={newCategory}
+    onChange={(e)=>handleCategoryChange(e.target.value)}
+  />
+
+  {categorySuggestions.length > 0 && (
+
+    <div className="autocompleteList">
+
+      {categorySuggestions.map(cat=>(
+        <div
+          key={cat}
+          className="autocompleteItem"
+          onClick={()=>{
+
+            setNewCategory(cat)
+            setCategorySuggestions([])
+
+          }}
+        >
+          {cat}
+        </div>
+      ))}
+
+    </div>
+
+  )}
+
+</div>
 
           <button
             className="primaryButton fullWidth mt-3"

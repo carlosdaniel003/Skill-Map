@@ -423,6 +423,18 @@ export async function getOperators(){
 
 export async function addOperator(operator:Operator){
 
+  /* verificar matrícula existente */
+
+  const { data:existing } = await supabase
+    .from("operators")
+    .select("id")
+    .eq("matricula", operator.matricula)
+    .maybeSingle()
+
+  if(existing){
+    throw new Error("MATRICULA_EXISTS")
+  }
+
   const { data, error } = await supabase
     .from("operators")
     .insert([operator])
@@ -430,10 +442,8 @@ export async function addOperator(operator:Operator){
     .single()
 
   if(error){
-
     console.error(error)
     throw error
-
   }
 
   const operatorId = data.id
@@ -446,10 +456,8 @@ export async function addOperator(operator:Operator){
     .eq("ativo",true)
 
   if(wsError){
-
     console.error(wsError)
     throw wsError
-
   }
 
   const skills = (workstations || []).map((ws:any)=>({
@@ -461,11 +469,9 @@ export async function addOperator(operator:Operator){
   }))
 
   if(skills.length > 0){
-
     await supabase
       .from("operator_skills")
       .insert(skills)
-
   }
 
   /* histórico inicial */
@@ -473,16 +479,13 @@ export async function addOperator(operator:Operator){
   await supabase
     .from("operator_history")
     .insert({
-
       operator_id:operatorId,
       linha:operator.linha_atual,
       posto:operator.posto_atual,
       data_inicio:new Date()
-
     })
 
   return data
-
 }
 
 /* MUDAR LINHA OU POSTO */

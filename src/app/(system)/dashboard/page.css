@@ -7,15 +7,17 @@
   animation: pageFadeIn 0.4s ease-out;
 }
 
-/* HEADER DA PÁGINA */
-.pageHeader {
+/* ==============================================
+   HEADER DA PÁGINA (Escopado para .dashboardPage)
+   ============================================== */
+.dashboardPage .pageHeader {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   margin-bottom: 8px;
 }
 
-.pageTitle {
+.dashboardPage .pageTitle {
   margin: 0 0 4px 0;
   font-size: 28px;
   font-weight: 800;
@@ -23,7 +25,7 @@
   letter-spacing: -0.5px;
 }
 
-.pageSubtitle {
+.dashboardPage .pageSubtitle {
   margin: 0;
   color: #666666;
   font-size: 14px;
@@ -44,7 +46,7 @@
 /* Grid do Operador: O card de Grade fica fixo em 350px e o Radar ocupa o resto */
 .operatorGrid {
   grid-template-columns: 350px 1fr;
-  align-items: stretch; /* Garante que ambos fiquem com a mesma altura visualmente */
+  align-items: stretch;
 }
 
 /* Grid da Linha: Cada card ocupa 100% da largura, um abaixo do outro */
@@ -67,7 +69,6 @@
 /* RESPONSIVIDADE PARA TELAS MENORES */
 @media (max-width: 1100px) {
   .operatorGrid {
-    /* Em telas menores, o card de 350px quebra para cima e o radar vai para a linha de baixo */
     grid-template-columns: 1fr; 
   }
 }

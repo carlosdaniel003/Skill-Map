@@ -81,15 +81,28 @@ export default function DashboardFilters(){
           <label>Operador</label>
           <div className="searchInputWrapper">
             <input
-              type="text"
-              className="corporateInput"
-              placeholder="Buscar operador ou matrícula..."
-              value={search}
-              onChange={e=>{
-                setSearch(e.target.value)
-                setPendingOperator(null)
-              }}
-            />
+  type="text"
+  className="corporateInput"
+  placeholder="Buscar operador ou matrícula..."
+  value={search}
+  onChange={e=>{
+    setSearch(e.target.value)
+    setPendingOperator(null)
+  }}
+  onKeyDown={(e)=>{
+
+    if(e.key === "Enter"){
+
+      e.preventDefault()
+
+      if(filteredOperators.length > 0){
+        handleSelectOperator(filteredOperators[0])
+      }
+
+    }
+
+  }}
+/>
 
             {filteredOperators.length > 0 && (
               <div className="dropdownResults">

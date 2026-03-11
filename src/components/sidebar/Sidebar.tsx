@@ -91,7 +91,7 @@ export default function Sidebar(){
 
       if(remaining <= 0){
         logout()
-        router.push("/login")
+        router.push("/login?expired=true")
         return
       }
 

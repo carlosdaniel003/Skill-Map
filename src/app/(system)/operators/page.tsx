@@ -63,15 +63,17 @@ export default function OperatorsPage(){
 
   async function handleCreateOperator(){
 
-    if(!nome || !matricula){
+  if(!nome || matricula.length !== 6){
 
-      setAlertConfig({
-        title: "Campos Obrigatórios",
-        message: "Por favor, preencha o nome e a matrícula do operador."
-      })
+    setAlertConfig({
+      title:"Campos Obrigatórios",
+      message:"A matricula deve conter exatamente 6 dígitos."
+    })
 
-      return
-    }
+    return
+  }
+
+  try{
 
     await addOperator({
       nome,
@@ -87,7 +89,32 @@ export default function OperatorsPage(){
 
     loadOperators()
 
+    setAlertConfig({
+      title:"Operador cadastrado",
+      message:"O operador foi cadastrado com sucesso."
+    })
+
+  }catch(error:any){
+
+    if(error.message === "MATRICULA_EXISTS"){
+
+      setAlertConfig({
+        title:"Matrícula duplicada",
+        message:"Já existe um operador cadastrado com essa matrícula."
+      })
+
+    }else{
+
+      setAlertConfig({
+        title:"Erro",
+        message:"Não foi possível cadastrar o operador."
+      })
+
+    }
+
   }
+
+}
 
   function handleRemoveOperator(id:string){
 
@@ -206,12 +233,18 @@ export default function OperatorsPage(){
               className="corporateInput"
               placeholder="Matrícula"
               value={matricula}
-              onChange={e=>setMatricula(e.target.value)}
+              inputMode="numeric"
+              maxLength={6}
+              onChange={(e)=>{
+                const value = e.target.value.replace(/\D/g,"")
+                setMatricula(value)
+              }}
             />
 
             <input
               className="corporateInput"
               placeholder="Nome completo"
+              maxLength={50}
               value={nome}
               onChange={e=>setNome(e.target.value)}
             />
@@ -267,7 +300,7 @@ export default function OperatorsPage(){
           <button
             className="primaryButton fullWidth mt-3"
             onClick={handleCreateOperator}
-            disabled={!nome || !matricula}
+            disabled={!nome || matricula.length !== 6}
           >
             Cadastrar Operador
           </button>
@@ -286,7 +319,10 @@ export default function OperatorsPage(){
               className="corporateInput"
               placeholder="Buscar matrícula"
               value={searchMatricula}
-              onChange={e=>setSearchMatricula(e.target.value)}
+              onChange={(e)=>{
+              const value = e.target.value.replace(/\D/g,"")
+              setSearchMatricula(value)
+              }}
             />
 
             <input
