@@ -1,115 +1,56 @@
-// src\services\auth\sessionService.ts
-import { User } from "@/core/auth/authTypes"
-import { logAction } from "@/services/audit/auditService"
+// src/services/auth/sessionService.ts
+import { User } from "@/core/auth/authTypes";
 
-interface SessionData{
-  user:User
-  loginTime:number
+const SESSION_KEY = "skillmap_session";
+const SESSION_DURATION_MS = 8 * 60 * 60 * 1000; // 8 horas de sessão
+
+export interface SessionData {
+  user: User; // Agora o User nunca carrega a senha
+  expiresAt: number;
 }
 
-const STORAGE_KEY = "sigma_session"
-
-/* duração da sessão (30 minutos) */
-const SESSION_DURATION = 30 * 60 * 1000
-
-function isBrowser(){
-  return typeof window !== "undefined"
-}
-
-function formatDuration(ms:number){
-
-  const seconds = Math.floor(ms/1000)
-  const minutes = Math.floor(seconds/60)
-  const remainingSeconds = seconds % 60
-
-  return `${minutes}m ${remainingSeconds}s`
-
-}
-
-export function saveSession(user:User){
-
-  if(!isBrowser()) return
-
-  const session:SessionData = {
+export function saveSession(user: User): void {
+  const session: SessionData = {
     user,
-    loginTime:Date.now()
+    expiresAt: Date.now() + SESSION_DURATION_MS
+  };
+  localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+}
+
+export function getSessionData(): SessionData | null {
+  if (typeof window === "undefined") return null;
+
+  const data = localStorage.getItem(SESSION_KEY);
+  if (!data) return null;
+
+  try {
+    const session: SessionData = JSON.parse(data);
+    
+    // Verifica se a sessão já expirou
+    if (Date.now() > session.expiresAt) {
+      clearSession();
+      return null;
+    }
+    
+    return session;
+  } catch (e) {
+    clearSession();
+    return null;
   }
-
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(session)
-  )
-
 }
 
-export function getSession():User | null{
+export function getSession(): User | null {
+  const data = getSessionData();
+  return data ? data.user : null;
+}
 
-  const session = getSessionData()
-
-  if(!session) return null
-
-  if(isSessionExpired(session)){
-
-    const duration = Date.now() - session.loginTime
-
-    logAction(
-      session.user.username,
-      "session_expired",
-      "",
-      formatDuration(duration)
-    )
-
-    logout(false)
-
-    return null
-
+export function clearSession(): void {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem(SESSION_KEY);
   }
-
-  return session.user
-
 }
 
-export function getSessionData():SessionData | null{
-
-  if(!isBrowser()) return null
-
-  const raw = localStorage.getItem(STORAGE_KEY)
-
-  if(!raw) return null
-
-  return JSON.parse(raw)
-
-}
-
-export function isSessionExpired(session:SessionData){
-
-  const now = Date.now()
-
-  const diff = now - session.loginTime
-
-  return diff > SESSION_DURATION
-
-}
-
-export function logout(registerLog:boolean = true){
-
-  if(!isBrowser()) return
-
-  const session = getSessionData()
-
-  if(registerLog && session){
-
-    const duration = Date.now() - session.loginTime
-
-    logAction(
-      session.user.username,
-      "logout",
-      "",
-      formatDuration(duration)
-    )
-
-  }
-
-  localStorage.removeItem(STORAGE_KEY)
-
+export function logout(): void {
+  clearSession();
+  window.location.href = "/login";
 }

@@ -72,6 +72,7 @@ export default function Sidebar(){
     setNavigating(false)
   },[pathname])
 
+  // ...
   useEffect(()=>{
 
     const sessionData = getSessionData()
@@ -84,15 +85,18 @@ export default function Sidebar(){
     const interval = setInterval(()=>{
 
       const now = Date.now()
-      const elapsed = now - sessionData.loginTime
-      const remaining = SESSION_DURATION - elapsed
+      
+      // O expiresAt agora vem direto do sessionData
+      const remaining = sessionData.expiresAt - now
 
-      setSessionTime(formatTime(elapsed))
+      // Tempo percorrido desde a criação (Assumindo que a duração era 8h = 28800000ms)
+      const elapsed = 28800000 - remaining 
+      
+      setSessionTime(formatTime(elapsed > 0 ? elapsed : 0))
 
       if(remaining <= 0){
         logout()
-        localStorage.setItem("sessionExpired","true")
-        router.push("/login")
+        router.push("/login?expired=true")
         return
       }
 
@@ -109,6 +113,7 @@ export default function Sidebar(){
     return ()=>clearInterval(interval)
 
   },[])
+// ...
 
   function handleNavigate(path:string){
     if(path === pathname) return

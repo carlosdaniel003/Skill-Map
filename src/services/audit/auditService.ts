@@ -1,132 +1,53 @@
-export interface AuditLog{
+// src/services/audit/auditService.ts
+import { supabase } from "@/services/database/supabaseClient";
+import { AuditLog } from "@/core/auth/authTypes";
 
-  time:number
-  user:string
-  action:string
-  target?:string
-  duration?:string
+/**
+ * Registra uma nova ação no banco de dados (Supabase)
+ */
+export async function logAction(username: string, action: string, details?: string): Promise<void> {
+  const { error } = await supabase
+    .from("audit_logs")
+    .insert([{
+      username,
+      action,
+      details: details || ""
+    }]);
 
+  if (error) {
+    console.error("Erro ao registrar auditoria no Supabase:", error);
+  }
 }
 
-const STORAGE_KEY = "sigma_audit"
+/**
+ * Busca os logs mais recentes
+ */
+export async function getLogs(limit: number = 50): Promise<AuditLog[]> {
+  const { data, error } = await supabase
+    .from("audit_logs")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(limit);
 
-/* logs mais antigos que isso serão removidos */
-const LOG_RETENTION_TIME = 24 * 60 * 60 * 1000 // 1 dia
-
-/* limite máximo de logs */
-const MAX_LOGS = 1000
-
-function isBrowser(){
-  return typeof window !== "undefined"
-}
-
-function cleanOldLogs(logs:AuditLog[]){
-
-  const now = Date.now()
-
-  return logs.filter(log =>
-    now - log.time <= LOG_RETENTION_TIME
-  )
-
-}
-
-function limitLogs(logs:AuditLog[]){
-
-  if(logs.length <= MAX_LOGS) return logs
-
-  return logs.slice(logs.length - MAX_LOGS)
-
-}
-
-function formatTarget(action:string,target?:string){
-
-  if(!target) return ""
-
-  switch(action){
-
-    case "create_user":
-      return `usuário: ${target}`
-
-    case "remove_user":
-      return `usuário: ${target}`
-
-    case "change_password":
-      return `usuário: ${target}`
-
-    case "update_permissions":
-      return `usuário: ${target}`
-
-    default:
-      return target
-
+  if (error) {
+    console.error("Erro ao buscar logs de auditoria:", error);
+    return [];
   }
 
+  return data || [];
 }
 
-export function logAction(
-  user:string,
-  action:string,
-  target?:string,
-  duration?:string
-){
+/**
+ * Limpa todos os logs (Apenas para fins de manutenção)
+ */
+export async function clearLogs(): Promise<void> {
+  // O Supabase exige um filtro para deletar, então dizemos "delete onde ID não é nulo"
+  const { error } = await supabase
+    .from("audit_logs")
+    .delete()
+    .not("id", "is", null);
 
-  if(!isBrowser()) return
-
-  let logs:AuditLog[] =
-    JSON.parse(
-      localStorage.getItem(STORAGE_KEY) || "[]"
-    )
-
-  /* limpeza automática */
-  logs = cleanOldLogs(logs)
-
-  /* adiciona novo log */
-
-  logs.push({
-
-    time:Date.now(),
-    user,
-    action,
-    target: formatTarget(action,target),
-    duration: duration || ""
-
-  })
-
-  /* limite de logs */
-  logs = limitLogs(logs)
-
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(logs)
-  )
-
-}
-
-export function getLogs():AuditLog[]{
-
-  if(!isBrowser()) return []
-
-  let logs:AuditLog[] =
-    JSON.parse(
-      localStorage.getItem(STORAGE_KEY) || "[]"
-    )
-
-  /* limpeza ao ler também */
-  logs = cleanOldLogs(logs)
-
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(logs)
-  )
-
-  return logs.sort((a,b)=>b.time-a.time)
-
-}
-
-export function clearLogs(){
-
-  if(!isBrowser()) return
-
-  localStorage.removeItem(STORAGE_KEY)
-
+  if (error) {
+    console.error("Erro ao limpar logs de auditoria:", error);
+  }
 }

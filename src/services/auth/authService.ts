@@ -1,83 +1,30 @@
 // src/services/auth/authService.ts
+import { findUserByUsername } from "./authRepository";
+import { User } from "@/core/auth/authTypes";
 
-import { findUser, saveUsers, getUsers } from "./authRepository"
-import { User } from "@/core/auth/authTypes"
+/**
+ * Valida credenciais consultando o Supabase.
+ * Retorna os dados do usuário (sem a senha) se for sucesso, ou null se falhar.
+ */
+export async function authenticate(username: string, password: string): Promise<User | null> {
+  
+  // 1. Busca o usuário e a senha criptografada/salva no banco
+  const user = await findUserByUsername(username);
 
-/*
-Inicializa usuários padrão do sistema.
-Somente executa se o banco local ainda estiver vazio.
-*/
-export function initializeUsers(){
+  // 2. Valida se o usuário existe e se a senha confere
+  if (user && user.password === password) {
+    
+    // 3. Monta o objeto de sessão seguro (Omitindo o password)
+    const safeUser: User = {
+      id: user.id,
+      username: user.username,
+      role: user.role,
+      allowedPages: user.allowedPages
+    };
 
-  const users = getUsers()
-
-  if(users.length > 0) return
-
-  const defaultUsers:User[] = [
-
-    /* MASTER ADMIN - controle total do sistema */
-    {
-      id:"0",
-      username:"master",
-      password:"master123",
-      role:"master",
-      allowedPages:[
-        "/dashboard",
-        "/operators",
-        "/access"
-      ]
-    },
-
-    /* ADMIN PADRÃO */
-    {
-      id:"1",
-      username:"admin",
-      password:"admin",
-      role:"admin",
-      allowedPages:[
-        "/dashboard",
-        "/operators",
-      ]
-    }
-
-  ]
-
-  saveUsers(defaultUsers)
-
-}
-
-/*
-Autenticação de usuário
-*/
-export function authenticate(
-  username:string,
-  password:string
-):User | null{
-
-  const user = findUser(username)
-
-  if(!user) return null
-
-  if(user.password !== password) return null
-
-  return user
-
-}
-
-/*
-Verifica se usuário é MASTER
-*/
-export function isMaster(user:User){
-
-  return user.role === "master"
-
-}
-
-/*
-Verifica se usuário é ADMIN
-*/
-export function isAdmin(user:User){
-
-  return user.role === "admin" || user.role === "master"
-
+    return safeUser;
+  }
+  
+  // Credenciais inválidas
+  return null; 
 }
