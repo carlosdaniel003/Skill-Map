@@ -171,18 +171,16 @@
   text-align: right;
 }
 
-/* CÉLULA DE SENHA */
+/* CÉLULA DE SENHA (Ajustada para melhor alinhamento) */
 .passwordCell {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  vertical-align: middle;
 }
 
 .pwdText {
   font-family: monospace;
-  font-size: 14px;
-  color: #666666;
-  min-width: 70px;
+  font-size: 15px; /* Tamanho ligeiramente maior para as bolinhas */
+  color: #a0a0a0; /* Um cinza mais discreto */
+  letter-spacing: 2px; /* Deixa as bolinhas elegantemente separadas */
 }
 
 /* BOTÕES */
@@ -234,9 +232,18 @@
   transition: all 0.2s ease;
 }
 
-.secondaryButton:hover {
+.secondaryButton:hover:not(:disabled) {
   background: #f9f9f9;
   border-color: #cccccc;
+}
+
+/* NOVO: Estilo para quando o Nova Senha estiver bloqueado */
+.secondaryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: #a0a0a0;
+  background: #f5f5f5;
+  border-color: #e0e0e0;
 }
 
 .dangerButton {
@@ -261,6 +268,9 @@
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+  color: #a0a0a0;
+  background: #f5f5f5;
+  border-color: #e0e0e0;
 }
 
 .iconButton {
@@ -294,7 +304,7 @@
 }
 
 /* =========================================
-   MODAL CORPORATIVO (Substituindo alertas nativos)
+   MODAL CORPORATIVO
    ========================================= */
 .modalOverlay {
   position: fixed;

@@ -104,3 +104,18 @@ export async function deleteUser(id: string): Promise<boolean> {
   if (error) console.error("Erro ao remover usuário:", error);
   return !error;
 }
+
+// Adicione esta função no final do seu src/services/auth/authRepository.ts
+
+/**
+ * Atualiza o cargo (role) de um usuário (Apenas Master deve usar isso)
+ */
+export async function updateUserRole(id: string, newRole: string): Promise<boolean> {
+  const { error } = await supabase
+    .from("users")
+    .update({ role: newRole })
+    .eq("id", id);
+    
+  if (error) console.error("Erro ao atualizar cargo do usuário:", error);
+  return !error;
+}

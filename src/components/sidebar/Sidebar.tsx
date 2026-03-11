@@ -2,7 +2,7 @@
 "use client"
 
 import "./Sidebar.css"
-import { logout, getSessionData } from "@/services/auth/sessionService"
+import { logout, getSessionData, renewSession, SESSION_DURATION_MS } from "@/services/auth/sessionService"
 import { useRouter, usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -41,8 +41,6 @@ const MENU = [
   }
 ]
 
-const SESSION_DURATION = 30 * 60 * 1000
-
 function formatTime(ms:number){
   const seconds = Math.floor(ms / 1000)
   const minutes = Math.floor(seconds / 60)
@@ -62,6 +60,7 @@ export default function Sidebar(){
   const [remainingTime,setRemainingTime] = useState("00:00")
 
   const [isWarning,setIsWarning] = useState(false)
+  const [showRenewModal, setShowRenewModal] = useState(false)
 
   const [loggingOut,setLoggingOut] = useState(false)
   const [navigating,setNavigating] = useState(false)
@@ -72,25 +71,24 @@ export default function Sidebar(){
     setNavigating(false)
   },[pathname])
 
-  // Substitua o useEffect do cronômetro no seu src/components/sidebar/Sidebar.tsx
   useEffect(()=>{
-
-    const sessionData = getSessionData()
-    if(!sessionData) return
-
-    setSession(sessionData)
-    setUsername(sessionData.user.username)
 
     const interval = setInterval(()=>{
 
+      // Pega do storage a cada segundo, assim se o usuário renovou noutra aba, reflete aqui.
+      const sessionData = getSessionData()
+      
+      if(!sessionData) {
+        clearInterval(interval)
+        return
+      }
+
+      setSession(sessionData)
+      setUsername(sessionData.user.username)
+
       const now = Date.now()
-      
-      // Calcula o tempo restante com base na data de expiração real da sessão
       const remaining = sessionData.expiresAt - now
-      
-      // O tempo total da sessão é 30 minutos (1.800.000 ms)
-      const SESSION_DURATION = 30 * 60 * 1000
-      const elapsed = SESSION_DURATION - remaining
+      const elapsed = SESSION_DURATION_MS - remaining
 
       setSessionTime(formatTime(elapsed > 0 ? elapsed : 0))
 
@@ -102,18 +100,20 @@ export default function Sidebar(){
 
       setRemainingTime(formatTime(remaining))
 
-      // Avisa quando faltarem menos de 2 minutos
+      // Avisa e exibe Modal quando faltar menos de 2 minutos
       if(remaining < 2 * 60 * 1000){
         setIsWarning(true)
+        setShowRenewModal(true)
       }else{
         setIsWarning(false)
+        setShowRenewModal(false) // Garante que o modal suma se renovou
       }
 
     },1000)
 
     return ()=>clearInterval(interval)
 
-  },[])
+  },[router])
 
   function handleNavigate(path:string){
     if(path === pathname) return
@@ -129,26 +129,33 @@ export default function Sidebar(){
     },800)
   }
 
+  // Função para o botão do Modal
+  function handleRenewSession() {
+    renewSession()
+    setShowRenewModal(false)
+    setIsWarning(false)
+  }
+
   if(!session) return null
 
   const user = session.user
 
-  const allowedMenu = user.role === "admin"
+  const allowedMenu = user.role === "admin" || user.role === "master"
       ? MENU
       : MENU.filter(item => user.allowedPages.includes(item.path))
 
   return(
 
     <>
-
       <aside
         className={`sidebar ${collapsed ? "collapsed" : ""}`}
         onMouseEnter={()=>setCollapsed(false)}
         onMouseLeave={()=>setCollapsed(true)}
       >
-
         <div className="sidebarHeader">
-          <h2>SM</h2>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="36" height="36" className="sidebarLogo">
+            <text x="50%" y="50%" textAnchor="middle" dominantBaseline="central" fontSize="110" fontFamily="system-ui, sans-serif" fontWeight="800" fill="#d40000">SM</text>
+          </svg>
           {!collapsed && (
             <span>SkillMap</span>
           )}
@@ -177,37 +184,26 @@ export default function Sidebar(){
         </div>
 
         <nav className="menuArea">
-
           {allowedMenu.map(item => {
-
             const active = pathname === item.path
-
             return(
-
               <div
                 key={item.path}
                 className={`menuItem ${active ? "active" : ""}`}
                 onClick={()=>handleNavigate(item.path)}
               >
-
                 <div className="menuIcon">
                   {item.icon}
                 </div>
-
                 {!collapsed && (
                   <span>{item.label}</span>
                 )}
-
               </div>
-
             )
-
           })}
-
         </nav>
 
         <div className="logoutArea">
-
           <button
             className={`logoutButton ${collapsed ? "collapsedBtn" : ""}`}
             onClick={handleLogout}
@@ -223,10 +219,39 @@ export default function Sidebar(){
               </svg>
             )}
           </button>
-
         </div>
 
       </aside>
+
+      {/* RENEW MODAL (Aparece faltando 2 minutos) */}
+      {showRenewModal && (
+        <div className="sidebarModalOverlay">
+          <div className="sidebarCorporateModal">
+            
+            <div className="sidebarModalHeader">
+              <div className="sidebarModalIcon warningIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+              </div>
+              <h3>Sessão Expirando</h3>
+            </div>
+            
+            <div className="sidebarModalBody">
+              <p>Por inatividade, sua sessão irá expirar em <strong>{remainingTime}</strong>.</p>
+              <p>Deseja renovar sua sessão para continuar trabalhando e não perder seus dados?</p>
+            </div>
+            
+            <div className="sidebarModalFooter">
+              <button className="sidebarPrimaryButton" onClick={handleRenewSession}>
+                Renovar Sessão
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
 
       {(loggingOut || navigating) && (
         <div className="pageTransition">
