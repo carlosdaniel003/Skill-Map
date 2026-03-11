@@ -14,6 +14,10 @@ import {
   updateWorkstationOrder
 } from "@/services/database/operatorRepository"
 
+// IMPORTAÇÕES PARA AUDITORIA
+import { logAction } from "@/services/audit/auditService"
+import { getSession } from "@/services/auth/sessionService"
+
 export default function SkillsPage(){
 
   const router = useRouter()
@@ -29,6 +33,9 @@ export default function SkillsPage(){
   // MODAIS CORPORATIVOS
   const [alertConfig,setAlertConfig] = useState<{title:string,message:string}|null>(null)
   const [confirmConfig,setConfirmConfig] = useState<{title:string,message:string, onConfirm: () => void}|null>(null)
+
+  // SESSÃO DO USUÁRIO
+  const sessionUser = getSession()
 
   useEffect(()=>{
     loadSkills()
@@ -51,6 +58,10 @@ export default function SkillsPage(){
 
     try{
       await createWorkstation(newSkill)
+      
+      // LOG DE AUDITORIA
+      await logAction(sessionUser?.username || "sistema", "skill_create", `Criou a skill: ${newSkill}`)
+
       setNewSkill("")
       loadSkills()
       
@@ -84,7 +95,12 @@ export default function SkillsPage(){
       })
       return
     }
+    
     await updateWorkstation(id,editName)
+    
+    // LOG DE AUDITORIA
+    await logAction(sessionUser?.username || "sistema", "skill_edit", `Editou a skill para: ${editName}`)
+
     cancelEdit()
     loadSkills()
   }
@@ -96,6 +112,11 @@ export default function SkillsPage(){
       onConfirm: async () => {
         try{
           await toggleWorkstation(skill.id, !skill.ativo)
+          
+          // LOG DE AUDITORIA
+          const actionWord = !skill.ativo ? "Reativou" : "Desativou"
+          await logAction(sessionUser?.username || "sistema", "skill_toggle", `${actionWord} a skill: ${skill.nome}`)
+
           loadSkills()
         }catch{
           setAlertConfig({
@@ -128,6 +149,9 @@ export default function SkillsPage(){
     for(let i=0;i<reordered.length;i++){
       await updateWorkstationOrder(reordered[i].id, i)
     }
+
+    // LOG DE AUDITORIA (Dispara uma vez após todo o arrasto)
+    await logAction(sessionUser?.username || "sistema", "skill_edit", `Reordenou a lista de skills`)
   }
 
   return(

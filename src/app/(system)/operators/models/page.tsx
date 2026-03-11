@@ -13,6 +13,10 @@ import {
   updateProductionLineOrder
 } from "@/services/database/operatorRepository"
 
+// IMPORTAÇÕES PARA AUDITORIA
+import { logAction } from "@/services/audit/auditService"
+import { getSession } from "@/services/auth/sessionService"
+
 export default function ModelsPage(){
   const [categories,setCategories] = useState<string[]>([])
   const [categorySuggestions,setCategorySuggestions] = useState<string[]>([])
@@ -34,46 +38,44 @@ export default function ModelsPage(){
   const [alertConfig,setAlertConfig] = useState<{title:string,message:string}|null>(null)
   const [confirmConfig,setConfirmConfig] = useState<{title:string,message:string, onConfirm: () => void}|null>(null)
 
+  // SESSÃO DO USUÁRIO
+  const sessionUser = getSession()
+
   useEffect(()=>{
     loadLines()
   },[])
 
   async function loadLines(){
+    const data = await getAllProductionLines()
+    const sorted = [...data].sort((a,b)=>(a.ordem ?? 0) - (b.ordem ?? 0))
+    
+    setLines(sorted)
 
-  const data = await getAllProductionLines()
-
-  const sorted = [...data].sort((a,b)=>(a.ordem ?? 0) - (b.ordem ?? 0))
-
-  setLines(sorted)
-
-  const uniqueCategories = Array.from(
-    new Set(
-      sorted
-        .map(l=>l.categoria)
-        .filter(Boolean)
+    const uniqueCategories = Array.from(
+      new Set(
+        sorted
+          .map(l=>l.categoria)
+          .filter(Boolean)
+      )
     )
-  )
 
-  setCategories(uniqueCategories)
-
-}
-
-function handleCategoryChange(value:string){
-
-  setNewCategory(value)
-
-  if(!value){
-    setCategorySuggestions([])
-    return
+    setCategories(uniqueCategories)
   }
 
-  const filtered = categories.filter(cat =>
-    cat.toLowerCase().includes(value.toLowerCase())
-  )
+  function handleCategoryChange(value:string){
+    setNewCategory(value)
 
-  setCategorySuggestions(filtered)
+    if(!value){
+      setCategorySuggestions([])
+      return
+    }
 
-}
+    const filtered = categories.filter(cat =>
+      cat.toLowerCase().includes(value.toLowerCase())
+    )
+
+    setCategorySuggestions(filtered)
+  }
 
   async function handleCreateModel(){
     if(!newModel){
@@ -85,10 +87,15 @@ function handleCategoryChange(value:string){
     }
 
     try{
-      await createProductionLine(
-        newModel,
-        newCategory
+      await createProductionLine(newModel, newCategory)
+      
+      // LOG DE AUDITORIA
+      await logAction(
+        sessionUser?.username || "sistema", 
+        "model_create", 
+        `Criou o modelo: ${newModel} ${newCategory ? `(${newCategory})` : ''}`
       )
+
       setNewModel("")
       setNewCategory("")
       loadLines()
@@ -118,11 +125,11 @@ function handleCategoryChange(value:string){
 
   async function saveEdit(id:string){
     try{
-      await updateProductionLine(
-        id,
-        editName,
-        editCategory
-      )
+      await updateProductionLine(id, editName, editCategory)
+      
+      // LOG DE AUDITORIA
+      await logAction(sessionUser?.username || "sistema", "model_edit", `Editou o modelo para: ${editName}`)
+
       cancelEdit()
       loadLines()
       setAlertConfig({
@@ -145,6 +152,11 @@ function handleCategoryChange(value:string){
       onConfirm: async () => {
         try{
           await toggleProductionLineActive(line.id, !line.ativo)
+          
+          // LOG DE AUDITORIA
+          const actionWord = !line.ativo ? "Reativou" : "Desativou"
+          await logAction(sessionUser?.username || "sistema", "model_toggle", `${actionWord} o modelo: ${line.nome}`)
+
           loadLines()
         }catch{
           setAlertConfig({
@@ -177,6 +189,9 @@ function handleCategoryChange(value:string){
     for(let i=0;i<reordered.length;i++){
       await updateProductionLineOrder(reordered[i].id, i)
     }
+
+    // LOG DE AUDITORIA
+    await logAction(sessionUser?.username || "sistema", "model_edit", `Reordenou a lista de modelos`)
   }
 
   function handleBack(){
@@ -217,40 +232,32 @@ function handleCategoryChange(value:string){
             />
           </div>
 
-          <div className="formGroup mt-2">
-  <label>Categoria (Opcional)</label>
+          <div className="formGroup mt-2 relativeGroup">
+            <label>Categoria (Opcional)</label>
+            <input
+              className="corporateInput"
+              placeholder="Ex: DVD, NBX..."
+              value={newCategory}
+              onChange={(e)=>handleCategoryChange(e.target.value)}
+            />
 
-  <input
-    className="corporateInput"
-    placeholder="Ex: DVD, NBX..."
-    value={newCategory}
-    onChange={(e)=>handleCategoryChange(e.target.value)}
-  />
-
-  {categorySuggestions.length > 0 && (
-
-    <div className="autocompleteList">
-
-      {categorySuggestions.map(cat=>(
-        <div
-          key={cat}
-          className="autocompleteItem"
-          onClick={()=>{
-
-            setNewCategory(cat)
-            setCategorySuggestions([])
-
-          }}
-        >
-          {cat}
-        </div>
-      ))}
-
-    </div>
-
-  )}
-
-</div>
+            {categorySuggestions.length > 0 && (
+              <div className="autocompleteList">
+                {categorySuggestions.map(cat=>(
+                  <div
+                    key={cat}
+                    className="autocompleteItem"
+                    onClick={()=>{
+                      setNewCategory(cat)
+                      setCategorySuggestions([])
+                    }}
+                  >
+                    {cat}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           <button
             className="primaryButton fullWidth mt-3"

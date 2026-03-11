@@ -292,3 +292,73 @@
 .action-remove_user { background: #fef2f2; color: #dc2626; } /* Vermelho */
 .action-change_password { background: #fffbeb; color: #d97706; } /* Laranja/Amarelo */
 .action-update_permissions { background: #faf5ff; color: #9333ea; } /* Roxo */
+
+/* src/components/audit/AuditPanel.css */
+
+.auditPanelContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auditPanelActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.auditTableWrapper {
+  max-height: 380px;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+}
+
+/* Custom Scrollbar */
+.auditTableWrapper::-webkit-scrollbar { width: 6px; }
+.auditTableWrapper::-webkit-scrollbar-track { background: transparent; }
+.auditTableWrapper::-webkit-scrollbar-thumb { background-color: #cccccc; border-radius: 10px; }
+
+/* Tipografia específica da auditoria */
+.timeCell {
+  color: #888888;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.authorCell {
+  color: #111111;
+}
+
+.detailsCell {
+  color: #555555;
+  font-size: 13px;
+}
+
+.auditLoading {
+  padding: 40px;
+  text-align: center;
+  color: #888888;
+  font-style: italic;
+  font-size: 14px;
+}
+
+/* BADGES DAS AÇÕES (Módulos Temáticos) */
+.auditBadge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* Cores por módulo */
+.action-access { background: #faf5ff; color: #9333ea; } /* Roxo (Segurança) */
+.action-operator { background: #eff6ff; color: #2563eb; } /* Azul (Pessoas) */
+.action-model { background: #e0f2fe; color: #0284c7; } /* Turquesa (Estrutura) */
+.action-skill { background: #fffbeb; color: #d97706; } /* Laranja (Habilidades) */
+.action-history { background: #ecfdf5; color: #059669; } /* Verde (Registros) */
+.action-default { background: #f1f5f9; color: #475569; } /* Cinza Genérico */

@@ -9,6 +9,10 @@ import { supabase } from "@/services/database/supabaseClient"
 import { getOperators } from "@/services/database/operatorRepository"
 import { recalculateOperatorSkills } from "@/services/database/operatorRepository"
 
+// IMPORTAÇÕES PARA AUDITORIA
+import { logAction } from "@/services/audit/auditService"
+import { getSession } from "@/services/auth/sessionService"
+
 export default function OperatorSkillsPage(){
 
   const params = useParams()
@@ -26,18 +30,18 @@ export default function OperatorSkillsPage(){
   // ESTADO PARA O MODAL DE CONFIRMAÇÃO DE SAÍDA (UNSAVED CHANGES)
   const [showConfirmLeave, setShowConfirmLeave] = useState(false)
 
+  // SESSÃO DO USUÁRIO (AUDITORIA)
+  const sessionUser = getSession()
+
   useEffect(()=>{
-  initializePage()
-},[])
+    initializePage()
+  },[])
 
-async function initializePage(){
-
-  await recalculateOperatorSkills(operatorId)
-
-  await loadOperator()
-  await loadSkills()
-
-}
+  async function initializePage(){
+    await recalculateOperatorSkills(operatorId)
+    await loadOperator()
+    await loadSkills()
+  }
 
   async function loadOperator(){
     const operators = await getOperators()
@@ -89,7 +93,7 @@ async function initializePage(){
       return
     }
 
-    /* registrar histórico */
+    /* registrar histórico e auditoria */
     const history = changedSkills.map(skill => {
       const original = originalSkills.find(s => s.id === skill.id)
       return {
@@ -131,6 +135,18 @@ async function initializePage(){
         )
       }
     }
+
+    // LOG DE AUDITORIA: Registra todas as skills alteradas numa frase resumida
+    const actionDetails = changedSkills.map(skill => {
+        const original = originalSkills.find(s => s.id === skill.id)
+        return `[${skill.posto}: de Nvl ${original?.skill_level || 0} para Nvl ${skill.skill_level}]`
+    }).join(", ")
+
+    await logAction(
+      sessionUser?.username || "sistema", 
+      "skill_level_update", 
+      `Avaliou ${operator?.nome || 'o operador'}: ${actionDetails}`
+    )
 
     await loadSkills()
   }

@@ -18,6 +18,10 @@ import {
   activateOperatorHistory
 } from "@/services/database/operatorRepository"
 
+// IMPORTAÇÕES PARA AUDITORIA
+import { logAction } from "@/services/audit/auditService"
+import { getSession } from "@/services/auth/sessionService"
+
 export default function OperatorHistoryPage(){
 
   const params = useParams()
@@ -43,6 +47,9 @@ export default function OperatorHistoryPage(){
   const [alertConfig, setAlertConfig] = useState<{title: string, message: string} | null>(null)
   const [confirmConfig, setConfirmConfig] = useState<{title: string, message: string, onConfirm: () => void} | null>(null)
 
+  // SESSÃO DO USUÁRIO
+  const sessionUser = getSession()
+
   useEffect(()=>{
     loadOperator()
     loadLines()
@@ -51,6 +58,8 @@ export default function OperatorHistoryPage(){
   },[])
 
   function handleDeactivate(id:string, origem:string){
+    const targetExp = history.find(e => e.id === id)
+
     setConfirmConfig({
       title: "Desativar Experiência",
       message: "Deseja realmente desativar esta experiência do histórico do operador?",
@@ -60,19 +69,39 @@ export default function OperatorHistoryPage(){
         }else{
           await deactivateOperatorExperience(id)
         }
+
+        // LOG DE AUDITORIA
+        if(targetExp) {
+          await logAction(
+            sessionUser?.username || "sistema", 
+            "history_toggle", 
+            `Desativou histórico de ${operator?.nome}: ${targetExp.linha} - ${targetExp.posto}`
+          )
+        }
+
         loadHistory()
       }
     })
   }
 
   async function handleActivate(id:string, origem:string){
-    // Mantido sem confirm pois a ação é direta e reversível, 
-    // mas se quiser podemos adicionar o modal verde aqui no futuro!
+    const targetExp = history.find(e => e.id === id)
+
     if(origem === "movimentacao"){
       await activateOperatorHistory(id)
     }else{
       await activateOperatorExperience(id)
     }
+
+    // LOG DE AUDITORIA
+    if(targetExp) {
+      await logAction(
+        sessionUser?.username || "sistema", 
+        "history_toggle", 
+        `Reativou histórico de ${operator?.nome}: ${targetExp.linha} - ${targetExp.posto}`
+      )
+    }
+
     loadHistory()
   }
 
@@ -174,6 +203,13 @@ export default function OperatorHistoryPage(){
       skill_level:skill
     })
 
+    // LOG DE AUDITORIA
+    await logAction(
+      sessionUser?.username || "sistema", 
+      "history_add", 
+      `Add exp. manual p/ ${operator?.nome}: ${linha} - ${posto} (Nvl ${skill})`
+    )
+
     setLinha("")
     setPosto("")
     setDataInicio("")
@@ -184,11 +220,23 @@ export default function OperatorHistoryPage(){
   }
 
   function handleRemove(id:string){
+    const targetExp = history.find(e => e.id === id)
+
     setConfirmConfig({
       title: "Remover Experiência",
       message: "Tem certeza que deseja remover esta experiência permanentemente?",
       onConfirm: async () => {
         await deleteOperatorExperience(id)
+        
+        // LOG DE AUDITORIA
+        if(targetExp) {
+          await logAction(
+            sessionUser?.username || "sistema", 
+            "history_remove", 
+            `Removeu histórico de ${operator?.nome}: ${targetExp.linha} - ${targetExp.posto}`
+          )
+        }
+
         loadHistory()
       }
     })
@@ -386,7 +434,7 @@ export default function OperatorHistoryPage(){
           MODAIS CORPORATIVOS
           ========================================= */}
 
-      {/* 1. ALERT MODAL (Avisos de Validação de Data e Preenchimento) */}
+      {/* 1. ALERT MODAL */}
       {alertConfig && (
         <div className="modalOverlay">
           <div className="corporateModal">

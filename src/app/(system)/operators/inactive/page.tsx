@@ -12,6 +12,10 @@ import {
 
 import { supabase } from "@/services/database/supabaseClient"
 
+// IMPORTAÇÕES PARA AUDITORIA
+import { logAction } from "@/services/audit/auditService"
+import { getSession } from "@/services/auth/sessionService"
+
 export default function InactiveOperatorsPage(){
 
   const router = useRouter()
@@ -21,6 +25,9 @@ export default function InactiveOperatorsPage(){
 
   // Estado para controlar o modal de confirmação de reativação
   const [confirmConfig, setConfirmConfig] = useState<{title: string, message: string, onConfirm: () => void} | null>(null)
+
+  // SESSÃO DO USUÁRIO
+  const sessionUser = getSession()
 
   useEffect(()=>{
     loadInactiveOperators()
@@ -42,13 +49,21 @@ export default function InactiveOperatorsPage(){
     setLoading(false)
   }
 
-  function handleActivateClick(id:string, nome:string){
+  function handleActivateClick(id:string, nome:string, matricula:string){
     // Abre o nosso modal corporativo ao invés do confirm nativo
     setConfirmConfig({
       title: "Reativar Operador",
       message: `Tem certeza que deseja reativar o acesso de "${nome}"? Ele voltará para a lista de operadores ativos.`,
       onConfirm: async () => {
         await activateOperator(id)
+        
+        // LOG DE AUDITORIA
+        await logAction(
+          sessionUser?.username || "sistema", 
+          "operator_reactivate", 
+          `Reativou o operador: ${nome} (${matricula})`
+        )
+
         loadInactiveOperators()
       }
     })
@@ -120,7 +135,8 @@ export default function InactiveOperatorsPage(){
                     <td className="actionColumn">
                       <button
                         className="reactivateButton"
-                        onClick={()=>handleActivateClick(op.id, op.nome)}
+                        // Passamos a matrícula também para enriquecer o Log
+                        onClick={()=>handleActivateClick(op.id, op.nome, op.matricula)}
                         title="Reativar Operador"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
