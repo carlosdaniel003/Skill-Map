@@ -91,7 +91,8 @@ export default function Sidebar(){
 
       if(remaining <= 0){
         logout()
-        router.push("/login?expired=true")
+        localStorage.setItem("sessionExpired","true")
+        router.push("/login")
         return
       }
 

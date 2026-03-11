@@ -4,7 +4,6 @@
 import "./page.css"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { useSearchParams } from "next/navigation"
 import { authenticate, initializeUsers } from "@/services/auth/authService"
 import { saveSession } from "@/services/auth/sessionService"
 import { logAction } from "@/services/audit/auditService"
@@ -12,7 +11,6 @@ import { logAction } from "@/services/audit/auditService"
 export default function LoginPage(){
 
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [username,setUsername] = useState("")
   const [password,setPassword] = useState("")
   const [showPassword,setShowPassword] = useState(false)
@@ -33,11 +31,15 @@ export default function LoginPage(){
     setRememberUser(true)
   }
 
-  const expired = searchParams.get("expired")
+  const expired = localStorage.getItem("sessionExpired")
 
-  if(expired === "true"){
-    setError("Sua sessão expirou. Faça login novamente.")
-  }
+if(expired === "true"){
+
+  setError("Sua sessão expirou. Faça login novamente.")
+
+  localStorage.removeItem("sessionExpired")
+
+}
 
 },[])
 
