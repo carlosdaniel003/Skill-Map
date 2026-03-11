@@ -2,7 +2,7 @@
 "use client"
 
 import "./page.css"
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { authenticate } from "@/services/auth/authService"
 import { saveSession } from "@/services/auth/sessionService"
@@ -11,7 +11,7 @@ import { saveSession } from "@/services/auth/sessionService"
 // import { logAction } from "@/services/audit/auditService" 
 // (A longo prazo, recomendamos criar uma tabela 'audit_logs' e fazer o insert nela também)
 
-export default function LoginPage(){
+function LoginContent(){
 
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -172,5 +172,20 @@ export default function LoginPage(){
         </div>
       )}
     </div>
+  )
+}
+
+// COMPONENTE PRINCIPAL ENVOLVIDO EM SUSPENSE
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="loginPage">
+        <div className="loginTransition">
+          <div className="loginLoader" />
+        </div>
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   )
 }
