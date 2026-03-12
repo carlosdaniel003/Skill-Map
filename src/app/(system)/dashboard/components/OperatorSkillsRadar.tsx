@@ -10,6 +10,7 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   Radar,
+  Tooltip, // Importado para mostrar os dados ao passar o mouse
   ResponsiveContainer
 } from "recharts"
 
@@ -27,6 +28,10 @@ export default function OperatorSkillsRadar(){
 
   const [skills,setSkills] = useState<Skill[]>([])
   const [operatorName,setOperatorName] = useState("")
+  
+  // Novos estados para a cor dinâmica e a média
+  const [radarColor, setRadarColor] = useState("#d40000")
+  const [average, setAverage] = useState("0.00")
 
   useEffect(()=>{
     loadSkills()
@@ -36,6 +41,8 @@ export default function OperatorSkillsRadar(){
     if(!filters.operatorId){
       setSkills([])
       setOperatorName("")
+      setRadarColor("#d40000")
+      setAverage("0.00")
       return
     }
 
@@ -62,7 +69,32 @@ export default function OperatorSkillsRadar(){
       return
     }
 
-    setSkills(data || [])
+    const fetchedSkills = data || []
+    setSkills(fetchedSkills)
+
+    /* --- CÁLCULO DE CORES E MÉDIA --- */
+    if (fetchedSkills.length > 0) {
+      const total = fetchedSkills.reduce((acc, row) => acc + row.skill_level, 0)
+      const max = fetchedSkills.length * 5
+      const ratio = max > 0 ? (total / max) * 100 : 0
+      
+      // Média com duas casas decimais
+      const avg = total / fetchedSkills.length
+      setAverage(avg.toFixed(2))
+
+      // Cores dos 5 Níveis Exatos
+      let barColor = "#ef4444" // 1. Nunca Fez (Vermelho)
+      if (ratio <= 20) barColor = "#ef4444"
+      else if (ratio <= 40) barColor = "#f59e0b" // 2. Em Treinamento (Laranja)
+      else if (ratio <= 60) barColor = "#3b82f6" // 3. Apto a Operar (Azul)
+      else if (ratio <= 80) barColor = "#8b5cf6" // 4. Especialista (Roxo)
+      else barColor = "#22c55e"                  // 5. Instrutor (Verde)
+
+      setRadarColor(barColor)
+    } else {
+      setAverage("0.00")
+      setRadarColor("#e0e0e0") // Cinza caso o operador não tenha skills
+    }
   }
 
   const data = skills.map(skill => ({
@@ -91,11 +123,12 @@ export default function OperatorSkillsRadar(){
   /* RENDER DO GRÁFICO             */
   /* ----------------------------- */
   return(
-
+    // A borda superior do card voltou a ser estática no CSS, removido o style={{ borderTopColor: radarColor }}
     <div className="corporateCard radarCard">
       
       <div className="radarHeader">
-        <h3>Radar de Habilidades — <span>{operatorName}</span></h3>
+        <h3>Radar de Habilidades — <span style={{ color: radarColor }}>{operatorName}</span></h3>
+        <p className="radarAverage">Média Geral: <strong style={{ color: radarColor }}>{average}</strong> <span className="maxAverage">/ 5.00</span></p>
       </div>
 
       <div className="radarChartContainer">
@@ -115,12 +148,19 @@ export default function OperatorSkillsRadar(){
               tick={{fill: "#888888"}}
             />
 
+            {/* Tooltip super elegante ao passar o mouse */}
+            <Tooltip 
+              contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+              itemStyle={{ fontWeight: 'bold', color: radarColor }}
+              formatter={(value) => [`Nível ${value}`, "Habilidade"]}
+            />
+
             <Radar
               name="Skill"
               dataKey="nivel"
-              stroke="#d40000"
+              stroke={radarColor}
               strokeWidth={2}
-              fill="#d40000"
+              fill={radarColor}
               fillOpacity={0.4}
               animationDuration={600}
             />

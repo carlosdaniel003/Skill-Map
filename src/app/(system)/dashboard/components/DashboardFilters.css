@@ -1,6 +1,6 @@
 /* src/app/(system)/dashboard/components/DashboardFilters.css */
 
-/* CARD CORPORATIVO */
+/* CARD PRINCIPAL (Autossuficiente) */
 .filtersCard {
   background: #ffffff;
   border-top: 6px solid #d40000;
@@ -8,33 +8,35 @@
   padding: 24px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
   margin-bottom: 24px;
+  box-sizing: border-box;
 }
 
 .filtersHeader {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .filtersHeader h2 {
   margin: 0;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: #111111;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* GRID DOS FILTROS */
+/* GRID DO FILTRO */
 .filtersGrid {
-  display: flex;
-  align-items: flex-end; /* Alinha o botão "Buscar" na mesma linha base dos inputs */
+  display: grid;
+  grid-template-columns: 2fr 1.5fr auto;
   gap: 20px;
-  flex-wrap: wrap;
+  align-items: flex-end;
 }
 
 .filterGroup {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  flex: 1;
-  min-width: 250px;
+  position: relative;
 }
 
 .filterGroup label {
@@ -43,74 +45,58 @@
   color: #555555;
 }
 
-/* INPUTS E SELECTS CORPORATIVOS */
+/* CONTAINER DA BUSCA */
+.searchInputWrapper {
+  position: relative;
+}
+
 .corporateInput {
-  padding: 12px 14px;
-  border-radius: 6px;
-  border: 1px solid #e0e0e0;
-  background: #f9f9f9;
-  color: #333333;
-  font-size: 14px;
-  transition: all 0.2s ease;
   width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #f9f9f9;
+  font-size: 14px;
+  color: #333333;
+  transition: all 0.2s ease;
   box-sizing: border-box;
 }
 
 .corporateInput:focus {
   outline: none;
-  background: #ffffff;
   border-color: #d40000;
+  background: #ffffff;
   box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
 }
 
-select.corporateInput {
-  cursor: pointer;
-}
-
-/* COMPORTAMENTO DO DROPDOWN DE BUSCA */
-.searchGroup {
-  position: relative;
-}
-
-.searchInputWrapper {
-  position: relative;
-}
-
+/* DROPDOWN AUTOSUGGEST */
 .dropdownResults {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 4px);
   left: 0;
   width: 100%;
-  margin-top: 8px;
-  background: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   max-height: 250px;
   overflow-y: auto;
-  z-index: 100; /* Fica acima de outros elementos do Dashboard */
-  padding: 8px;
-}
-
-/* Customização da barra de rolagem do dropdown */
-.dropdownResults::-webkit-scrollbar {
-  width: 6px;
-}
-.dropdownResults::-webkit-scrollbar-track {
-  background: transparent;
-}
-.dropdownResults::-webkit-scrollbar-thumb {
-  background-color: #cccccc;
-  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
 }
 
 .dropdownItem {
-  padding: 10px 12px;
-  border-radius: 6px;
+  padding: 12px 14px;
   font-size: 14px;
   color: #333333;
   cursor: pointer;
-  transition: all 0.2s ease;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
+}
+
+.dropdownItem:last-child {
+  border-bottom: none;
 }
 
 .dropdownItem:hover {
@@ -118,23 +104,39 @@ select.corporateInput {
   color: #d40000;
 }
 
-.dropdownItem strong {
-  color: #111111;
-}
-
-/* BOTÃO BUSCAR */
+/* BOTÕES DE AÇÃO */
 .filterAction {
   display: flex;
-  align-items: center;
+  gap: 12px;
+  height: 43px;
+}
+
+.secondaryButton.clearButton {
+  height: 100%;
+  padding: 0 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #555555;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.secondaryButton.clearButton:hover {
+  background: #f5f5f5;
+  color: #111111;
+  border-color: #cccccc;
 }
 
 .searchButton {
-  display: inline-flex;
+  height: 100%;
+  display: flex;
   align-items: center;
-  justify-content: center;
   gap: 8px;
-  padding: 12px 24px;
-  height: 44px; /* Mesma altura dos inputs */
+  padding: 0 20px;
   border: none;
   border-radius: 6px;
   background: #d40000;
@@ -155,22 +157,36 @@ select.corporateInput {
 .searchButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
+  background: #cccccc;
 }
 
 /* RESPONSIVIDADE */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .filtersGrid {
-    flex-direction: column;
-    align-items: stretch;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
   }
   
   .filterAction {
-    margin-top: 8px;
+    grid-column: span 2;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 600px) {
+  .filtersGrid {
+    grid-template-columns: 1fr;
   }
   
-  .searchButton {
+  .filterAction {
+    grid-column: span 1;
+    flex-direction: column-reverse;
+    height: auto;
+  }
+
+  .filterAction button {
     width: 100%;
+    height: 44px;
+    justify-content: center;
   }
 }

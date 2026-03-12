@@ -37,8 +37,23 @@ export default function DashboardFilters(){
     const ops = await getOperators()
     const lns = await getProductionLines()
 
-    setOperators(ops || [])
-    setLines(lns || [])
+    // 1. Pega apenas os operadores ativos
+    const activeOps = ops?.filter(op => op.ativo) || []
+    setOperators(activeOps)
+
+    // 2. Mapeia quais linhas realmente têm operadores alocados nelas
+    const linhasComOperador = new Set(
+      activeOps
+        .map(op => op.linha_atual)
+        .filter(linha => linha && linha.trim() !== "")
+    )
+
+    // 3. Filtra a lista de modelos para manter apenas os ativos e COM OPERADOR
+    const linhasVisiveis = (lns || []).filter(line => 
+      line.ativo && linhasComOperador.has(line.nome)
+    )
+
+    setLines(linhasVisiveis)
   }
 
   function filterOperators(){
@@ -63,12 +78,21 @@ export default function DashboardFilters(){
     setFilteredOperators([])
   }
 
-  /* botão buscar habilitado se operador OU linha existir */
-  const canSearch = pendingFilters.operatorId || pendingFilters.linha
+  function handleClearFilters() {
+    setSearch("")
+    setFilteredOperators([])
+    
+    setPendingOperator(null)
+    setPendingLinha(null)
+
+    setTimeout(() => {
+      applyFilters()
+    }, 50)
+  }
 
   return(
 
-    <div className="corporateCard filtersCard">
+    <div className="filtersCard">
       
       <div className="filtersHeader">
         <h2>Filtros Analíticos</h2>
@@ -81,28 +105,23 @@ export default function DashboardFilters(){
           <label>Operador</label>
           <div className="searchInputWrapper">
             <input
-  type="text"
-  className="corporateInput"
-  placeholder="Buscar operador ou matrícula..."
-  value={search}
-  onChange={e=>{
-    setSearch(e.target.value)
-    setPendingOperator(null)
-  }}
-  onKeyDown={(e)=>{
-
-    if(e.key === "Enter"){
-
-      e.preventDefault()
-
-      if(filteredOperators.length > 0){
-        handleSelectOperator(filteredOperators[0])
-      }
-
-    }
-
-  }}
-/>
+              type="text"
+              className="corporateInput"
+              placeholder="Buscar operador ou matrícula..."
+              value={search}
+              onChange={e=>{
+                setSearch(e.target.value)
+                setPendingOperator(null)
+              }}
+              onKeyDown={(e)=>{
+                if(e.key === "Enter"){
+                  e.preventDefault()
+                  if(filteredOperators.length > 0){
+                    handleSelectOperator(filteredOperators[0])
+                  }
+                }
+              }}
+            />
 
             {filteredOperators.length > 0 && (
               <div className="dropdownResults">
@@ -120,7 +139,7 @@ export default function DashboardFilters(){
           </div>
         </div>
 
-        {/* LINHA */}
+        {/* LINHA / MODELO */}
         <div className="filterGroup">
           <label>Modelo de Produção</label>
           <select
@@ -141,13 +160,21 @@ export default function DashboardFilters(){
           </select>
         </div>
 
-        {/* BOTÃO BUSCAR */}
+        {/* BOTÕES DE AÇÃO */}
         <div className="filterAction">
+          
+          <button
+            className="secondaryButton clearButton"
+            onClick={handleClearFilters}
+            title="Limpar todos os filtros"
+          >
+            Limpar Filtros
+          </button>
+
           <button
             className="primaryButton searchButton"
             onClick={applyFilters}
-            disabled={!canSearch}
-            title={canSearch ? "Aplicar Filtros" : "Selecione um filtro para buscar"}
+            title="Aplicar Filtros"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8"/>
@@ -155,6 +182,7 @@ export default function DashboardFilters(){
             </svg>
             Buscar Dados
           </button>
+
         </div>
 
       </div>

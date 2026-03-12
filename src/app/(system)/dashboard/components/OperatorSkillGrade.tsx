@@ -14,7 +14,7 @@ export default function OperatorSkillGrade(){
   const [maxPoints,setMaxPoints] = useState(0)
   const [ratio,setRatio] = useState(0)
   const [grade,setGrade] = useState("")
-  const [color,setColor] = useState("#ef4444") // vermelho padrão
+  const [color,setColor] = useState("#d40000") // vermelho padrão
 
   useEffect(()=>{
     loadData()
@@ -56,22 +56,25 @@ export default function OperatorSkillGrade(){
     setMaxPoints(max)
     setRatio(sr)
 
-    /* classificação executiva e dinâmica */
+    /* Classificação dinâmica em 5 níveis exatos (Intervalos de 20%) */
     let gradeText = ""
-    let barColor = "#d40000" // vermelho da marca
+    let barColor = "#d40000"
 
-    if(sr <= 30){
-      gradeText = "Iniciante"
-      barColor = "#d40000" // vermelho
+    if(sr <= 20){
+      gradeText = "Nunca Fez"
+      barColor = "#ef4444" // Vermelho (Alerta)
+    }else if(sr <= 40){
+      gradeText = "Em Treinamento"
+      barColor = "#f59e0b" // Laranja (Desenvolvimento)
     }else if(sr <= 60){
-      gradeText = "Em Desenvolvimento"
-      barColor = "#f59e0b" // laranja/amarelo
+      gradeText = "Apto a Operar"
+      barColor = "#3b82f6" // Azul (Padrão/Operacional)
     }else if(sr <= 80){
       gradeText = "Especialista"
-      barColor = "#3b82f6" // azul executivo
+      barColor = "#8b5cf6" // Roxo (Avançado)
     }else{
       gradeText = "Instrutor"
-      barColor = "#2e7d32" // verde sucesso
+      barColor = "#22c55e" // Verde (Mestria)
     }
 
     setGrade(gradeText)
@@ -110,7 +113,7 @@ export default function OperatorSkillGrade(){
         
         <div className="statBox">
           <span className="statLabel">Total de Pontos</span>
-          <span className="statValue">{totalPoints}</span>
+          <span className="statValue">{totalPoints} <span style={{fontSize: 14, color: '#999'}}>de {maxPoints}</span></span>
         </div>
 
         <div className="statBox">
@@ -128,7 +131,7 @@ export default function OperatorSkillGrade(){
       <div className="progressSection">
         <div className="progressLabels">
           <span>Progresso de Habilidades</span>
-          <span>Meta SR: 80%</span>
+          <span>Meta: Especialista (80%)</span>
         </div>
         
         <div className="progressBarContainer">

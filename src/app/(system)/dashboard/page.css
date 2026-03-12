@@ -72,3 +72,25 @@
     grid-template-columns: 1fr; 
   }
 }
+
+/* Adicione no final do seu src/app/(system)/dashboard/page.css */
+
+/* GRID DOS DOIS RADARES (50% / 50%) */
+.dualRadarGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+/* MARGEM DO HEATMAP PARA RESPIRAR */
+.heatmapSection {
+  margin-bottom: 24px;
+}
+
+/* RESPONSIVIDADE (Telas menores que 1024px quebram para 1 coluna) */
+@media (max-width: 1024px) {
+  .dualRadarGrid {
+    grid-template-columns: 1fr;
+  }
+}

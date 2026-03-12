@@ -11,7 +11,8 @@ import {
   PolarRadiusAxis,
   Radar,
   ResponsiveContainer,
-  Legend
+  Legend,
+  Tooltip // Adicionado para ver a nota ao passar o mouse
 } from "recharts"
 
 import { supabase } from "@/services/database/supabaseClient"
@@ -174,30 +175,23 @@ export default function LineOperatorsRadar(){
 
       <div className="lineRadarBody">
 
-        {/* LISTA DE OPERADORES */}
-        <div className="operatorsListWrapper">
-          <h4 className="listTitle">Selecione um operador:</h4>
+        {/* SELECT DE OPERADORES (Substitui a lista lateral para poupar espaço) */}
+        <div className="operatorSelectWrapper">
+          <label className="listTitle">Comparar com o operador:</label>
           
           {operators.length > 0 ? (
-            <div className="operatorsList">
-              <button
-                className={`operatorButton ${selectedOperator === "" ? "active" : ""}`}
-                onClick={()=>setSelectedOperator("")}
-              >
-                Apenas Média da Linha
-              </button>
-              
-              {operators.map(op=>(
-                <button
-                  key={op.id}
-                  className={`operatorButton ${selectedOperator === op.id ? "active" : ""}`}
-                  onClick={()=>setSelectedOperator(op.id)}
-                  title={`Ver radar de ${op.nome}`}
-                >
+            <select 
+              className="corporateInput"
+              value={selectedOperator}
+              onChange={(e) => setSelectedOperator(e.target.value)}
+            >
+              <option value="">Apenas Média da Linha</option>
+              {operators.map(op => (
+                <option key={op.id} value={op.id}>
                   {op.nome}
-                </button>
+                </option>
               ))}
-            </div>
+            </select>
           ) : (
             <div className="noOperatorsMsg">
               Nenhum operador ativo alocado nesta linha.
@@ -220,6 +214,11 @@ export default function LineOperatorsRadar(){
                 domain={[0,5]}
                 tickCount={6}
                 tick={{fill: "#888888", fontSize: 11}}
+              />
+
+              <Tooltip 
+                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                itemStyle={{ fontWeight: 'bold' }}
               />
 
               {/* MÉDIA DA LINHA (Azul Corporativo) */}
@@ -247,7 +246,7 @@ export default function LineOperatorsRadar(){
               )}
 
               <Legend 
-                wrapperStyle={{ paddingTop: "20px", fontSize: "13px", fontWeight: "500", color: "#555" }} 
+                wrapperStyle={{ paddingTop: "10px", fontSize: "13px", fontWeight: "500", color: "#555" }} 
               />
 
             </RadarChart>

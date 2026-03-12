@@ -3,6 +3,7 @@
 /* CARD CORPORATIVO PARA O RADAR */
 .radarCard {
   background: #ffffff;
+  /* A borda top voltou a ser o vermelho fixo da identidade corporativa */
   border-top: 6px solid #d40000;
   border-radius: 8px;
   padding: 24px;
@@ -15,7 +16,7 @@
 
 /* EMPTY STATE (Quando não tem operador selecionado) */
 .emptyRadarCard {
-  border-top: 6px solid #e0e0e0;
+  border-top: 6px solid #e0e0e0 !important;
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -45,10 +46,24 @@
   font-size: 18px;
   font-weight: 700;
   color: #111111;
+  transition: color 0.4s ease;
 }
 
-.radarHeader h3 span {
-  color: #d40000; /* Destaca o nome do operador em vermelho */
+.radarAverage {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #555555;
+  font-weight: 500;
+}
+
+.radarAverage strong {
+  font-size: 15px;
+  transition: color 0.4s ease;
+}
+
+.maxAverage {
+  color: #999999;
+  font-size: 12px;
 }
 
 /* CONTAINER DO GRÁFICO */
@@ -56,4 +71,12 @@
   flex: 1;
   width: 100%;
   min-height: 0; /* Ajuda o Recharts a calcular a altura correta no Flexbox */
+}
+
+/* Customiza o Tooltip do Recharts */
+.recharts-default-tooltip {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-radius: 8px !important;
+  border: 1px solid #e0e0e0 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
 }

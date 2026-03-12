@@ -51,114 +51,69 @@
   color: #d40000;
 }
 
-/* CORPO DO CARD (Grid Layout) */
+/* CORPO DO CARD (Flex Column) */
 .lineRadarBody {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  gap: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   flex: 1;
 }
 
-/* LISTA DE OPERADORES */
-.operatorsListWrapper {
+/* SELECT DE OPERADORES */
+.operatorSelectWrapper {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  border-right: 1px solid #f0f0f0;
-  padding-right: 16px;
+  gap: 8px;
 }
 
 .listTitle {
   margin: 0;
   font-size: 13px;
   font-weight: 600;
-  color: #888888;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  color: #555555;
 }
 
-.operatorsList {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 360px; /* Impede a quebra de layout se houver muitos operadores */
-  overflow-y: auto;
-  padding-right: 8px; /* Respiro para a barra de rolagem */
-}
-
-/* Customização da scrollbar da lista */
-.operatorsList::-webkit-scrollbar {
-  width: 4px;
-}
-.operatorsList::-webkit-scrollbar-track {
-  background: transparent;
-}
-.operatorsList::-webkit-scrollbar-thumb {
-  background-color: #cccccc;
-  border-radius: 10px;
-}
-
-/* BOTÃO DO OPERADOR */
-.operatorButton {
-  text-align: left;
+.corporateInput {
+  width: 100%;
   padding: 10px 14px;
   border: 1px solid #e0e0e0;
   border-radius: 6px;
-  background: #ffffff;
-  color: #555555;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.operatorButton:hover:not(.active) {
   background: #f9f9f9;
-  border-color: #cccccc;
-  color: #111111;
+  font-size: 14px;
+  color: #333333;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  cursor: pointer;
 }
 
-.operatorButton.active {
-  background: #d40000;
-  color: #ffffff;
+.corporateInput:focus {
+  outline: none;
   border-color: #d40000;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.2);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
 }
 
 .noOperatorsMsg {
   font-size: 13px;
   color: #a0a0a0;
   font-style: italic;
-  padding: 16px 0;
+  padding: 8px 0;
 }
 
 /* GRÁFICO DE RADAR */
 .lineRadarChart {
   flex: 1;
-  min-height: 360px;
+  min-height: 320px; /* Garante que o radar não seja esmagado */
   width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* RESPONSIVIDADE */
-@media (max-width: 768px) {
-  .lineRadarBody {
-    grid-template-columns: 1fr; /* No mobile, empilha a lista e o gráfico */
-    border-right: none;
-    padding-right: 0;
-  }
-  
-  .operatorsListWrapper {
-    border-right: none;
-    border-bottom: 1px solid #f0f0f0;
-    padding-bottom: 16px;
-    padding-right: 0;
-  }
-  
-  .operatorsList {
-    max-height: 160px; /* Menor no mobile para não ocupar a tela toda */
-  }
+/* Customização do Tooltip do Recharts */
+.recharts-default-tooltip {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-radius: 8px !important;
+  border: 1px solid #e0e0e0 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
 }

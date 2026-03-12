@@ -10,6 +10,7 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   Radar,
+  Tooltip,
   ResponsiveContainer
 } from "recharts"
 
@@ -50,47 +51,25 @@ export default function LineSkillsRadar(){
     }
 
     /* ------------------------------------------------ */
-    /* 1️⃣ BUSCAR SKILLS DOS OPERADORES DA LINHA        */
-    /* ------------------------------------------------ */
-    const { data:skills,error } = await supabase
-      .from("operator_skills")
-      .select(`
-        skill_level,
-        posto,
-        operators!inner(
-          linha_atual
-        )
-      `)
-      .eq("operators.linha_atual",filters.linha)
-
-    if(error){
-      console.error("SKILLS QUERY ERROR:", error)
-      return
-    }
-
-    if(!skills || skills.length === 0){
-      setData([])
-      return
-    }
-
-    /* ------------------------------------------------ */
-    /* 2️⃣ BUSCAR DADOS DA LINHA                        */
-    /* ------------------------------------------------ */
-    const { data:line,error:lineError } = await supabase
-      .from("production_lines")
-      .select("nome,categoria")
-      .eq("nome",filters.linha)
-      .single()
-
-    if(lineError){
-      console.error("LINE QUERY ERROR:", lineError)
-      return
-    }
-
-    /* ------------------------------------------------ */
-    /* MODO HABILIDADES                                 */
+    /* MODO HABILIDADES (Apenas a linha filtrada)       */
     /* ------------------------------------------------ */
     if(mode === "skills"){
+      const { data:skills,error } = await supabase
+        .from("operator_skills")
+        .select(`
+          skill_level,
+          posto,
+          operators!inner(
+            linha_atual
+          )
+        `)
+        .eq("operators.linha_atual",filters.linha)
+
+      if(error || !skills){
+        setData([])
+        return
+      }
+
       const map:Record<string,{total:number,count:number}> = {}
 
       skills.forEach((row:any)=>{
@@ -110,25 +89,47 @@ export default function LineSkillsRadar(){
     }
 
     /* ------------------------------------------------ */
-    /* MODO CATEGORIAS                                  */
+    /* MODO CATEGORIAS (Fábrica Inteira)                */
     /* ------------------------------------------------ */
     if(mode === "categories"){
-      const map:Record<string,{total:number,count:number}> = {}
+      // 1. Pegar a categoria de cada linha para fazer o "de-para"
+      const { data: linesData } = await supabase.from("production_lines").select("nome, categoria")
+      const lineCategoryMap: Record<string, string> = {}
+      
+      if(linesData){
+        linesData.forEach(l => {
+          if(l.nome && l.categoria) lineCategoryMap[l.nome] = l.categoria
+        })
+      }
 
+      // 2. Pegar os dados de TODOS os operadores
+      const { data: allSkills, error } = await supabase
+        .from("operator_skills")
+        .select(`skill_level, operators!inner(linha_atual)`)
+
+      if(error || !allSkills){
+        setData([])
+        return
+      }
+
+      const map:Record<string,{total:number,count:number}> = {}
       CATEGORIES.forEach(cat=>{
         map[cat] = { total:0,count:0 }
       })
 
-      const categoria = line?.categoria
+      // 3. Agrupar por categoria usando o de-para
+      allSkills.forEach((row:any)=>{
+        const linha = row.operators?.linha_atual
+        if(!linha) return
 
-      if(categoria){
-        skills.forEach((row:any)=>{
-          map[categoria].total += row.skill_level
-          map[categoria].count++
-        })
-      }
+        const cat = lineCategoryMap[linha]
+        if(cat && map[cat] !== undefined){
+          map[cat].total += row.skill_level
+          map[cat].count++
+        }
+      })
 
-      const result:Skill[] = Object.keys(map).map(cat=>({
+      const result:Skill[] = CATEGORIES.map(cat=>({
         label:cat,
         value: map[cat].count > 0 ? Number((map[cat].total / map[cat].count).toFixed(2)) : 0
       }))
@@ -137,19 +138,25 @@ export default function LineSkillsRadar(){
     }
 
     /* ------------------------------------------------ */
-    /* MODO MODELOS                                     */
+    /* MODO MODELOS (Fábrica Inteira)                   */
     /* ------------------------------------------------ */
     if(mode === "models"){
+      // 1. Pegar o nome de todos os modelos
       const { data:models,error:modelError } = await supabase
         .from("production_lines")
         .select("nome")
 
-      if(modelError){
-        console.error("MODEL QUERY ERROR:", modelError)
+      if(modelError || !models){
+        setData([])
         return
       }
 
-      if(!models){
+      // 2. Pegar as skills de TODOS os operadores
+      const { data: allSkills, error } = await supabase
+        .from("operator_skills")
+        .select(`skill_level, operators!inner(linha_atual)`)
+
+      if(error || !allSkills){
         setData([])
         return
       }
@@ -160,11 +167,14 @@ export default function LineSkillsRadar(){
         map[m.nome] = { total:0,count:0 }
       })
 
-      skills.forEach((row:any)=>{
-        const model = line?.nome
-        if(!model) return
-        map[model].total += row.skill_level
-        map[model].count++
+      // 3. Agrupar por modelo/linha
+      allSkills.forEach((row:any)=>{
+        const linha = row.operators?.linha_atual
+        if(!linha) return
+        
+        if(!map[linha]) map[linha] = { total:0,count:0 }
+        map[linha].total += row.skill_level
+        map[linha].count++
       })
 
       const result:Skill[] = Object.keys(map).map(model=>({
@@ -255,6 +265,14 @@ export default function LineSkillsRadar(){
               domain={[0,5]}
               tick={{fill:"#888888"}}
             />
+            
+            {/* Tooltip super elegante ao passar o mouse */}
+            <Tooltip 
+              contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+              itemStyle={{ fontWeight: 'bold', color: chartColor }}
+              formatter={(value) => [value, "Média"]}
+            />
+
             <Radar
               name="Média"
               dataKey="value"
@@ -268,8 +286,6 @@ export default function LineSkillsRadar(){
         </ResponsiveContainer>
       </div>
 
-      {/* ----------------------------- */}
-      
       {/* ----------------------------- */}
       <div className="skillsAverageTable">
         <h4>Média de Habilidades</h4>

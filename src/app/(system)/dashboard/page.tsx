@@ -48,20 +48,20 @@ export default function DashboardPage(){
           <OperatorKPIs />
         </div>
 
-        {/* BLOCO OPERADOR */}
+        {/* BLOCO OPERADOR (50/50) */}
         <div className="dashboardGrid operatorGrid">
           <OperatorSkillGrade />
           <OperatorSkillsRadar />
         </div>
 
-        {/* BLOCO LINHA */}
-        <div className="dashboardGrid lineGrid">
+        {/* BLOCO LINHA - RADARES (50/50) */}
+        <div className="dashboardGrid dualRadarGrid">
           <LineSkillsRadar />
-          
-          {/* Radar operadores vs média da linha */}
           <LineOperatorsRadar />
-          
-          {/* Heatmap geral da matriz */}
+        </div>
+        
+        {/* BLOCO LINHA - HEATMAP (100% DE LARGURA) */}
+        <div className="dashboardSection heatmapSection">
           <SkillMatrixHeatmap />
         </div>
 
