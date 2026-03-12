@@ -72,7 +72,6 @@
   width: 100%;
   min-height: 0; /* Ajuda o Recharts a calcular a altura correta no Flexbox */
 }
-
 /* Customiza o Tooltip do Recharts */
 .recharts-default-tooltip {
   background-color: rgba(255, 255, 255, 0.95) !important;
