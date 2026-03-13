@@ -165,7 +165,7 @@ export default function OperatorKPIs(){
         <div className="kpiCard kpi-inactive">
           <div className="kpiHeader">
             <span className="kpiLabel">
-              Sem Alocação
+              Operador Disponível
             </span>
             <div className="kpiIcon">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
