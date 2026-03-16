@@ -1,0 +1,462 @@
+/* src/app/(system)/attendance/page.css */
+
+.attendancePage {
+  padding-bottom: 40px;
+}
+
+.attendanceCard {
+  background: #ffffff;
+  border-top: 6px solid #d40000;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+/* FILTROS */
+.attendanceFilters {
+  display: flex;
+  flex-wrap: wrap; /* ADICIONAR ISSO */
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.attendanceFilters .filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  max-width: 300px;
+}
+
+.attendanceFilters label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555555;
+}
+
+.corporateInput {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #f9f9f9;
+  font-size: 14px;
+  color: #333333;
+  outline: none;
+}
+
+.corporateInput:focus {
+  border-color: #d40000;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
+}
+
+/* EMPTY STATE */
+.emptyAttendance {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background: #f9f9f9;
+  border: 1px dashed #cccccc;
+  border-radius: 8px;
+  color: #888888;
+  text-align: center;
+  gap: 16px;
+}
+
+.emptyAttendance .emptyIcon {
+  color: #cccccc;
+}
+
+/* =========================================
+   A MÁGICA DA PLANILHA ESTILO EXCEL
+   ========================================= */
+
+.tableContainer {
+  width: 100%;
+  max-height: 65vh;
+  overflow: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 1px #e0e0e0;
+}
+
+.excelTable {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: max-content;
+}
+
+/* CABEÇALHO GERAL */
+.excelTable th {
+  background: #f5f5f5;
+  color: #333333;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 12px 8px;
+  border-right: 1px solid #e0e0e0;
+  border-bottom: 2px solid #cccccc;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* CÉLULAS GERAIS */
+.excelTable td {
+  border-right: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0;
+  font-size: 13px;
+  color: #555555;
+  background: #ffffff;
+}
+
+.text-center { text-align: center; }
+.fw-bold { font-weight: 600; color: #111111 !important; }
+
+/* COLUNAS CONGELADAS (QTD, NOME, POSTO, LINHA) */
+.stickyCol {
+  position: sticky;
+  z-index: 5;
+}
+
+/* ------------------------------------------------------------------------- */
+.col-id        { left: 0; min-width: 50px; max-width: 50px; background: #fafafa !important; }
+.col-matricula { left: 50px; min-width: 100px; max-width: 100px; background: #ffffff !important; padding: 0 12px !important; }
+.col-nome      { left: 150px; min-width: 250px; max-width: 250px; background: #ffffff !important; padding: 0 12px !important; }
+.col-posto     { left: 400px; min-width: 120px; max-width: 120px; background: #ffffff !important; padding: 0 12px !important; }
+.col-linha     { left: 520px; min-width: 120px; max-width: 120px; background: #ffffff !important; padding: 0 12px !important; border-right: 2px solid #cccccc !important; }
+
+.excelTable th.stickyCol {
+  z-index: 20; 
+  background: #e8e8e8 !important;
+}
+
+/* COLUNA DOS DIAS DO MÊS */
+.dayCol {
+  min-width: 44px;
+  text-align: center;
+}
+
+.dayCol.weekend {
+  background: #eaeaea !important;
+  color: #d40000;
+}
+
+/* CÉLULA DO INPUT DE FREQUÊNCIA */
+.inputCell {
+  width: 44px;
+  height: 38px;
+}
+
+.inputCell.weekend {
+  background: #f5f5f5 !important;
+}
+
+.excelInput {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: #111111;
+  text-transform: uppercase;
+  outline: none;
+  transition: all 0.2s ease;
+  cursor: text;
+}
+
+.excelInput:focus {
+  background: #ffffff;
+  box-shadow: inset 0 0 0 2px #d40000;
+}
+
+.noDataCell {
+  text-align: center;
+  padding: 32px !important;
+  color: #888888;
+  font-style: italic;
+}
+
+/* =========================================
+   CORES DINÂMICAS PARA AS SIGLAS
+   ========================================= */
+
+/* Verde: Presença (P), Hora Extra (H.E) */
+.status-green {
+  color: #16a34a !important;
+  background-color: rgba(22, 163, 74, 0.08) !important;
+}
+
+/* Vermelho: Falta (F), Atraso (A), Saída (S) */
+.status-red {
+  color: #dc2626 !important;
+  background-color: rgba(220, 38, 38, 0.08) !important;
+}
+
+/* Laranja/Amarelo: Justificativas (FJ, AJ, SJ, AT) */
+.status-yellow {
+  color: #d97706 !important;
+  background-color: rgba(217, 119, 6, 0.08) !important;
+}
+
+/* Azul/Cinza: Afastamentos longos (FE, LP, LM) */
+.status-blue {
+  color: #2563eb !important;
+  background-color: rgba(37, 99, 235, 0.08) !important;
+}
+
+/* Adicione isso no final do seu arquivo page.css */
+
+/* =========================================
+   LEGENDA DE FREQUÊNCIA
+   ========================================= */
+.attendanceLegend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 12px 20px;
+  margin-bottom: 24px;
+}
+
+.legendGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.legendBadge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.legendItems {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: #555555;
+}
+
+.legendItems strong {
+  color: #111111;
+  font-weight: 700;
+}
+
+.legendDivider {
+  width: 1px;
+  height: 24px;
+  background-color: #dcdcdc;
+}
+
+/* RESPONSIVIDADE PARA A LEGENDA */
+@media (max-width: 1200px) {
+  .attendanceLegend {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .legendDivider {
+    display: none; /* Esconde as barras verticais no mobile/tablet */
+  }
+  
+  .legendItems {
+    flex-wrap: wrap;
+  }
+}
+
+/* src/app/(system)/attendance/page.css */
+
+/* ... (Mantenha todo o seu CSS anterior de layout da tabela) ... */
+
+/* =========================================
+   POPOVER DA CÉLULA (BALÃO FLUTUANTE)
+   ========================================= */
+.inputCell {
+  width: 44px;
+  height: 38px;
+  position: relative; /* Necessário para o popover saber onde ancorar */
+}
+
+.statusPopover {
+  position: absolute;
+  top: calc(100% + 4px); /* Fica colado em baixo da célula */
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  z-index: 9999;
+  width: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.statusGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.statusBtn {
+  border: none;
+  border-radius: 4px;
+  padding: 8px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  color: #111111;
+  transition: transform 0.1s, filter 0.1s;
+  background-color: #f0f0f0;
+}
+
+.statusBtn:hover {
+  transform: scale(1.05);
+  filter: brightness(0.95);
+}
+
+.clearBtn {
+  background: transparent;
+  border: 1px dashed #cccccc;
+  border-radius: 4px;
+  padding: 6px;
+  font-size: 11px;
+  color: #666666;
+  cursor: pointer;
+}
+
+.clearBtn:hover {
+  background: #f5f5f5;
+  color: #d40000;
+}
+
+/* =========================================
+   AS 12 CORES EXCLUSIVAS (BACKGROUND E TEXTO)
+   ========================================= */
+
+/* P - Presença (Verde Forte) */
+.status-p { background-color: rgba(22, 163, 74, 0.2) !important; color: #16a34a !important; }
+/* H.E - Hora Extra (Verde Escuro/Teal) */
+.status-he { background-color: rgba(13, 148, 136, 0.2) !important; color: #0d9488 !important; }
+
+/* F - Falta (Vermelho) */
+.status-f { background-color: rgba(220, 38, 38, 0.2) !important; color: #dc2626 !important; }
+/* A - Atraso (Bordô) */
+.status-a { background-color: rgba(190, 18, 60, 0.2) !important; color: #be123c !important; }
+/* S - Saída (Rosa/Coral) */
+.status-s { background-color: rgba(244, 63, 94, 0.2) !important; color: #f43f5e !important; }
+
+/* FJ - Falta Justificada (Laranja) */
+.status-fj { background-color: rgba(234, 88, 12, 0.2) !important; color: #ea580c !important; }
+/* AJ - Atraso Justificado (Amarelo Ouro) */
+.status-aj { background-color: rgba(217, 119, 6, 0.2) !important; color: #d97706 !important; }
+/* SJ - Saída Justificada (Amarelo Escuro) */
+.status-sj { background-color: rgba(202, 138, 4, 0.2) !important; color: #ca8a04 !important; }
+/* AT - Atestado (Roxo) */
+.status-at { background-color: rgba(147, 51, 234, 0.2) !important; color: #9333ea !important; }
+
+/* FE - Férias (Azul Padrão) */
+.status-fe { background-color: rgba(37, 99, 235, 0.2) !important; color: #2563eb !important; }
+/* LP - Licença Paternidade (Ciano) */
+.status-lp { background-color: rgba(8, 145, 178, 0.2) !important; color: #0891b2 !important; }
+/* LM - Licença Maternidade (Pink) */
+.status-lm { background-color: rgba(219, 39, 119, 0.2) !important; color: #db2777 !important; }
+
+/* Atualizando as Legendas para pegar o background chapado sólido e o texto branco */
+.legendBadge.status-p { background-color: #16a34a !important; color: #fff !important; }
+.legendBadge.status-he { background-color: #0d9488 !important; color: #fff !important; }
+.legendBadge.status-f { background-color: #dc2626 !important; color: #fff !important; }
+.legendBadge.status-a { background-color: #be123c !important; color: #fff !important; }
+.legendBadge.status-s { background-color: #f43f5e !important; color: #fff !important; }
+.legendBadge.status-fj { background-color: #ea580c !important; color: #fff !important; }
+.legendBadge.status-aj { background-color: #d97706 !important; color: #fff !important; }
+.legendBadge.status-sj { background-color: #ca8a04 !important; color: #fff !important; }
+.legendBadge.status-at { background-color: #9333ea !important; color: #fff !important; }
+.legendBadge.status-fe { background-color: #2563eb !important; color: #fff !important; }
+.legendBadge.status-lp { background-color: #0891b2 !important; color: #fff !important; }
+.legendBadge.status-lm { background-color: #db2777 !important; color: #fff !important; }
+
+/* src/app/(system)/attendance/page.css */
+
+/* ... (Mantenha o resto do seu CSS como está) ... */
+
+/* =========================================
+   AUTOCOMPLETE DE BUSCA (CAIXA SUSPENSA)
+   ========================================= */
+.searchGroup {
+  position: relative; /* Base para o balão flutuante */
+}
+
+.autocompleteDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #d40000;
+  border-radius: 6px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.autocompleteItem {
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
+}
+
+.autocompleteItem:last-child {
+  border-bottom: none;
+}
+
+.autocompleteItem:hover {
+  background: #fdf5f5; /* Vermelhinho bem claro no hover */
+}
+
+.autocompleteItem.empty {
+  color: #888888;
+  font-style: italic;
+  cursor: default;
+  justify-content: center;
+}
+
+.autocompleteItem.empty:hover {
+  background: #ffffff;
+}
+
+/* Badge estilizada para a matrícula na lista */
+.autoMatricula {
+  font-size: 11px;
+  font-weight: 700;
+  color: #d40000;
+  background: rgba(212, 0, 0, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.autoNome {
+  font-size: 13px;
+  color: #333333;
+  font-weight: 600;
+}
+

@@ -32,9 +32,12 @@ export default function SystemLayout({
       return
     }
 
+    // REGRA DE NEGÓCIO CORRIGIDA AQUI:
+    // - MASTER tem acesso absoluto a qualquer URL do sistema.
+    // - ADMIN e USER dependem estritamente do que o Master liberou no allowedPages.
     const allowed =
-      user.role === "admin" ||
-      user.allowedPages.some(page => pathname.startsWith(page))
+      user.role === "master" || 
+      user.allowedPages.some((page: string) => pathname.startsWith(page))
 
     if(!allowed){
       setAlertConfig({

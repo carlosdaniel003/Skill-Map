@@ -4,14 +4,13 @@
 import "./page.css"
 import { useEffect, useState } from "react"
 
-// Importamos as funções novas do repositório Supabase
 import { 
   getUsers, 
   createUser, 
   deleteUser, 
   updateUserPassword, 
   updateUserPermissions,
-  updateUserRole // <-- Nova função importada
+  updateUserRole 
 } from "@/services/auth/authRepository"
 import { User } from "@/core/auth/authTypes"
 
@@ -23,6 +22,7 @@ import AuditPanel from "@/components/audit/AuditPanel"
 const ALL_PAGES = [
   "/dashboard",
   "/operators",
+  "/attendance", 
   "/access"
 ]
 
@@ -32,10 +32,9 @@ export default function AccessPage(){
 
   const [username,setUsername] = useState("")
   const [password,setPassword] = useState("")
-  const [newUserRole,setNewUserRole] = useState("user") // Estado para o cargo do novo usuário
+  const [newUserRole,setNewUserRole] = useState("user")
   const [allowedPages,setAllowedPages] = useState<string[]>([])
 
-  // ESTADOS PARA OS NOSSOS MODAIS CORPORATIVOS
   const [alertConfig, setAlertConfig] = useState<{title: string, message: string} | null>(null)
   const [confirmConfig, setConfirmConfig] = useState<{title: string, message: string, onConfirm: () => void} | null>(null)
   const [promptConfig, setPromptConfig] = useState<{title: string, onConfirm: (val: string) => void} | null>(null)
@@ -71,7 +70,6 @@ export default function AccessPage(){
       return
     }
 
-    // Regra: Se um Admin estiver criando, forçamos o role para "user". O select só aparece para o Master.
     const roleToCreate = isMaster ? newUserRole : "user"
 
     const success = await createUser({
@@ -82,14 +80,13 @@ export default function AccessPage(){
     })
 
     if (success) {
-      // REGRA: Log de criação com cargo
       await logAction(sessionUser?.username || "sistema", "create_user", `Conta criada para: ${username} (${roleToCreate.toUpperCase()})`)
       
       setUsername("")
       setPassword("")
       setNewUserRole("user")
       setAllowedPages([])
-      await loadData() // Recarrega a tabela do banco
+      await loadData()
       
       setAlertConfig({
         title: "Sucesso",
@@ -106,7 +103,6 @@ export default function AccessPage(){
   function handleRemoveUser(id:string){
     const targetUser = users.find(u => u.id === id)
 
-    // Proteção absoluta do Master
     if(targetUser?.role === "master"){
       setAlertConfig({
         title: "Ação Bloqueada",
@@ -115,7 +111,6 @@ export default function AccessPage(){
       return
     }
 
-    // REGRA: Administrador não pode remover outro administrador (Apenas Master pode)
     if(isAdmin && targetUser?.role === "admin"){
       setAlertConfig({
         title: "Ação Bloqueada",
@@ -130,7 +125,6 @@ export default function AccessPage(){
       onConfirm: async () => {
         const success = await deleteUser(id)
         if (success) {
-          // REGRA: Log de remoção
           await logAction(sessionUser?.username || "sistema", "remove_user", `Conta removida: ${targetUser?.username}`)
           await loadData()
         }
@@ -149,7 +143,6 @@ export default function AccessPage(){
         const success = await updateUserPassword(userId, newPassword)
         
         if (success) {
-          // REGRA: Log de alteração de senha
           await logAction(sessionUser?.username || "sistema", "change_password", `Definiu nova senha para: ${targetUser?.username}`)
           setAlertConfig({
             title: "Sucesso",
@@ -174,18 +167,14 @@ export default function AccessPage(){
       ? targetUser.allowedPages.filter(p=>p !== page)
       : [...targetUser.allowedPages, page]
 
-    // Atualização otimista na tela
     setUsers(users.map(u => u.id === userId ? { ...u, allowedPages: newPages } : u))
 
-    // Salva no banco de dados
     const success = await updateUserPermissions(userId, newPages)
     
     if (success) {
-      // REGRA: Log de alteração de permissão
       const actionDesc = hasPage ? `Removeu acesso à ${page}` : `Concedeu acesso à ${page}`
       await logAction(sessionUser?.username || "sistema", "update_permissions", `${actionDesc} para ${targetUser.username}`)
     } else {
-      // Reverte em caso de erro
       await loadData()
       setAlertConfig({
         title: "Erro",
@@ -194,7 +183,6 @@ export default function AccessPage(){
     }
   }
 
-  // Nova função para o Master alterar o cargo direto na tabela
   async function handleChangeRole(userId:string, newRole:string){
     const targetUser = users.find(u => u.id === userId)
     if(!targetUser) return
@@ -245,7 +233,6 @@ export default function AccessPage(){
               onChange={e=>setPassword(e.target.value)}
             />
             
-            {/* Select de Cargo (Visível apenas para o MASTER) */}
             {isMaster && (
               <select 
                 className="corporateInput" 
@@ -300,11 +287,10 @@ export default function AccessPage(){
               <tbody>
                 {users.map(user=>{
                   
-                  // LÓGICA DE BLOQUEIO DE ADMINS
                   const isTargetMaster = user.role === "master";
                   const isTargetAdmin = user.role === "admin";
                   
-                  // Admin logado fica bloqueado de editar/excluir outros admins e o master
+                  // Apenas Admin comum fica bloqueado de mexer em Master ou outros Admins
                   const adminBlocked = isAdmin && (isTargetAdmin || isTargetMaster);
 
                   return(
@@ -312,10 +298,8 @@ export default function AccessPage(){
                       <td className="fontWeight600">
                         {user.username}
                         
-                        {/* Se for Master, sempre exibe apenas a Badge inalterável */}
                         {isTargetMaster && <span className="statusBadge badge-active" style={{marginLeft: 8}}>Master</span>}
                         
-                        {/* Se o logado for Master e o alvo não for Master, exibe o Select inline para alterar cargo */}
                         {!isTargetMaster && isMaster ? (
                           <select 
                             className="corporateInput"
@@ -327,7 +311,6 @@ export default function AccessPage(){
                             <option value="admin">ADMIN</option>
                           </select>
                         ) : (
-                          /* Se o logado for Admin/User, exibe a Badge caso o usuário listado seja Admin */
                           !isTargetMaster && isTargetAdmin && <span className="statusBadge badge-active" style={{marginLeft: 8}}>Admin</span>
                         )}
                       </td>
@@ -344,10 +327,11 @@ export default function AccessPage(){
                             <label key={page} className="corporateCheckbox smallCheckbox">
                               <input
                                 type="checkbox"
-                                checked={user.allowedPages.includes(page)}
+                                // REGRA APLICADA: Se for master, mostra checked. Senão, olha no banco de dados.
+                                checked={isTargetMaster ? true : user.allowedPages.includes(page)}
                                 onChange={()=>handleToggleUserPage(user.id,page)}
-                                // Bloqueia as checkbox se: é admin tentando editar admin, ou se é o master (que sempre tem acesso a tudo)
-                                disabled={adminBlocked || isTargetMaster}
+                                // REGRA APLICADA: Master pode editar todo mundo (menos ele mesmo). Admin não edita outros Admins/Master.
+                                disabled={isTargetMaster || adminBlocked}
                               />
                               <span>{page.replace("/", "")}</span>
                             </label>
@@ -366,7 +350,7 @@ export default function AccessPage(){
                         <button
                           className="dangerButton smallButton"
                           onClick={()=>handleRemoveUser(user.id)}
-                          disabled={adminBlocked || isTargetMaster}
+                          disabled={isTargetMaster || adminBlocked}
                         >
                           Remover
                         </button>
@@ -387,7 +371,7 @@ export default function AccessPage(){
 
       </div>
 
-      {/* MODAIS CORPORATIVOS */}
+      {/* MODAIS CORPORATIVOS (MANTIDOS) */}
       
       {alertConfig && (
         <div className="modalOverlay">

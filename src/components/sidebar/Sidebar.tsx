@@ -11,7 +11,7 @@ const MENU = [
     label:"Dashboard",
     path:"/dashboard",
     icon:(
-      <svg viewBox="0 0 24 24">
+      <svg viewBox="0 0 24 24" fill="currentColor">
         <rect x="3" y="3" width="7" height="7"/>
         <rect x="14" y="3" width="7" height="7"/>
         <rect x="14" y="14" width="7" height="7"/>
@@ -23,9 +23,21 @@ const MENU = [
     label:"Operadores",
     path:"/operators",
     icon:(
-      <svg viewBox="0 0 24 24">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <circle cx="12" cy="7" r="4"/>
         <path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
+      </svg>
+    )
+  },
+  {
+    label:"Frequência",
+    path:"/attendance",
+    icon:(
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
       </svg>
     )
   },
@@ -33,7 +45,7 @@ const MENU = [
     label:"Acesso",
     path:"/access",
     icon:(
-      <svg viewBox="0 0 24 24">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <rect x="3" y="11" width="18" height="10" rx="2"/>
         <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
       </svg>
@@ -74,8 +86,6 @@ export default function Sidebar(){
   useEffect(()=>{
 
     const interval = setInterval(()=>{
-
-      // Pega do storage a cada segundo, assim se o usuário renovou noutra aba, reflete aqui.
       const sessionData = getSessionData()
       
       if(!sessionData) {
@@ -100,13 +110,12 @@ export default function Sidebar(){
 
       setRemainingTime(formatTime(remaining))
 
-      // Avisa e exibe Modal quando faltar menos de 2 minutos
       if(remaining < 2 * 60 * 1000){
         setIsWarning(true)
         setShowRenewModal(true)
       }else{
         setIsWarning(false)
-        setShowRenewModal(false) // Garante que o modal suma se renovou
+        setShowRenewModal(false)
       }
 
     },1000)
@@ -129,7 +138,6 @@ export default function Sidebar(){
     },800)
   }
 
-  // Função para o botão do Modal
   function handleRenewSession() {
     renewSession()
     setShowRenewModal(false)
@@ -140,12 +148,13 @@ export default function Sidebar(){
 
   const user = session.user
 
-  const allowedMenu = user.role === "admin" || user.role === "master"
+  // REGRA APLICADA: APENAS O MASTER VÊ O MENU TODO AUTOMATICAMENTE
+  // Os outros (inclusive Admin) só veem o que o Master marcou no banco
+  const allowedMenu = user.role === "master"
       ? MENU
       : MENU.filter(item => user.allowedPages.includes(item.path))
 
   return(
-
     <>
       <aside
         className={`sidebar ${collapsed ? "collapsed" : ""}`}
@@ -185,7 +194,7 @@ export default function Sidebar(){
 
         <nav className="menuArea">
           {allowedMenu.map(item => {
-            const active = pathname === item.path
+            const active = pathname.startsWith(item.path)
             return(
               <div
                 key={item.path}
@@ -223,7 +232,6 @@ export default function Sidebar(){
 
       </aside>
 
-      {/* RENEW MODAL (Aparece faltando 2 minutos) */}
       {showRenewModal && (
         <div className="sidebarModalOverlay">
           <div className="sidebarCorporateModal">
@@ -260,7 +268,5 @@ export default function Sidebar(){
       )}
 
     </>
-
   )
-
 }
