@@ -1,0 +1,138 @@
+/* src/app/(system)/operators/history/[id]/components/HistoryForm.css */
+
+.formCard {
+  background: #ffffff;
+  border-top: 6px solid #d40000;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.formCard h2 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111111;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inputGroup label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555555;
+}
+
+.corporateInput {
+  padding: 12px 14px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  background: #f9f9f9;
+  color: #333333;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.corporateInput:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: #d40000;
+  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
+}
+
+.primaryButton {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #d40000;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: #b30000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
+}
+
+.primaryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.mt-3 {
+  margin-top: 16px;
+}
+
+/* AVALIAÇÃO DE SKILLS */
+.assessmentList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 8px;
+  background: #fafafa;
+}
+
+.assessmentRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid #f0f0f0;
+}
+
+.assessmentInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.assName {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.assDiffBadge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.diff-simple { background: #e8f5e9; color: #2e7d32; }
+.diff-medium { background: #fff8e1; color: #f57c00; }
+.diff-complex { background: #ffebee; color: #c62828; }
+
+.slimSelect {
+  padding: 6px 10px;
+  font-size: 13px;
+  width: 180px;
+  background: #fdfdfd;
+}

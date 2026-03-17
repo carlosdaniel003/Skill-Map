@@ -1,4 +1,5 @@
 // src/app/(system)/attendance/components/AttendanceLegend.tsx
+import "./AttendanceLegend.css"
 
 export default function AttendanceLegend() {
   return (

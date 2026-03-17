@@ -17,9 +17,9 @@ import {
 import { supabase } from "@/services/database/supabaseClient"
 import { useDashboardFilters } from "../context/DashboardFilterContext"
 
-interface Skill{
-  label:string
-  value:number
+interface Skill {
+  label: string
+  value: number
 }
 
 const CATEGORIES = [
@@ -32,174 +32,182 @@ const CATEGORIES = [
   "ARCON"
 ]
 
-export default function LineSkillsRadar(){
+export default function LineSkillsRadar() {
 
   const { filters } = useDashboardFilters()
 
-  const [mode,setMode] = useState<"skills" | "categories" | "models">("skills")
-  const [data,setData] = useState<Skill[]>([])
+  const [mode, setMode] = useState<"skills" | "categories" | "models">("skills")
+  const [data, setData] = useState<Skill[]>([])
+  const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(()=>{
+  useEffect(() => {
     loadData()
-  },[filters.linha,mode])
+  }, [filters.linha, mode])
 
-  async function loadData(){
+  async function loadData() {
 
-    if(!filters.linha){
+    if (!filters.linha) {
       setData([])
       return
     }
 
-    /* ------------------------------------------------ */
-    /* MODO HABILIDADES (Apenas a linha filtrada)       */
-    /* ------------------------------------------------ */
-    if(mode === "skills"){
-      const { data:skills,error } = await supabase
-        .from("operator_skills")
-        .select(`
-          skill_level,
-          posto,
-          operators!inner(
-            linha_atual
-          )
-        `)
-        .eq("operators.linha_atual",filters.linha)
+    setIsLoading(true)
 
-      if(error || !skills){
+    try {
+      /* 1. Primeiro pegamos TODOS os operadores que estão AGORA nesta linha */
+      const { data: operatorsInLine, error: opError } = await supabase
+        .from("operators")
+        .select("id")
+        .eq("linha_atual", filters.linha)
+        .eq("ativo", true)
+
+      if (opError || !operatorsInLine || operatorsInLine.length === 0) {
         setData([])
+        setIsLoading(false)
         return
       }
 
-      const map:Record<string,{total:number,count:number}> = {}
+      // Extrai apenas os IDs da equipe atual
+      const teamIds = operatorsInLine.map(op => op.id)
 
-      skills.forEach((row:any)=>{
-        if(!map[row.posto]){
-          map[row.posto] = { total:0,count:0 }
-        }
-        map[row.posto].total += row.skill_level
-        map[row.posto].count++
-      })
 
-      const result:Skill[] = Object.keys(map).map(posto=>({
-        label: posto,
-        value:Number((map[posto].total / map[posto].count).toFixed(2))
-      }))
+      /* ------------------------------------------------ */
+      /* MODO HABILIDADES (Skills Atuais da Equipe)       */
+      /* ------------------------------------------------ */
+      if (mode === "skills") {
+        // Pega as skills desses operadores na linha atual
+        const { data: skills, error } = await supabase
+          .from("operator_skills")
+          .select("posto, skill_level")
+          .in("operator_id", teamIds)
 
-      setData(result)
-    }
+        if (error || !skills) throw error
 
-    /* ------------------------------------------------ */
-    /* MODO CATEGORIAS (Fábrica Inteira)                */
-    /* ------------------------------------------------ */
-    if(mode === "categories"){
-      // 1. Pegar a categoria de cada linha para fazer o "de-para"
-      const { data: linesData } = await supabase.from("production_lines").select("nome, categoria")
-      const lineCategoryMap: Record<string, string> = {}
-      
-      if(linesData){
-        linesData.forEach(l => {
-          if(l.nome && l.categoria) lineCategoryMap[l.nome] = l.categoria
+        const map: Record<string, { total: number, count: number }> = {}
+
+        skills.forEach((row: any) => {
+          if (!map[row.posto]) {
+            map[row.posto] = { total: 0, count: 0 }
+          }
+          map[row.posto].total += row.skill_level
+          map[row.posto].count++
         })
+
+        const result: Skill[] = Object.keys(map).map(posto => ({
+          label: posto,
+          value: Number((map[posto].total / map[posto].count).toFixed(2))
+        }))
+
+        setData(result)
       }
 
-      // 2. Pegar os dados de TODOS os operadores
-      const { data: allSkills, error } = await supabase
-        .from("operator_skills")
-        .select(`skill_level, operators!inner(linha_atual)`)
 
-      if(error || !allSkills){
-        setData([])
-        return
-      }
-
-      const map:Record<string,{total:number,count:number}> = {}
-      CATEGORIES.forEach(cat=>{
-        map[cat] = { total:0,count:0 }
-      })
-
-      // 3. Agrupar por categoria usando o de-para
-      allSkills.forEach((row:any)=>{
-        const linha = row.operators?.linha_atual
-        if(!linha) return
-
-        const cat = lineCategoryMap[linha]
-        if(cat && map[cat] !== undefined){
-          map[cat].total += row.skill_level
-          map[cat].count++
+      /* ------------------------------------------------ */
+      /* MODO CATEGORIAS (Bagagem da Equipe)              */
+      /* ------------------------------------------------ */
+      if (mode === "categories") {
+        // 1. Pega as linhas e suas categorias para o De-Para
+        const { data: linesData } = await supabase.from("production_lines").select("nome, categoria")
+        const lineCategoryMap: Record<string, string> = {}
+        if (linesData) {
+          linesData.forEach(l => {
+            if (l.nome && l.categoria) lineCategoryMap[l.nome] = l.categoria
+          })
         }
-      })
 
-      const result:Skill[] = CATEGORIES.map(cat=>({
-        label:cat,
-        value: map[cat].count > 0 ? Number((map[cat].total / map[cat].count).toFixed(2)) : 0
-      }))
+        // 2. Busca TODA a experiência histórica DESSA EQUIPE
+        const { data: teamExperience, error } = await supabase
+          .from("operator_experience")
+          .select("linha, skill_level")
+          .in("operator_id", teamIds)
+          .eq("ativo", true)
 
-      setData(result)
-    }
+        if (error || !teamExperience) throw error
 
-    /* ------------------------------------------------ */
-    /* MODO MODELOS (Fábrica Inteira)                   */
-    /* ------------------------------------------------ */
-    if(mode === "models"){
-      // 1. Pegar o nome de todos os modelos
-      const { data:models,error:modelError } = await supabase
-        .from("production_lines")
-        .select("nome")
+        const map: Record<string, { total: number, count: number }> = {}
+        CATEGORIES.forEach(cat => {
+          map[cat] = { total: 0, count: 0 }
+        })
 
-      if(modelError || !models){
-        setData([])
-        return
+        // 3. Agrupa as experiências por categoria
+        teamExperience.forEach((row: any) => {
+          const linhaHistorica = row.linha
+          if (!linhaHistorica) return
+
+          const cat = lineCategoryMap[linhaHistorica]
+          // Se a linha tem categoria mapeada e ela está na nossa lista de CATEGORIES
+          if (cat && map[cat] !== undefined) {
+            map[cat].total += row.skill_level
+            map[cat].count++
+          }
+        })
+
+        const result: Skill[] = CATEGORIES.map(cat => ({
+          label: cat,
+          value: map[cat].count > 0 ? Number((map[cat].total / map[cat].count).toFixed(2)) : 0
+        }))
+
+        setData(result)
       }
 
-      // 2. Pegar as skills de TODOS os operadores
-      const { data: allSkills, error } = await supabase
-        .from("operator_skills")
-        .select(`skill_level, operators!inner(linha_atual)`)
 
-      if(error || !allSkills){
-        setData([])
-        return
+      /* ------------------------------------------------ */
+      /* MODO MODELOS (Bagagem Específica da Equipe)      */
+      /* ------------------------------------------------ */
+      if (mode === "models") {
+        // 1. Pegar todas as experiências históricas DESSA EQUIPE
+        const { data: teamExperience, error } = await supabase
+          .from("operator_experience")
+          .select("linha, skill_level")
+          .in("operator_id", teamIds)
+          .eq("ativo", true)
+
+        if (error || !teamExperience) throw error
+
+        const map: Record<string, { total: number, count: number }> = {}
+
+        // Agrupa as experiências pelo modelo (linha) que eles trabalharam
+        teamExperience.forEach((row: any) => {
+          const modeloHistorico = row.linha
+          if (!modeloHistorico) return
+          
+          if (!map[modeloHistorico]) map[modeloHistorico] = { total: 0, count: 0 }
+          
+          map[modeloHistorico].total += row.skill_level
+          map[modeloHistorico].count++
+        })
+
+        // Retorna apenas os modelos que essa equipe já trabalhou e ordena pelo maior nível
+        const result: Skill[] = Object.keys(map).map(model => ({
+          label: model,
+          value: Number((map[model].total / map[model].count).toFixed(2))
+        })).sort((a, b) => b.value - a.value)
+
+        setData(result)
       }
 
-      const map:Record<string,{total:number,count:number}> = {}
-
-      models.forEach((m:any)=>{
-        map[m.nome] = { total:0,count:0 }
-      })
-
-      // 3. Agrupar por modelo/linha
-      allSkills.forEach((row:any)=>{
-        const linha = row.operators?.linha_atual
-        if(!linha) return
-        
-        if(!map[linha]) map[linha] = { total:0,count:0 }
-        map[linha].total += row.skill_level
-        map[linha].count++
-      })
-
-      const result:Skill[] = Object.keys(map).map(model=>({
-        label:model,
-        value: map[model].count > 0 ? Number((map[model].total / map[model].count).toFixed(2)) : 0
-      }))
-
-      setData(result)
+    } catch (err) {
+      console.error("Erro ao carregar dados do Radar:", err)
+      setData([])
+    } finally {
+      setIsLoading(false)
     }
   }
 
   /* ----------------------------- */
   /* ESTADO SEM LINHA (EMPTY STATE)*/
   /* ----------------------------- */
-  if(!filters.linha){
-    return(
+  if (!filters.linha) {
+    return (
       <div className="corporateCard radarCard emptyRadarCard">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="emptyIcon">
-          <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/>
-          <line x1="12" y1="22" x2="12" y2="15.5"/>
-          <polyline points="22 8.5 12 15.5 2 8.5"/>
-          <polyline points="2 15.5 12 8.5 22 15.5"/>
-          <line x1="12" y1="2" x2="12" y2="8.5"/>
+          <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2" />
+          <line x1="12" y1="22" x2="12" y2="15.5" />
+          <polyline points="22 8.5 12 15.5 2 8.5" />
+          <polyline points="2 15.5 12 8.5 22 15.5" />
+          <line x1="12" y1="2" x2="12" y2="8.5" />
         </svg>
-        <p>Selecione uma linha de produção no filtro acima para visualizar o radar de skills coletivo.</p>
+        <p>Selecione uma linha de produção no filtro acima para visualizar o radar de skills e o histórico da equipe.</p>
       </div>
     )
   }
@@ -208,8 +216,8 @@ export default function LineSkillsRadar(){
   /* CORES DO GRÁFICO              */
   /* ----------------------------- */
   const getChartColor = () => {
-    if(mode === "skills") return "#d40000" // Vermelho corporativo
-    if(mode === "categories") return "#3b82f6" // Azul
+    if (mode === "skills") return "#d40000" // Vermelho
+    if (mode === "categories") return "#3b82f6" // Azul
     return "#f59e0b" // Laranja
   }
 
@@ -218,91 +226,108 @@ export default function LineSkillsRadar(){
   /* ----------------------------- */
   /* RENDER                        */
   /* ----------------------------- */
-  return(
+  return (
     <div className="corporateCard radarCard">
 
       <div className="radarHeader">
-        <h3>Radar da Linha — <span>{filters.linha}</span></h3>
+        <h3>
+          Radar da Equipe — <span>{filters.linha}</span>
+        </h3>
 
         <div className="radarModeToggle">
           <button
             className={`toggleBtn ${mode === "skills" ? "active red" : ""}`}
-            onClick={()=>setMode("skills")}
+            onClick={() => setMode("skills")}
+            title="Mostra a proficiência da equipe nos postos de trabalho atuais"
           >
-            Habilidades
+            Postos Atuais
           </button>
 
           <button
             className={`toggleBtn ${mode === "categories" ? "active blue" : ""}`}
-            onClick={()=>setMode("categories")}
+            onClick={() => setMode("categories")}
+            title="Mostra a experiência prévia da equipe por família de produtos (BBS, MW, etc)"
           >
-            Categorias
+            Exp. por Categoria
           </button>
 
           <button
             className={`toggleBtn ${mode === "models" ? "active orange" : ""}`}
-            onClick={()=>setMode("models")}
+            onClick={() => setMode("models")}
+            title="Mostra em quais outros modelos específicos essa equipe já trabalhou"
           >
-            Modelos
+            Exp. por Modelo
           </button>
         </div>
       </div>
 
       <div className="radarChartContainer">
-        <ResponsiveContainer width="100%" height="100%">
-          <RadarChart data={data}>
-            <PolarGrid stroke="#e0e0e0" />
-            <PolarAngleAxis
-              dataKey="label"
-              tick={{
-                fill:"#555555",
-                fontSize:12,
-                fontWeight:600
-              }}
-            />
-            <PolarRadiusAxis
-              angle={30}
-              domain={[0,5]}
-              tick={{fill:"#888888"}}
-            />
-            
-            {/* Tooltip super elegante ao passar o mouse */}
-            <Tooltip 
-              contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-              itemStyle={{ fontWeight: 'bold', color: chartColor }}
-              formatter={(value) => [value, "Média"]}
-            />
+        {isLoading ? (
+          <div className="radarLoading">
+            <div className="corporateSpinner small"></div>
+          </div>
+        ) : data.length === 0 ? (
+          <div className="emptyRadarData">
+             Nenhuma experiência registrada para esta equipe neste modo.
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%">
+            <RadarChart data={data}>
+              <PolarGrid stroke="#e0e0e0" />
+              <PolarAngleAxis
+                dataKey="label"
+                tick={{
+                  fill: "#555555",
+                  fontSize: 11,
+                  fontWeight: 600
+                }}
+              />
+              <PolarRadiusAxis
+                angle={30}
+                domain={[0, 5]}
+                tick={{ fill: "#888888" }}
+              />
 
-            <Radar
-              name="Média"
-              dataKey="value"
-              stroke={chartColor}
-              strokeWidth={2}
-              fill={chartColor}
-              fillOpacity={0.4}
-              animationDuration={600}
-            />
-          </RadarChart>
-        </ResponsiveContainer>
+              <Tooltip
+                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                itemStyle={{ fontWeight: 'bold', color: chartColor }}
+                formatter={(value) => [value, "Média da Equipe (Lvl)"]}
+              />
+
+              <Radar
+                name="Média da Equipe"
+                dataKey="value"
+                stroke={chartColor}
+                strokeWidth={2}
+                fill={chartColor}
+                fillOpacity={0.4}
+                animationDuration={600}
+              />
+            </RadarChart>
+          </ResponsiveContainer>
+        )}
       </div>
 
       {/* ----------------------------- */}
       <div className="skillsAverageTable">
-        <h4>Média de Habilidades</h4>
+        <h4>{mode === "skills" ? "Média nos Postos" : "Histórico da Equipe (Média Lvl)"}</h4>
 
         <div className="skillsList">
-          {data.map(skill=>{
-            
-            // Cores de status de performance para os números
-            let color = "#2e7d32" // Verde (bom)
-            if(skill.value < 2) color = "#d40000" // Vermelho (crítico)
-            else if(skill.value < 3) color = "#f59e0b" // Amarelo (atenção)
+          {data.length === 0 && !isLoading && (
+            <span style={{fontSize: 13, color: '#888'}}>Sem dados para exibir.</span>
+          )}
+          {data.map(skill => {
 
-            return(
+            let color = "#2e7d32" // Verde (bom)
+            if (skill.value === 0) color = "#cccccc" // Cinza (Sem exp)
+            else if (skill.value < 2) color = "#d40000" // Vermelho (baixo)
+            else if (skill.value < 3) color = "#f59e0b" // Amarelo (médio)
+
+            return (
               <div key={skill.label} className="skillRow">
                 <span className="skillName">{skill.label}</span>
-                <span className="skillValue" style={{color}}>
-                  {skill.value}
+                <span className="skillValue" style={{ color }}>
+                  {skill.value > 0 ? skill.value : "-"}
                 </span>
               </div>
             )

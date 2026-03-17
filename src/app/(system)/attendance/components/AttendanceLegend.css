@@ -1,0 +1,75 @@
+/* src/app/(system)/attendance/components/AttendanceLegend.css */
+
+.attendanceLegend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 12px 20px;
+  margin-bottom: 24px;
+}
+
+.legendGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.legendBadge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.legendItems {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: #555555;
+}
+
+.legendItems strong {
+  color: #111111;
+  font-weight: 700;
+}
+
+.legendDivider {
+  width: 1px;
+  height: 24px;
+  background-color: #dcdcdc;
+}
+
+/* CORES CHAPADAS DAS BADGES NA LEGENDA */
+.legendBadge.status-green, .legendBadge.status-p { background-color: #16a34a !important; color: #fff !important; }
+.legendBadge.status-he { background-color: #0d9488 !important; color: #fff !important; }
+.legendBadge.status-red, .legendBadge.status-f { background-color: #dc2626 !important; color: #fff !important; }
+.legendBadge.status-a { background-color: #be123c !important; color: #fff !important; }
+.legendBadge.status-s { background-color: #f43f5e !important; color: #fff !important; }
+.legendBadge.status-yellow, .legendBadge.status-fj { background-color: #ea580c !important; color: #fff !important; }
+.legendBadge.status-aj { background-color: #d97706 !important; color: #fff !important; }
+.legendBadge.status-sj { background-color: #ca8a04 !important; color: #fff !important; }
+.legendBadge.status-at { background-color: #9333ea !important; color: #fff !important; }
+.legendBadge.status-blue, .legendBadge.status-fe { background-color: #2563eb !important; color: #fff !important; }
+.legendBadge.status-lp { background-color: #0891b2 !important; color: #fff !important; }
+.legendBadge.status-lm { background-color: #db2777 !important; color: #fff !important; }
+
+/* RESPONSIVIDADE PARA A LEGENDA */
+@media (max-width: 1200px) {
+  .attendanceLegend {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .legendDivider {
+    display: none;
+  }
+  
+  .legendItems {
+    flex-wrap: wrap;
+  }
+}

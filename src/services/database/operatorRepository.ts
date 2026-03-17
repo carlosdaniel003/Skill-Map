@@ -744,3 +744,42 @@ export async function updateOperator(operator:Operator){
   }
 
 }
+
+/* =========================================
+   MATRIZ DE DIFICULDADE (LINHA x SKILL)
+   ========================================= */
+
+export async function getLineSkillDifficulties(linha: string) {
+  const { data, error } = await supabase
+    .from("line_skill_difficulty")
+    .select("posto, dificuldade")
+    .eq("linha", linha)
+
+  if (error) {
+    console.error("Erro ao buscar dificuldades:", error)
+    return {}
+  }
+
+  // Transforma o array num objeto fácil de ler: { "Parafusamento": 3, "Solda": 5 }
+  const map: Record<string, number> = {}
+  data?.forEach(row => {
+    map[row.posto] = row.dificuldade
+  })
+  
+  return map
+}
+
+export async function saveLineSkillDifficulty(linha: string, posto: string, dificuldade: number) {
+  const { error } = await supabase
+    .from("line_skill_difficulty")
+    .upsert({
+      linha,
+      posto,
+      dificuldade
+    }, { onConflict: "linha, posto" })
+
+  if (error) {
+    console.error("Erro ao salvar dificuldade:", error)
+    throw error
+  }
+}

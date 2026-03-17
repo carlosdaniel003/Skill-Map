@@ -1,0 +1,113 @@
+/* src/app/(system)/attendance/components/AttendanceFilters.css */
+
+.attendanceFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  max-width: 300px;
+}
+
+.attendanceFilters label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555555;
+}
+
+.corporateInput {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #f9f9f9;
+  font-size: 14px;
+  color: #333333;
+  outline: none;
+}
+
+.corporateInput:focus {
+  border-color: #d40000;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
+}
+
+/* AUTOCOMPLETE DE BUSCA (CAIXA SUSPENSA) */
+.searchGroup {
+  position: relative;
+}
+
+.autocompleteDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #d40000;
+  border-radius: 6px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.autocompleteItem {
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
+}
+
+.autocompleteItem:last-child {
+  border-bottom: none;
+}
+
+.autocompleteItem:hover {
+  background: #fdf5f5;
+}
+
+.autocompleteItem.empty {
+  color: #888888;
+  font-style: italic;
+  cursor: default;
+  justify-content: center;
+}
+
+.autocompleteItem.empty:hover {
+  background: #ffffff;
+}
+
+.autoMatricula {
+  font-size: 11px;
+  font-weight: 700;
+  color: #d40000;
+  background: rgba(212, 0, 0, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.autoInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.autoNome {
+  font-size: 13px;
+  color: #333333;
+  font-weight: 600;
+}
+
+.autoLinha {
+  font-size: 11px;
+  color: #888;
+}

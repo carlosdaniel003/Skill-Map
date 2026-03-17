@@ -2,8 +2,11 @@
 "use client"
 
 import "./OperatorRow.css"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+
+// Importamos a função que busca a dificuldade no banco
+import { getLineSkillDifficulties } from "@/services/database/operatorRepository"
 
 interface Props{
   operator:any
@@ -27,9 +30,23 @@ export default function OperatorRow({
   const router = useRouter()
 
   const [editing,setEditing] = useState(false)
+  const [dificuldade, setDificuldade] = useState<number | null>(null)
 
   const [linha,setLinha] = useState(operator.linha_atual || "")
   const [posto,setPosto] = useState(operator.posto_atual || "")
+
+  // Busca a dificuldade atual daquele posto naquela linha específica
+  useEffect(() => {
+    async function fetchDifficulty() {
+      if (operator.linha_atual && operator.posto_atual) {
+        const diffs = await getLineSkillDifficulties(operator.linha_atual)
+        setDificuldade(diffs[operator.posto_atual] || 1) // Se não tiver configurado, assume 1 (Simples)
+      } else {
+        setDificuldade(null)
+      }
+    }
+    fetchDifficulty()
+  }, [operator.linha_atual, operator.posto_atual])
 
   function handleSave(){
     onChangeLine(operator.id,linha,posto)
@@ -50,6 +67,14 @@ export default function OperatorRow({
     router.push(`/operators/skills/${operator.id}`)
   }
 
+  // Função utilitária para renderizar a etiqueta com a cor certa
+  function renderDifficultyBadge(level: number) {
+    if (level === 1) return <span className="rowDiffBadge diff-simple">Simples</span>
+    if (level === 2) return <span className="rowDiffBadge diff-medium">Médio</span>
+    if (level === 3) return <span className="rowDiffBadge diff-complex">Complexo</span>
+    return null
+  }
+
   return(
 
     <tr className={editing ? "editingRow" : ""}>
@@ -58,6 +83,7 @@ export default function OperatorRow({
 
       <td className="operatorName">{operator.nome}</td>
 
+      {/* COLUNA DO MODELO (LINHA) */}
       <td>
         {editing ? (
           <select
@@ -79,6 +105,7 @@ export default function OperatorRow({
         )}
       </td>
 
+      {/* COLUNA DO POSTO (SKILL) + DIFICULDADE */}
       <td>
         {editing ? (
           <select
@@ -94,9 +121,13 @@ export default function OperatorRow({
             ))}
           </select>
         ) : (
-          <span className={!operator.posto_atual ? "emptyText" : ""}>
-            {operator.posto_atual || "Não alocado"}
-          </span>
+          <div className="postoContainer">
+            <span className={!operator.posto_atual ? "emptyText" : "postoName"}>
+              {operator.posto_atual || "Não alocado"}
+            </span>
+            {/* Renderiza a etiqueta de dificuldade ao lado do posto */}
+            {operator.posto_atual && dificuldade && renderDifficultyBadge(dificuldade)}
+          </div>
         )}
       </td>
 

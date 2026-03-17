@@ -31,85 +31,6 @@
   font-size: 14px;
 }
 
-/* CARDS CORPORATIVOS */
-.operatorsPage .corporateCard {
-  background: #ffffff;
-  border-top: 6px solid #d40000;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-}
-
-.corporateCard h2 {
-  margin: 0 0 20px 0;
-  font-size: 18px;
-  font-weight: 700;
-  color: #111111;
-}
-
-/* GRID DE AÇÕES (Formulário e Filtros) */
-.actionPanels {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
-
-.formGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-/* INPUTS E SELECTS CORPORATIVOS */
-.corporateInput {
-  padding: 12px 14px;
-  border-radius: 6px;
-  border: 1px solid #e0e0e0;
-  background: #f9f9f9;
-  color: #333333;
-  font-size: 14px;
-  transition: all 0.2s ease;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.corporateInput:focus {
-  outline: none;
-  background: #ffffff;
-  border-color: #d40000;
-  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
-}
-
-/* BOTÕES */
-.operatorsPage .primaryButton {
-  padding: 12px 16px;
-  border: none;
-  border-radius: 6px;
-  background: #d40000;
-  color: white;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.operatorsPage .primaryButton:hover:not(:disabled) {
-  background: #b30000;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
-}
-
-.operatorsPage .primaryButton:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.operatorsPage .primaryButton.fullWidth {
-  width: 100%;
-}
-
 .operatorsPage .secondaryButton {
   padding: 10px 16px;
   border: 1px solid #e0e0e0;
@@ -127,11 +48,23 @@
   border-color: #cccccc;
 }
 
-.mt-3 {
-  margin-top: 16px;
+/* CARDS CORPORATIVOS (Para cards genéricos que não têm CSS próprio) */
+.operatorsPage .corporateCard {
+  background: #ffffff;
+  border-top: 6px solid #d40000;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 
-/* RESPONSIVIDADE */
+/* GRID DE AÇÕES (Formulário e Filtros) */
+.actionPanels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* RESPONSIVIDADE GERAL */
 @media (max-width: 1024px) {
   .actionPanels {
     grid-template-columns: 1fr;
@@ -139,10 +72,6 @@
 }
 
 @media (max-width: 600px) {
-  .formGrid {
-    grid-template-columns: 1fr;
-  }
-  
   .operatorsPage .pageHeader {
     flex-direction: column;
     align-items: flex-start;
@@ -227,6 +156,24 @@
   gap: 12px;
 }
 
+.primaryButton {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #d40000;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primaryButton:hover {
+  background: #b30000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
+}
+
 .dangerButtonSolid {
   padding: 10px 16px;
   border: none;
@@ -243,4 +190,25 @@
   background: #b30000;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pageFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalEnter {
+  from {
+    transform: translateY(20px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
 }

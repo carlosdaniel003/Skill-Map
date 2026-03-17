@@ -1,0 +1,79 @@
+/* src/app/(system)/attendance/components/AttendanceTable.css */
+
+.tableContainer {
+  width: 100%;
+  max-height: 65vh;
+  overflow: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 1px #e0e0e0;
+}
+
+.excelTable {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: max-content;
+}
+
+/* CABEÇALHO GERAL */
+.excelTable th {
+  background: #f5f5f5;
+  color: #333333;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 12px 8px;
+  border-right: 1px solid #e0e0e0;
+  border-bottom: 2px solid #cccccc;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* CÉLULAS GERAIS */
+.excelTable td {
+  border-right: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0;
+  font-size: 13px;
+  color: #555555;
+  background: #ffffff;
+}
+
+.text-center { text-align: center; }
+.fw-bold { font-weight: 600; color: #111111 !important; }
+
+/* COLUNAS CONGELADAS (QTD, NOME, POSTO, LINHA) */
+.stickyCol {
+  position: sticky;
+  z-index: 5;
+}
+
+.col-id        { left: 0; min-width: 50px; max-width: 50px; background: #fafafa !important; }
+.col-matricula { left: 50px; min-width: 100px; max-width: 100px; background: #ffffff !important; padding: 0 12px !important; }
+.col-nome      { left: 150px; min-width: 250px; max-width: 250px; background: #ffffff !important; padding: 0 12px !important; }
+.col-posto     { left: 400px; min-width: 120px; max-width: 120px; background: #ffffff !important; padding: 0 12px !important; }
+.col-linha     { left: 520px; min-width: 120px; max-width: 120px; background: #ffffff !important; padding: 0 12px !important; border-right: 2px solid #cccccc !important; }
+
+.excelTable th.stickyCol {
+  z-index: 20; 
+  background: #e8e8e8 !important;
+}
+
+/* COLUNA DOS DIAS DO MÊS */
+.dayCol {
+  min-width: 44px;
+  text-align: center;
+}
+
+.dayCol.weekend {
+  background: #eaeaea !important;
+  color: #d40000;
+}
+
+.noDataCell {
+  text-align: center;
+  padding: 32px !important;
+  color: #888888;
+  font-style: italic;
+}

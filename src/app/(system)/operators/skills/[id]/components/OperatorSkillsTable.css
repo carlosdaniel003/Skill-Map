@@ -1,0 +1,152 @@
+/* src/app/(system)/operators/skills/[id]/components/OperatorSkillsTable.css */
+
+.corporateCard {
+  background: #ffffff;
+  border-top: 6px solid #d40000;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.cardHeader {
+  margin-bottom: 20px;
+}
+
+.cardHeader h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111111;
+}
+
+.tableContainer {
+  overflow-x: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+}
+
+.corporateTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.corporateTable th {
+  background: #f9f9f9;
+  color: #555555;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 12px 16px;
+  border-bottom: 2px solid #e0e0e0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.corporateTable td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333333;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.levelColumn {
+  width: 250px;
+}
+
+.corporateSelect {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  background: #f9f9f9;
+  color: #333333;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.corporateSelect:focus {
+  background: #ffffff;
+  border-color: #d40000;
+  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px !important;
+  color: #888888 !important;
+  font-style: italic;
+  background: #fafafa;
+}
+
+.fontWeight500 {
+  font-weight: 500;
+}
+
+/* RODAPÉ DE AÇÃO (ALTERAÇÕES NÃO SALVAS) */
+.actionFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff8e1;
+  border: 1px solid #ffe0b2;
+  padding: 16px 24px;
+  border-radius: 8px;
+  margin-top: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.warningText {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f57c00;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 12px;
+}
+
+.saveButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Adicione no final de src/app/(system)/operators/skills/[id]/components/OperatorSkillsTable.css */
+
+.cardSubtitle {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.postoInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.diffBadge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.diff-simple { background: #e8f5e9; color: #2e7d32; }
+.diff-medium { background: #fff8e1; color: #f57c00; }
+.diff-complex { background: #ffebee; color: #c62828; }

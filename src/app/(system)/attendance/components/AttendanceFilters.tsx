@@ -1,5 +1,6 @@
 // src/app/(system)/attendance/components/AttendanceFilters.tsx
 import { useState, useRef, useEffect } from "react"
+import "./AttendanceFilters.css"
 
 const MESES = [
   "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",

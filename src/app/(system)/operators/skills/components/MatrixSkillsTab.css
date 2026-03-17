@@ -1,0 +1,94 @@
+/* src/app/(system)/operators/skills/components/MatrixSkillsTab.css */
+
+.matrixCard {
+  min-height: 400px;
+}
+
+.matrixHeader {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px dashed #e0e0e0;
+}
+
+.difficultySelector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.diffBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.diffBtn:hover {
+  background: #f0f0f0;
+  border-color: #999;
+}
+
+/* Cores específicas para cada nível quando Ativo */
+.diffBtn.active {
+  border-color: transparent;
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.diffBtn.active.level-1 { background: #4caf50; } /* Verde - Simples */
+.diffBtn.active.level-2 { background: #ffb300; } /* Laranja - Médio */
+.diffBtn.active.level-3 { background: #d32f2f; } /* Vermelho - Complexo */
+
+.diffLabel {
+  margin-left: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  min-width: 100px;
+}
+
+/* PAINEL DE AVISO (ALTERAÇÕES NÃO SALVAS) */
+.actionFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff8e1;
+  border: 1px solid #ffe0b2;
+  padding: 16px 24px;
+  border-radius: 8px;
+  margin-top: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.warningText {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f57c00;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 12px;
+}
+
+.saveButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

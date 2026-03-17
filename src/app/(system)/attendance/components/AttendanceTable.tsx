@@ -1,5 +1,6 @@
 // src/app/(system)/attendance/components/AttendanceTable.tsx
 import AttendanceCell from "./AttendanceCell"
+import "./AttendanceTable.css"
 
 interface Day {
   day: number

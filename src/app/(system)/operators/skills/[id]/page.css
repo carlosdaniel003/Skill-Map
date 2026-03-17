@@ -56,142 +56,9 @@
   font-size: 14px;
 }
 
-/* CARD CORPORATIVO */
-.corporateCard {
-  background: #ffffff;
-  border-top: 6px solid #d40000;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.cardHeader h2 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 700;
-  color: #111111;
-}
-
-/* TABELA */
-.tableContainer {
-  overflow-x: auto;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-}
-
-.corporateTable {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-
-.corporateTable th {
-  background: #f9f9f9;
-  color: #555555;
-  font-weight: 600;
-  font-size: 13px;
-  padding: 12px 16px;
-  border-bottom: 2px solid #e0e0e0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.corporateTable td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #f0f0f0;
-  color: #333333;
-  font-size: 14px;
-  vertical-align: middle;
-}
-
-.corporateTable tr:last-child td {
-  border-bottom: none;
-}
-
-.corporateTable tr:hover td {
-  background: #fafafa;
-}
-
-.fontWeight500 {
-  font-weight: 500;
-}
-
-.levelColumn {
-  width: 250px;
-}
-
-.emptyState {
-  text-align: center;
-  padding: 40px !important;
-  color: #888888 !important;
-  font-style: italic;
-  background: #fafafa;
-}
-
-/* SELECT */
-.corporateSelect {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 6px;
-  border: 1px solid #cccccc;
-  background: #ffffff;
-  color: #333333;
-  font-size: 14px;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.corporateSelect:focus {
-  outline: none;
-  border-color: #d40000;
-  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
-}
-
-/* RODAPÉ DE AÇÕES */
-.actionFooter {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 16px;
-  padding-top: 20px;
-  border-top: 1px solid #e0e0e0;
-  animation: slideUp 0.3s ease-out;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.warningText {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #d40000;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.buttonGroup {
-  display: flex;
-  gap: 12px;
-}
-
-/* BOTÕES */
+/* BOTÕES GERAIS COMPARTILHADOS */
 .primaryButton {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
+  padding: 12px 16px;
   border: none;
   border-radius: 6px;
   background: #d40000;
@@ -202,27 +69,19 @@
   transition: all 0.2s ease;
 }
 
-.primaryButton:hover {
+.primaryButton:hover:not(:disabled) {
   background: #b30000;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
 }
 
-.saveButton {
-  background: #2e7d32; /* Verde executivo para confirmar salvar */
-}
-
-.saveButton:hover {
-  background: #1b5e20;
-}
-
 .secondaryButton {
-  padding: 12px 20px;
+  padding: 10px 16px;
   border: 1px solid #e0e0e0;
   border-radius: 6px;
   background: #ffffff;
   color: #333333;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -233,11 +92,25 @@
   border-color: #cccccc;
 }
 
+.dangerButtonSolid {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #d40000;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
 
-/* =========================================
-   MODAIS CORPORATIVOS (Substituindo alertas nativos)
-   ========================================= */
+.dangerButtonSolid:hover {
+  background: #b30000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
+}
 
+/* MODAL CORPORATIVO */
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -250,14 +123,14 @@
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  animation: fadeIn 0.2s ease-out;
+  animation: fadeInModal 0.2s ease-out;
 }
 
 .corporateModal {
   width: 100%;
   max-width: 420px;
   background: #ffffff;
-  border-top: 6px solid #d40000; /* Mantém o padrão de atenção/perigo */
+  border-top: 6px solid #d40000;
   border-radius: 8px;
   padding: 24px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -266,9 +139,8 @@
   animation: modalEnter 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* Variante de warning (Pode ser alaranjada se preferir, mas vamos manter o vermelho da marca) */
 .corporateModal.warningModal {
-  border-top-color: #d40000; 
+  border-top-color: #f57c00;
 }
 
 .modalHeader {
@@ -289,8 +161,8 @@
 }
 
 .modalIcon.warningIcon {
-  background: #fff0f0;
-  color: #d40000;
+  background: #fff8e1;
+  color: #f57c00;
 }
 
 .modalHeader h3 {
@@ -305,18 +177,10 @@
 }
 
 .modalBody p {
-  margin: 0 0 12px 0;
+  margin: 0 0 10px 0;
   font-size: 14px;
   color: #555555;
   line-height: 1.5;
-}
-
-.modalBody p:last-child {
-  margin-bottom: 0;
-}
-
-.modalBody strong {
-  color: #d40000;
 }
 
 .modalFooter {
@@ -325,34 +189,59 @@
   gap: 12px;
 }
 
-.dangerButtonSolid {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  background: #fff0f0;
-  color: #d40000;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+@keyframes pageFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.dangerButtonSolid:hover {
-  background: #ffe0e0;
-}
-
-@keyframes fadeIn {
+@keyframes fadeInModal {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
 @keyframes modalEnter {
-  from {
-    transform: translateY(20px) scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
+  from { transform: translateY(20px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* =========================================
+   LOADING STATE (SPINNER CORPORATIVO)
+   ========================================= */
+
+.loadingCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 350px;
+  gap: 16px;
+  text-align: center;
+}
+
+.loadingCard p {
+  color: #666666;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  animation: pulseText 1.5s infinite ease-in-out;
+}
+
+.corporateSpinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f0f0f0;
+  border-top: 4px solid #d40000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulseText {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
 }

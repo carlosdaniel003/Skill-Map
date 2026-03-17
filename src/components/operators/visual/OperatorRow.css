@@ -127,3 +127,29 @@
   background: #ffebee;
   color: #c62828;
 }
+
+/* src/components/operators/visual/OperatorRow.css */
+
+.postoContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.postoName {
+  font-weight: 500;
+  color: #333;
+}
+
+.rowDiffBadge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.diff-simple { background: #e8f5e9; color: #2e7d32; }
+.diff-medium { background: #fff8e1; color: #f57c00; }
+.diff-complex { background: #ffebee; color: #c62828; }

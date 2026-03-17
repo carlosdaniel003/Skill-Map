@@ -1,0 +1,161 @@
+/* src/app/(system)/operators/skills/components/BaseSkillsTab.css */
+
+.skillsGrid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .skillsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Row hover e efeito de arrastar */
+.dragRow {
+  cursor: grab;
+  transition: background-color 0.2s ease;
+}
+
+.dragRow:active {
+  cursor: grabbing;
+  opacity: 0.6;
+  background-color: #f5f5f5;
+}
+
+.dragRow:hover td {
+  background: #fafafa;
+}
+
+.dragCol {
+  width: 60px;
+  text-align: center;
+}
+
+.dragHandle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #888888;
+  font-weight: 600;
+  user-select: none;
+}
+
+.dragHandle svg {
+  color: #cccccc;
+}
+
+/* Lógica de linhas inativas */
+.inactiveRow td {
+  background: #fafafa;
+  color: #a0a0a0;
+}
+
+/* BADGES DE STATUS (Ativo/Inativo) */
+.statusBadge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.badge-active {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.badge-inactive {
+  background: #ffebee;
+  color: #c62828;
+}
+
+/* AÇÕES DA TABELA */
+.actionColumn {
+  text-align: right;
+  width: 1%;
+  white-space: nowrap;
+}
+
+.actionGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* BOTÕES DE ÍCONE (Edição) */
+.actionIconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.saveBtn {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+.saveBtn:hover {
+  background: #c8e6c9;
+  color: #1b5e20;
+}
+
+.cancelBtn {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  color: #666666;
+}
+.cancelBtn:hover {
+  background: #f5f5f5;
+  color: #333333;
+}
+
+/* Botões Pequenos (Editar / Desativar) */
+.smallButton {
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.secondaryButton {
+  border: 1px solid #e0e0e0;
+  background: #ffffff;
+  color: #333333;
+}
+.secondaryButton:hover {
+  background: #f9f9f9;
+  border-color: #cccccc;
+}
+
+.dangerButton {
+  border: 1px solid #ffcccc;
+  background: #fff0f0;
+  color: #d40000;
+}
+.dangerButton:hover {
+  background: #d40000;
+  color: #ffffff;
+}
+
+.successButton {
+  border: 1px solid #c8e6c9;
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+.successButton:hover {
+  background: #2e7d32;
+  color: #ffffff;
+}

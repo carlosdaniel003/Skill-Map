@@ -1,0 +1,150 @@
+/* src/app/(system)/operators/history/[id]/components/HistoryTable.css */
+
+.tableCard {
+  background: #ffffff;
+  border-top: 6px solid #d40000;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.cardHeader h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111111;
+}
+
+.tableActions {
+  display: flex;
+  gap: 12px;
+}
+
+.secondaryButton {
+  padding: 10px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #333333;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.secondaryButton:hover {
+  background: #f9f9f9;
+  border-color: #cccccc;
+}
+
+.iconTextButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tableContainer {
+  overflow-x: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+}
+
+.corporateTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.corporateTable th {
+  background: #f9f9f9;
+  color: #555555;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 12px 16px;
+  border-bottom: 2px solid #e0e0e0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.corporateTable td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333333;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.corporateTable tr:last-child td {
+  border-bottom: none;
+}
+
+.corporateTable tr:hover td {
+  background: #fafafa;
+}
+
+.inactiveRow td {
+  opacity: 0.5;
+  background: #fafafa;
+}
+
+.fontWeight500 {
+  font-weight: 500;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px !important;
+  color: #888888 !important;
+  font-style: italic;
+  background: #fafafa;
+}
+
+/* ESTILOS DE SKILL (BADGE) */
+.skillBadge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #f0f0f0;
+  color: #555555;
+}
+
+.skillBadge.level-1 { background: #ffebee; color: #c62828; }
+.skillBadge.level-2 { background: #fff3e0; color: #ef6c00; }
+.skillBadge.level-3 { background: #e3f2fd; color: #1565c0; }
+.skillBadge.level-4 { background: #e8f5e9; color: #2e7d32; }
+.skillBadge.level-5 { background: #f3e5f5; color: #6a1b9a; }
+
+/* AÇÕES DA TABELA */
+.actionColumn {
+  text-align: center;
+  width: 1%;
+  white-space: nowrap;
+}
+
+.actionIconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.deactivateBtn { color: #888888; }
+.deactivateBtn:hover { background: #ffebee; color: #c62828; }
+
+.reactivateBtn { color: #888888; }
+.reactivateBtn:hover { background: #e8f5e9; color: #2e7d32; }

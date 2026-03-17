@@ -56,15 +56,7 @@
   font-size: 14px;
 }
 
-/* GRID PRINCIPAL */
-.skillsGrid {
-  display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: 24px;
-  align-items: start;
-}
-
-/* CARDS CORPORATIVOS */
+/* CARDS E FORMULÁRIOS COMPARTILHADOS */
 .manageSkillsPage .corporateCard {
   background: #ffffff;
   border-top: 6px solid #d40000;
@@ -80,7 +72,6 @@
   color: #111111;
 }
 
-/* FORMULÁRIO */
 .formGroup {
   display: flex;
   flex-direction: column;
@@ -114,7 +105,7 @@
 
 .mt-3 { margin-top: 24px; }
 
-/* BOTÕES GERAIS */
+/* BOTÕES COMPARTILHADOS */
 .manageSkillsPage .primaryButton {
   padding: 12px 16px;
   border: none;
@@ -142,7 +133,39 @@
   width: 100%;
 }
 
-/* TABELA E DRAG/DROP */
+.secondaryButton {
+  border: 1px solid #e0e0e0;
+  background: #ffffff;
+  color: #333333;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.secondaryButton:hover {
+  background: #f9f9f9;
+  border-color: #cccccc;
+}
+
+.dangerButtonSolid {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #d40000;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dangerButtonSolid:hover {
+  background: #b30000;
+}
+
+/* TABELAS COMPARTILHADAS */
 .tableContainer {
   overflow-x: auto;
   border: 1px solid #e0e0e0;
@@ -179,46 +202,6 @@
   border-bottom: none;
 }
 
-/* Row hover e efeito de arrastar */
-.dragRow {
-  cursor: grab;
-  transition: background-color 0.2s ease;
-}
-
-.dragRow:active {
-  cursor: grabbing;
-  opacity: 0.6;
-  background-color: #f5f5f5;
-}
-
-.dragRow:hover td {
-  background: #fafafa;
-}
-
-.dragCol {
-  width: 60px;
-  text-align: center;
-}
-
-.dragHandle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #888888;
-  font-weight: 600;
-  user-select: none;
-}
-
-.dragHandle svg {
-  color: #cccccc;
-}
-
-/* Lógica de linhas inativas */
-.inactiveRow td {
-  background: #fafafa;
-  color: #a0a0a0;
-}
-
 .fontWeight600 {
   font-weight: 600;
   color: #111111;
@@ -232,124 +215,50 @@
   background: #fafafa;
 }
 
-/* BADGES DE STATUS (Ativo/Inativo) */
-.statusBadge {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-}
-
-.badge-active {
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-
-.badge-inactive {
-  background: #ffebee;
-  color: #c62828;
-}
-
-/* AÇÕES DA TABELA */
-.actionColumn {
-  text-align: right;
-  width: 1%;
-  white-space: nowrap;
-}
-
-.actionGroup {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* BOTÕES DE ÍCONE (Edição) */
-.actionIconBtn {
+/* =========================================
+   SISTEMA DE TABS (ABAS)
+   ========================================= */
+.skillsTabs {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+  gap: 16px;
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 12px;
+}
+
+.tabButton {
   background: transparent;
-  border: 1px solid transparent;
-  padding: 6px;
-  border-radius: 6px;
+  border: none;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #888;
   cursor: pointer;
-  transition: all 0.2s ease;
+  position: relative;
+  transition: all 0.2s;
 }
 
-.saveBtn {
-  background: #e8f5e9;
-  color: #2e7d32;
-  border: 1px solid #c8e6c9;
-}
-.saveBtn:hover {
-  background: #c8e6c9;
-  color: #1b5e20;
+.tabButton:hover {
+  color: #444;
 }
 
-.cancelBtn {
-  background: #ffffff;
-  border: 1px solid #e0e0e0;
-  color: #666666;
-}
-.cancelBtn:hover {
-  background: #f5f5f5;
-  color: #333333;
-}
-
-/* Botões Pequenos (Editar / Desativar) */
-.smallButton {
-  padding: 6px 10px;
-  font-size: 12px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.manageSkillsPage .secondaryButton {
-  border: 1px solid #e0e0e0;
-  background: #ffffff;
-  color: #333333;
-}
-.secondaryButton:hover {
-  background: #f9f9f9;
-  border-color: #cccccc;
-}
-
-.dangerButton {
-  border: 1px solid #ffcccc;
-  background: #fff0f0;
+.tabButton.active {
   color: #d40000;
 }
-.dangerButton:hover {
+
+.tabButton.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 3px;
   background: #d40000;
-  color: #ffffff;
-}
-
-.successButton {
-  border: 1px solid #c8e6c9;
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-.successButton:hover {
-  background: #2e7d32;
-  color: #ffffff;
-}
-
-/* RESPONSIVIDADE */
-@media (max-width: 900px) {
-  .skillsGrid {
-    grid-template-columns: 1fr;
-  }
+  border-radius: 3px 3px 0 0;
 }
 
 /* =========================================
-   MODAIS CORPORATIVOS
+   MODAIS CORPORATIVOS (Compartilhados)
    ========================================= */
-
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -362,7 +271,7 @@
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  animation: fadeIn 0.2s ease-out;
+  animation: fadeInModal 0.2s ease-out;
 }
 
 .corporateModal {
@@ -395,15 +304,8 @@
   flex-shrink: 0;
 }
 
-.modalIcon.warningIcon {
-  background: #fff0f0;
-  color: #d40000;
-}
-
-.modalIcon.successIcon {
-  background: #e8f5e9;
-  color: #2e7d32;
-}
+.modalIcon.warningIcon { background: #fff0f0; color: #d40000; }
+.modalIcon.successIcon { background: #e8f5e9; color: #2e7d32; }
 
 .modalHeader h3 {
   margin: 0;
@@ -429,36 +331,17 @@
   gap: 12px;
 }
 
-.dangerButtonSolid {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  background: #d40000;
-  color: white;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+@keyframes pageFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.dangerButtonSolid:hover {
-  background: #b30000;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
-}
-
-@keyframes fadeIn {
+@keyframes fadeInModal {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
 @keyframes modalEnter {
-  from {
-    transform: translateY(20px) scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
+  from { transform: translateY(20px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
 }
