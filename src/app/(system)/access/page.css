@@ -8,11 +8,11 @@
 }
 
 /* HEADER DA PÁGINA */
-.pageHeader {
+.accessPage .pageHeader {
   margin-bottom: 8px;
 }
 
-.accessTitle {
+.accessPage .accessTitle {
   margin: 0 0 4px 0;
   font-size: 28px;
   font-weight: 800;
@@ -20,14 +20,14 @@
   letter-spacing: -0.5px;
 }
 
-.accessSubtitle {
+.accessPage .accessSubtitle {
   margin: 0;
   color: #666666;
   font-size: 14px;
 }
 
 /* GRID PRINCIPAL */
-.accessGrid {
+.accessPage .accessGrid {
   display: grid;
   grid-template-columns: 340px 1fr;
   gap: 24px;
@@ -35,7 +35,7 @@
 }
 
 /* CARDS CORPORATIVOS */
-.accessCard {
+.accessPage .accessCard {
   background: #ffffff;
   border-top: 6px solid #d40000;
   border-radius: 8px;
@@ -46,7 +46,7 @@
   gap: 20px;
 }
 
-.accessCard h2 {
+.accessPage .accessCard h2 {
   margin: 0;
   font-size: 18px;
   font-weight: 700;
@@ -54,13 +54,13 @@
 }
 
 /* FORMULÁRIOS */
-.formGroup {
+.accessPage .formGroup {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.corporateInput {
+.accessPage .corporateInput {
   padding: 12px 14px;
   border-radius: 6px;
   border: 1px solid #e0e0e0;
@@ -72,7 +72,7 @@
   box-sizing: border-box;
 }
 
-.corporateInput:focus {
+.accessPage .corporateInput:focus {
   outline: none;
   background: #ffffff;
   border-color: #d40000;
@@ -80,31 +80,31 @@
 }
 
 /* CHECKBOXES */
-.permissionsGroup {
+.accessPage .permissionsGroup {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.groupLabel {
+.accessPage .groupLabel {
   font-size: 13px;
   font-weight: 600;
   color: #555555;
 }
 
-.permissionsList {
+.accessPage .permissionsList {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.inlinePermissions {
+.accessPage .inlinePermissions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
 }
 
-.corporateCheckbox {
+.accessPage .corporateCheckbox {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -113,30 +113,30 @@
   cursor: pointer;
 }
 
-.corporateCheckbox input[type="checkbox"] {
+.accessPage .corporateCheckbox input[type="checkbox"] {
   cursor: pointer;
   accent-color: #d40000;
   width: 16px;
   height: 16px;
 }
 
-.smallCheckbox {
+.accessPage .smallCheckbox {
   font-size: 13px;
   color: #555555;
 }
 
 /* TABELA CORPORATIVA */
-.tableWrapper {
+.accessPage .tableWrapper {
   overflow-x: auto;
 }
 
-.usersTable {
+.accessPage .usersTable {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
 }
 
-.usersTable th {
+.accessPage .usersTable th {
   background: #f9f9f9;
   color: #555555;
   font-weight: 600;
@@ -147,7 +147,7 @@
   letter-spacing: 0.5px;
 }
 
-.usersTable td {
+.accessPage .usersTable td {
   padding: 14px 16px;
   border-bottom: 1px solid #f0f0f0;
   color: #333333;
@@ -155,36 +155,36 @@
   vertical-align: middle;
 }
 
-.usersTable tr:last-child td {
+.accessPage .usersTable tr:last-child td {
   border-bottom: none;
 }
 
-.usersTable tr:hover td {
+.accessPage .usersTable tr:hover td {
   background: #fafafa;
 }
 
-.fontWeight600 {
+.accessPage .fontWeight600 {
   font-weight: 600;
 }
 
-.alignRight {
+.accessPage .alignRight {
   text-align: right;
 }
 
-/* CÉLULA DE SENHA (Ajustada para melhor alinhamento) */
-.passwordCell {
+/* CÉLULA DE SENHA */
+.accessPage .passwordCell {
   vertical-align: middle;
 }
 
-.pwdText {
+.accessPage .pwdText {
   font-family: monospace;
-  font-size: 15px; /* Tamanho ligeiramente maior para as bolinhas */
-  color: #a0a0a0; /* Um cinza mais discreto */
-  letter-spacing: 2px; /* Deixa as bolinhas elegantemente separadas */
+  font-size: 15px; 
+  color: #a0a0a0; 
+  letter-spacing: 2px; 
 }
 
 /* BOTÕES */
-.primaryButton {
+.accessPage .primaryButton {
   padding: 12px 16px;
   border: none;
   border-radius: 6px;
@@ -196,31 +196,31 @@
   transition: all 0.2s ease;
 }
 
-.primaryButton:hover:not(:disabled) {
+.accessPage .primaryButton:hover:not(:disabled) {
   background: #b30000;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
 }
 
-.primaryButton.fullWidth {
+.accessPage .primaryButton.fullWidth {
   width: 100%;
 }
 
-.primaryButton:disabled {
+.accessPage .primaryButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
 
-.actionsCell {
+.accessPage .actionsCell {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
 }
 
-.secondaryButton {
+.accessPage .secondaryButton {
   padding: 8px 12px;
   border: 1px solid #e0e0e0;
   border-radius: 6px;
@@ -232,13 +232,12 @@
   transition: all 0.2s ease;
 }
 
-.secondaryButton:hover:not(:disabled) {
+.accessPage .secondaryButton:hover:not(:disabled) {
   background: #f9f9f9;
   border-color: #cccccc;
 }
 
-/* NOVO: Estilo para quando o Nova Senha estiver bloqueado */
-.secondaryButton:disabled {
+.accessPage .secondaryButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   color: #a0a0a0;
@@ -246,7 +245,7 @@
   border-color: #e0e0e0;
 }
 
-.dangerButton {
+.accessPage .dangerButton {
   padding: 8px 12px;
   border: 1px solid #ffcccc;
   border-radius: 6px;
@@ -258,12 +257,12 @@
   transition: all 0.2s ease;
 }
 
-.dangerButton:hover:not(:disabled) {
+.accessPage .dangerButton:hover:not(:disabled) {
   background: #d40000;
   color: #ffffff;
 }
 
-.dangerButton:disabled {
+.accessPage .dangerButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
@@ -273,7 +272,7 @@
   border-color: #e0e0e0;
 }
 
-.iconButton {
+.accessPage .iconButton {
   background: transparent;
   border: none;
   color: #888888;
@@ -286,19 +285,19 @@
   transition: all 0.2s ease;
 }
 
-.iconButton:hover {
+.accessPage .iconButton:hover {
   color: #d40000;
   background: #fff0f0;
 }
 
 /* O card de auditoria ocupa a linha toda em baixo */
-.auditCard {
+.accessPage .auditCard {
   grid-column: 1 / -1; 
 }
 
 /* RESPONSIVIDADE */
 @media (max-width: 1024px) {
-  .accessGrid {
+  .accessPage .accessGrid {
     grid-template-columns: 1fr;
   }
 }
@@ -306,7 +305,7 @@
 /* =========================================
    MODAL CORPORATIVO
    ========================================= */
-.modalOverlay {
+.accessPage .modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -321,7 +320,7 @@
   animation: fadeIn 0.2s ease-out;
 }
 
-.corporateModal {
+.accessPage .corporateModal {
   width: 100%;
   max-width: 420px;
   background: #ffffff;
@@ -334,14 +333,14 @@
   animation: modalEnter 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.modalHeader {
+.accessPage .modalHeader {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 16px;
 }
 
-.modalIcon {
+.accessPage .modalIcon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -351,41 +350,41 @@
   flex-shrink: 0;
 }
 
-.modalIcon.warningIcon {
+.accessPage .modalIcon.warningIcon {
   background: #fff0f0;
   color: #d40000;
 }
 
-.modalIcon.infoIcon {
+.accessPage .modalIcon.infoIcon {
   background: #f0f4ff;
   color: #0056b3;
 }
 
-.modalHeader h3 {
+.accessPage .modalHeader h3 {
   margin: 0;
   font-size: 20px;
   font-weight: 700;
   color: #111111;
 }
 
-.modalBody {
+.accessPage .modalBody {
   margin-bottom: 24px;
 }
 
-.modalBody p {
+.accessPage .modalBody p {
   margin: 0;
   font-size: 14px;
   color: #555555;
   line-height: 1.5;
 }
 
-.modalFooter {
+.accessPage .modalFooter {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 
-.dangerButtonSolid {
+.accessPage .dangerButtonSolid {
   padding: 10px 16px;
   border: none;
   border-radius: 6px;
@@ -397,10 +396,16 @@
   transition: all 0.2s ease;
 }
 
-.dangerButtonSolid:hover {
+.accessPage .dangerButtonSolid:hover {
   background: #b30000;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
+}
+
+/* KEYFRAMES (Globais) */
+@keyframes pageFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes fadeIn {

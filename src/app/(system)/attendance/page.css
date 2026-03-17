@@ -4,24 +4,24 @@
   padding-bottom: 40px;
 }
 
-.pageHeader {
+.attendancePage .pageHeader {
   margin-bottom: 24px;
 }
 
-.pageTitle {
+.attendancePage .pageTitle {
   font-size: 1.8rem;
   font-weight: 800;
   color: #111111;
   margin: 0 0 6px 0;
 }
 
-.pageSubtitle {
+.attendancePage .pageSubtitle {
   font-size: 0.9rem;
   color: #888888;
   margin: 0;
 }
 
-.attendanceCard {
+.attendancePage .attendanceCard {
   background: #ffffff;
   border-top: 6px solid #d40000;
   border-radius: 8px;
@@ -30,7 +30,7 @@
 }
 
 /* EMPTY STATE QUANDO NENHUMA LINHA ESTÁ SELECIONADA */
-.emptyAttendance {
+.attendancePage .emptyAttendance {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -44,6 +44,6 @@
   gap: 16px;
 }
 
-.emptyAttendance .emptyIcon {
+.attendancePage .emptyAttendance .emptyIcon {
   color: #cccccc;
 }
