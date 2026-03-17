@@ -11,10 +11,6 @@ export default function OperatorKPIs(){
   const { filters } = useDashboardFilters()
 
   const [totalOperators,setTotalOperators] = useState(0)
-  const [activeOperators,setActiveOperators] = useState(0)
-  const [inactiveOperators,setInactiveOperators] = useState(0)
-
-  const [utilization,setUtilization] = useState(0)
 
   // Estados para os 5 Níveis de Habilidade
   const [neverDid, setNeverDid] = useState(0)        // 1 - Nunca fez (0 a 20%)
@@ -29,45 +25,41 @@ export default function OperatorKPIs(){
 
   async function loadKPIs(){
 
-    let query = supabase
+    // 1. Pega apenas o total de operadores (Para a badge superior)
+    let opQuery = supabase
       .from("operators")
-      .select("id,ativo,linha_atual,posto_atual")
+      .select("id")
+      .eq("ativo", true)
 
     if(filters.linha){
-      query = query.eq("linha_atual",filters.linha)
+      opQuery = opQuery.eq("linha_atual", filters.linha)
     }
 
-    const { data:operators } = await query
-
+    const { data: operators } = await opQuery
     if(!operators) return
 
-    /* TOTAL = ativo true */
-    const total = operators.filter(o => o.ativo)
-    setTotalOperators(total.length)
+    setTotalOperators(operators.length)
 
-    /* ATIVOS = tem linha E posto */
-    const active = total.filter(o =>
-      o.linha_atual && o.posto_atual
-    )
-    setActiveOperators(active.length)
+    // 2. Faz uma consulta unificada (INNER JOIN) nas skills e operadores.
+    // Isso evita o erro de URL gigante quando não há filtros (Fábrica Inteira).
+    let skillsQuery = supabase
+      .from("operator_skills")
+      .select(`
+        operator_id,
+        skill_level,
+        operators!inner(ativo, linha_atual, posto_atual)
+      `)
+      .eq("operators.ativo", true)
+      .not("operators.linha_atual", "is", null)
+      .not("operators.posto_atual", "is", null)
 
-    /* INATIVOS = falta linha OU posto */
-    const inactive = total.filter(o =>
-      !o.linha_atual || !o.posto_atual
-    )
-    setInactiveOperators(inactive.length)
-
-    /* UTILIZAÇÃO */
-    if(total.length > 0){
-      const utilizationRate = (active.length / total.length) * 100
-      setUtilization(Math.round(utilizationRate))
-    }else{
-      setUtilization(0)
+    if(filters.linha){
+      skillsQuery = skillsQuery.eq("operators.linha_atual", filters.linha)
     }
 
-    const ids = active.map(o=>o.id)
+    const { data: skills } = await skillsQuery
 
-    if(ids.length === 0) {
+    if(!skills || skills.length === 0) {
       setNeverDid(0)
       setInTraining(0)
       setCapable(0)
@@ -76,16 +68,10 @@ export default function OperatorKPIs(){
       return
     }
 
-    const { data:skills } = await supabase
-      .from("operator_skills")
-      .select("operator_id,skill_level")
-      .in("operator_id",ids)
+    // 3. Agrupa as skills por operador
+    const skillMap: Record<string, number[]> = {}
 
-    if(!skills) return
-
-    const skillMap:Record<string,number[]> = {}
-
-    skills.forEach(s => {
+    skills.forEach((s: any) => {
       if(!skillMap[s.operator_id]){
         skillMap[s.operator_id] = []
       }
@@ -97,10 +83,10 @@ export default function OperatorKPIs(){
 
     Object.values(skillMap).forEach(levels => {
 
-      const total = levels.reduce((a,b)=>a+b,0)
+      const totalSkills = levels.reduce((a,b) => a + b, 0)
       const max = levels.length * 5
 
-      const ratio = max > 0 ? (total/max)*100 : 0
+      const ratio = max > 0 ? (totalSkills / max) * 100 : 0
 
       // Distribuição exata em blocos de 20%
       if(ratio <= 20) n1++
@@ -116,88 +102,20 @@ export default function OperatorKPIs(){
     setCapable(n3)
     setExperts(n4)
     setInstructors(n5)
-
   }
 
   return(
 
     <>
-      {/* SEÇÃO 1: KPIS OPERACIONAIS GERAIS */}
-      <div className="kpiSectionTitle">Visão Geral da Operação</div>
-      
-      <div className="kpiGrid">
-
-        {/* TOTAL */}
-        <div className="kpiCard kpi-total">
-          <div className="kpiHeader">
-            <span className="kpiLabel">
-              Operadores Totais
-            </span>
-            <div className="kpiIcon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-              </svg>
-            </div>
-          </div>
-          <span className="kpiValue">{totalOperators}</span>
+      <div className="kpiSectionTitle">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          Distribuição de Habilidades
+          <span style={{ fontSize: '14px', color: '#888', fontWeight: 600 }}>
+            {filters.linha ? `(${filters.linha})` : "(Fábrica Inteira)"}
+          </span>
         </div>
-
-        {/* ATIVOS */}
-        <div className="kpiCard kpi-active">
-          <div className="kpiHeader">
-            <span className="kpiLabel">
-              Alocados (Ativos)
-            </span>
-            <div className="kpiIcon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                <polyline points="22 4 12 14.01 9 11.01"/>
-              </svg>
-            </div>
-          </div>
-          <span className="kpiValue">{activeOperators}</span>
-        </div>
-
-        {/* INATIVOS */}
-        <div className="kpiCard kpi-inactive">
-          <div className="kpiHeader">
-            <span className="kpiLabel">
-              Operador Disponível
-            </span>
-            <div className="kpiIcon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" x2="12" y1="8" y2="12"/>
-                <line x1="12" x2="12.01" y1="16" y2="16"/>
-              </svg>
-            </div>
-          </div>
-          <span className="kpiValue">{inactiveOperators}</span>
-        </div>
-
-        {/* UTILIZAÇÃO */}
-        <div className="kpiCard kpi-utilization">
-          <div className="kpiHeader">
-            <span className="kpiLabel">
-              Taxa de Utilização
-            </span>
-            <div className="kpiIcon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
-                <polyline points="16 7 22 7 22 13"/>
-              </svg>
-            </div>
-          </div>
-          <span className="kpiValue">{utilization}%</span>
-        </div>
-
+        <span className="totalBadge">Total de Operadores: {totalOperators}</span>
       </div>
-
-      {/* SEÇÃO 2: KPIS DE NÍVEL DE HABILIDADE (OS 5 NÍVEIS) */}
-      <div className="kpiSectionTitle" style={{marginTop: 16}}>Distribuição de Habilidades (Alocados)</div>
       
       <div className="kpiGrid five-cols">
 
@@ -283,5 +201,4 @@ export default function OperatorKPIs(){
     </>
 
   )
-
 }

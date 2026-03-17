@@ -9,11 +9,11 @@ export default function OperatorSkillsTable({ data }: { data: any }) {
     operatorLine,
     hasChanges,
     handleChangeSkill,
+    isSaving,
     handleSave,
     handleCancel
   } = data
 
-  // Funções para renderizar o texto e a cor da dificuldade
   function getDifficultyText(level: number) {
     if (level === 1) return "Simples"
     if (level === 2) return "Médio"
@@ -33,7 +33,7 @@ export default function OperatorSkillsTable({ data }: { data: any }) {
       <div className="cardHeader">
         <h2>Matriz de Habilidades (Skill Matrix)</h2>
         {operatorLine && (
-          <p className="cardSubtitle">Mostrando dificuldades com base no modelo: <strong>{operatorLine}</strong></p>
+          <p className="cardSubtitle">Mostrando dificuldades e experiências com base no modelo: <strong>{operatorLine}</strong></p>
         )}
       </div>
 
@@ -67,6 +67,7 @@ export default function OperatorSkillsTable({ data }: { data: any }) {
                         className="corporateSelect"
                         value={skill.skill_level}
                         onChange={e => handleChangeSkill(skill.id, Number(e.target.value))}
+                        disabled={isSaving}
                       >
                         <option value={1}>1 - Nunca fez / Sem Exp.</option>
                         <option value={2}>2 - Em treinamento</option>
@@ -81,7 +82,9 @@ export default function OperatorSkillsTable({ data }: { data: any }) {
             ) : (
               <tr>
                 <td colSpan={2} className="emptyState">
-                  Nenhuma habilidade cadastrada para este operador.
+                  {operatorLine 
+                    ? "Nenhuma habilidade cadastrada no sistema." 
+                    : "Aloque o operador em um Modelo de Produção primeiro para avaliar suas habilidades atuais."}
                 </td>
               </tr>
             )}
@@ -100,14 +103,14 @@ export default function OperatorSkillsTable({ data }: { data: any }) {
             Alterações não salvas
           </span>
           <div className="buttonGroup">
-            <button className="secondaryButton" onClick={handleCancel}>
+            <button className="secondaryButton" onClick={handleCancel} disabled={isSaving}>
               Cancelar
             </button>
-            <button className="primaryButton saveButton" onClick={handleSave}>
+            <button className="primaryButton saveButton" onClick={handleSave} disabled={isSaving}>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 6 9 17l-5-5" />
               </svg>
-              Salvar Alterações
+              {isSaving ? "Salvando..." : "Salvar Alterações"}
             </button>
           </div>
         </div>

@@ -40,6 +40,9 @@ export function useOperatorHistory(operatorId: string) {
   const [assessments, setAssessments] = useState<SkillAssessment[]>([])
   const [initialAssessments, setInitialAssessments] = useState<SkillAssessment[]>([])
 
+  // ESTADO DE SALVAMENTO PARA BLOQUEAR O BOTÃO
+  const [isSaving, setIsSaving] = useState(false)
+
   const [alertConfig, setAlertConfig] = useState<{title: string, message: string} | null>(null)
   const [confirmConfig, setConfirmConfig] = useState<{title: string, message: string, onConfirm: () => void} | null>(null)
 
@@ -142,69 +145,23 @@ export function useOperatorHistory(operatorId: string) {
   }
 
   // =========================================================================
-  // SALVAMENTO ABSOLUTO: Compara mudanças e tem Auto-Healing de bugs passados
+  // SALVAMENTO ABSOLUTO COM BLOQUEIO DE BOTÃO
   // =========================================================================
   async function handleSave(){
+    // Evita duplo clique se já estiver salvando
+    if (isSaving) return
+
     if(!linha){
       setAlertConfig({ title: "Atenção", message: "Selecione o modelo de produção." })
       return
     }
 
-    // O que foi alterado EXPLICITAMENTE pelo gestor agora
     const changedAssessments = assessments.filter(a => {
       const initial = initialAssessments.find(init => init.posto === a.posto)
       return initial && initial.level !== a.level
     })
 
-    const dataRegistro = new Date().toISOString().split("T")[0]
-    let savedCount = 0
-
-    // 1. Atualiza a tabela de Histórico APENAS para o que o gestor mudou na tela
-    for(const assessment of changedAssessments) {
-      const existing = history.find((h:any) => h.linha === linha && h.posto === assessment.posto && h.origem === "experiencia" && h.ativo !== false)
-
-      if (existing) {
-        await deactivateOperatorExperience(existing.id)
-      }
-
-      if (assessment.level > 1) {
-        await addOperatorExperience({
-          operator_id: operatorId,
-          linha,
-          posto: assessment.posto,
-          data_inicio: dataRegistro,
-          skill_level: assessment.level
-        })
-      }
-      savedCount++
-    }
-
-    // 2. SINCRONIZAÇÃO GERAL COM A TELA DE SKILLS BASE
-    // Varre TODAS as notas que estão na tela (mesmo as que não foram clicadas agora)
-    for(const assessment of assessments) {
-      const isExplicitlyChanged = changedAssessments.some(c => c.posto === assessment.posto)
-
-      const { data: existingSkill } = await supabase
-        .from("operator_skills")
-        .select("id, skill_level")
-        .eq("operator_id", operatorId)
-        .eq("posto", assessment.posto)
-        .maybeSingle()
-
-      if (existingSkill) {
-        // Atualiza a tabela base SE o usuário mexeu na nota agora OU se a nota base estiver desatualizada (bug fantasma)
-        if (isExplicitlyChanged || assessment.level > existingSkill.skill_level) {
-          await supabase.from("operator_skills").update({ skill_level: assessment.level }).eq("id", existingSkill.id)
-          if (!isExplicitlyChanged) savedCount++ // Conta como um salvamento se corrigiu o bug
-        }
-      } else {
-        // Se a skill não existe na tabela base, cria ela
-        await supabase.from("operator_skills").insert({ operator_id: operatorId, posto: assessment.posto, skill_level: assessment.level })
-        savedCount++
-      }
-    }
-
-    if(savedCount === 0) {
+    if(changedAssessments.length === 0) {
        setAlertConfig({ 
          title: "Sem Alterações", 
          message: "Nenhuma mudança de nível foi detectada e as skills já estão sincronizadas." 
@@ -212,20 +169,78 @@ export function useOperatorHistory(operatorId: string) {
        return
     }
 
-    await logAction(
-      sessionUser?.username || "sistema", 
-      "history_add", 
-      `Atualizou/Sincronizou exp. manual p/ ${operator?.nome}: ${linha}`
-    )
+    // Bloqueia o botão
+    setIsSaving(true)
 
-    setLinha("")
-    setAssessments([])
-    loadHistory()
+    try {
+      const dataRegistro = new Date().toISOString().split("T")[0]
+      let savedCount = 0
 
-    setAlertConfig({
-      title: "Sucesso",
-      message: "Avaliação registrada e sincronizada com sucesso nas Habilidades do colaborador!"
-    })
+      // 1. Atualiza a tabela de Histórico APENAS para o que o gestor mudou na tela
+      for(const assessment of changedAssessments) {
+        const existing = history.find((h:any) => h.linha === linha && h.posto === assessment.posto && h.origem === "experiencia" && h.ativo !== false)
+
+        if (existing) {
+          await deactivateOperatorExperience(existing.id)
+        }
+
+        if (assessment.level > 1) {
+          await addOperatorExperience({
+            operator_id: operatorId,
+            linha,
+            posto: assessment.posto,
+            data_inicio: dataRegistro,
+            skill_level: assessment.level
+          })
+        }
+        savedCount++
+      }
+
+      // 2. SINCRONIZAÇÃO GERAL COM A TELA DE SKILLS BASE
+      for(const assessment of assessments) {
+        const isExplicitlyChanged = changedAssessments.some(c => c.posto === assessment.posto)
+
+        const { data: existingSkill } = await supabase
+          .from("operator_skills")
+          .select("id, skill_level")
+          .eq("operator_id", operatorId)
+          .eq("posto", assessment.posto)
+          .maybeSingle()
+
+        if (existingSkill) {
+          if (isExplicitlyChanged || assessment.level > existingSkill.skill_level) {
+            await supabase.from("operator_skills").update({ skill_level: assessment.level }).eq("id", existingSkill.id)
+          }
+        } else {
+          await supabase.from("operator_skills").insert({ operator_id: operatorId, posto: assessment.posto, skill_level: assessment.level })
+        }
+      }
+
+      await logAction(
+        sessionUser?.username || "sistema", 
+        "history_add", 
+        `Atualizou/Sincronizou exp. manual p/ ${operator?.nome}: ${linha}`
+      )
+
+      setLinha("")
+      setAssessments([])
+      await loadHistory() // Aguarda o histórico carregar antes de mostrar a mensagem
+
+      setAlertConfig({
+        title: "Sucesso",
+        message: "Avaliação registrada e sincronizada com sucesso nas Habilidades do colaborador!"
+      })
+
+    } catch (error) {
+      console.error("Erro ao salvar histórico:", error)
+      setAlertConfig({
+        title: "Erro",
+        message: "Ocorreu um erro ao salvar as informações. Tente novamente."
+      })
+    } finally {
+      // Libera o botão independente de dar certo ou errado
+      setIsSaving(false)
+    }
   }
 
   function handleBack(){
@@ -239,6 +254,7 @@ export function useOperatorHistory(operatorId: string) {
       lines,
       linha, setLinha,
       assessments, handleAssessmentChange,
+      isSaving, // <-- Exportamos para o formulário
       handleSave
     },
     table: {

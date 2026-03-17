@@ -3,7 +3,13 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
 import { supabase } from "@/services/database/supabaseClient"
-import { getOperators, getLineSkillDifficulties } from "@/services/database/operatorRepository"
+import { 
+  getOperators, 
+  getLineSkillDifficulties, 
+  getWorkstations, 
+  addOperatorExperience, 
+  deactivateOperatorExperience 
+} from "@/services/database/operatorRepository"
 
 import { logAction } from "@/services/audit/auditService"
 import { getSession } from "@/services/auth/sessionService"
@@ -13,11 +19,12 @@ export function useOperatorSkills(operatorId: string) {
   const sessionUser = getSession()
 
   const [isLoading, setIsLoading] = useState(true)
+  const [isSaving, setIsSaving] = useState(false) // Trava de botão contra cliques duplos
 
   const [operator, setOperator] = useState<any>(null)
   const [skills, setSkills] = useState<any[]>([])
   const [originalSkills, setOriginalSkills] = useState<any[]>([])
-  const [lineDifficulties, setLineDifficulties] = useState<Record<string, number>>({}) // Guarda as dificuldades
+  const [lineDifficulties, setLineDifficulties] = useState<Record<string, number>>({})
   const [hasChanges, setHasChanges] = useState(false)
 
   const [showConfirmLeave, setShowConfirmLeave] = useState(false)
@@ -30,12 +37,8 @@ export function useOperatorSkills(operatorId: string) {
 
   async function initializePage(){
     setIsLoading(true)
-    
-    // REMOVIDO: await recalculateOperatorSkills(operatorId)
-    // O recálculo apagava a avaliação manual do gestor se o tempo de histórico não fosse suficiente.
-
-    await loadOperatorAndDifficulties()
-    await loadSkills()
+    const op = await loadOperatorAndDifficulties()
+    await loadSkills(op)
     setIsLoading(false)
   }
 
@@ -44,27 +47,46 @@ export function useOperatorSkills(operatorId: string) {
     const op = operators.find((o:any)=>o.id === operatorId)
     setOperator(op)
 
-    // Se o operador estiver em uma linha, carrega as dificuldades dela
     if (op && op.linha_atual) {
       const diffs = await getLineSkillDifficulties(op.linha_atual)
       setLineDifficulties(diffs)
     }
+    return op
   }
 
-  async function loadSkills(){
-    const { data, error } = await supabase
-      .from("operator_skills")
-      .select("*")
-      .eq("operator_id", operatorId)
-      .order("posto")
-
-    if(error){
-      console.error(error)
+  async function loadSkills(op: any){
+    // Se o operador não tiver linha atual, não carrega habilidades. Ele precisa ser alocado primeiro.
+    if (!op || !op.linha_atual) {
+      setSkills([])
+      setOriginalSkills([])
+      setHasChanges(false)
       return
     }
 
-    setSkills(data || [])
-    setOriginalSkills(JSON.parse(JSON.stringify(data || [])))
+    const wss = await getWorkstations()
+
+    // Busca a bagagem dele APENAS na linha que ele está alocado hoje
+    const { data: exp } = await supabase
+      .from("operator_experience")
+      .select("*")
+      .eq("operator_id", operatorId)
+      .eq("linha", op.linha_atual)
+      .eq("origem", "experiencia")
+      .eq("ativo", true)
+
+    // Monta a tela lendo a experiência exata daquela linha
+    const loadedSkills = wss.map(ws => {
+      const existing = exp?.find(e => e.posto.trim() === ws.nome.trim())
+      return {
+        id: ws.nome, 
+        posto: ws.nome,
+        skill_level: existing ? Number(existing.skill_level) : 1, // Se não tiver exp NESSA linha, é nível 1
+        exp_id: existing ? existing.id : null // Guarda o ID do histórico para atualizar depois
+      }
+    })
+
+    setSkills(loadedSkills)
+    setOriginalSkills(JSON.parse(JSON.stringify(loadedSkills)))
     setHasChanges(false)
   }
 
@@ -81,6 +103,8 @@ export function useOperatorSkills(operatorId: string) {
   }
 
   async function handleSave(){
+    if (isSaving) return
+
     const changedSkills = skills.filter(skill => {
       const original = originalSkills.find(s => s.id === skill.id)
       return original && original.skill_level !== skill.skill_level
@@ -91,41 +115,73 @@ export function useOperatorSkills(operatorId: string) {
       return
     }
 
-    const history = changedSkills.map(skill => {
-      const original = originalSkills.find(s => s.id === skill.id)
-      return {
-        operator_id: operatorId,
-        posto: skill.posto,
-        skill_level: skill.skill_level,
-        previous_level: original?.skill_level
-      }
-    })
+    setIsSaving(true)
 
-    const { error: historyError } = await supabase.from("operator_skills_history").insert(history)
+    try {
+      const dataRegistro = new Date().toISOString().split("T")[0]
+      const linha = operator.linha_atual
 
-    if(historyError) console.error("Erro histórico:", historyError)
-
-    const updates = changedSkills.map(skill => {
-      return supabase
-        .from("operator_skills")
-        .update({ skill_level: skill.skill_level })
-        .eq("id", skill.id)
-    })
-
-    await Promise.all(updates)
-
-    const actionDetails = changedSkills.map(skill => {
+      // 1. Guarda log de auditoria tradicional
+      const historyLog = changedSkills.map(skill => {
         const original = originalSkills.find(s => s.id === skill.id)
-        return `[${skill.posto}: de Nvl ${original?.skill_level || 0} para Nvl ${skill.skill_level}]`
-    }).join(", ")
+        return {
+          operator_id: operatorId,
+          posto: skill.posto,
+          skill_level: skill.skill_level,
+          previous_level: original?.skill_level || 1
+        }
+      })
+      await supabase.from("operator_skills_history").insert(historyLog)
 
-    await logAction(
-      sessionUser?.username || "sistema", 
-      "skill_level_update", 
-      `Avaliou ${operator?.nome || 'o operador'}: ${actionDetails}`
-    )
+      for(const skill of changedSkills) {
+        // 2. Atualiza a bagagem no Histórico para a linha ATUAL
+        if (skill.exp_id) {
+          await deactivateOperatorExperience(skill.exp_id)
+        }
+        
+        if (skill.skill_level > 1) {
+          await addOperatorExperience({
+            operator_id: operatorId,
+            linha,
+            posto: skill.posto,
+            data_inicio: dataRegistro,
+            skill_level: skill.skill_level
+          })
+        }
 
-    await loadSkills()
+        // 3. Sincroniza na tabela base global para Dashboards
+        const { data: existingSkill } = await supabase
+          .from("operator_skills")
+          .select("id")
+          .eq("operator_id", operatorId)
+          .eq("posto", skill.posto)
+          .maybeSingle()
+
+        if (existingSkill) {
+          await supabase.from("operator_skills").update({ skill_level: skill.skill_level }).eq("id", existingSkill.id)
+        } else {
+          await supabase.from("operator_skills").insert({ operator_id: operatorId, posto: skill.posto, skill_level: skill.skill_level })
+        }
+      }
+
+      const actionDetails = changedSkills.map(skill => {
+          const original = originalSkills.find(s => s.id === skill.id)
+          return `[${skill.posto}: Nvl ${skill.skill_level}]`
+      }).join(", ")
+
+      await logAction(
+        sessionUser?.username || "sistema", 
+        "skill_level_update", 
+        `Atualizou skills de ${operator?.nome} na linha ${linha}: ${actionDetails}`
+      )
+
+      await loadSkills(operator)
+
+    } catch (error) {
+      console.error("Erro ao salvar skills:", error)
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   function handleCancel(){
@@ -156,6 +212,7 @@ export function useOperatorSkills(operatorId: string) {
       operatorLine: operator?.linha_atual,
       hasChanges,
       handleChangeSkill,
+      isSaving,
       handleSave,
       handleCancel
     },
