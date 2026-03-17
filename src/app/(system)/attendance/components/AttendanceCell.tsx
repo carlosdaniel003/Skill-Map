@@ -1,3 +1,4 @@
+// src/app/(system)/attendance/components/AttendanceCell.tsx
 import { useState, useRef, useEffect } from "react"
 import { createPortal } from "react-dom"
 import "./AttendanceCell.css"
@@ -22,65 +23,81 @@ interface Props {
   dateStr: string
   value: string
   isWeekend: boolean
-  onSave: (opId: string, dateStr: string, val: string) => void
+  onSave: (opId: string, dateStr: string, val: string) => Promise<void>
 }
 
 export default function AttendanceCell({ operatorId, dateStr, value, isWeekend, onSave }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const [localValue, setLocalValue] = useState(value)
 
-  // 🔥 Guarda as coordenadas fixas do popover
-  const [popoverPos, setPopoverPos] = useState({ top: 0, left: 0 })
+  // ESTADOS VISUAIS DE SINCRONIZAÇÃO
+  const [syncState, setSyncState] = useState<'idle' | 'saving' | 'error' | 'success'>('idle')
 
+  const [popoverPos, setPopoverPos] = useState({ top: 0, left: 0 })
   const cellRef = useRef<HTMLTableDataCellElement>(null)
 
-  useEffect(() => { setLocalValue(value) }, [value])
+  // O Rollback do hook reflete aqui também via props
+  useEffect(() => { 
+    setLocalValue(value) 
+  }, [value])
 
-  // 🔥 Calcula posição real da célula no viewport ao abrir
   function openPopover() {
     if (cellRef.current) {
       const rect = cellRef.current.getBoundingClientRect()
       setPopoverPos({
-        top: rect.bottom + window.scrollY + 4,  // logo abaixo da célula
-        left: rect.left + window.scrollX + rect.width / 2, // centralizado
+        top: rect.bottom + window.scrollY + 4,
+        left: rect.left + window.scrollX + rect.width / 2,
       })
     }
     setIsOpen(true)
   }
 
-  // Fecha ao clicar fora
+  // LÓGICA ASSÍNCRONA COM FEEDBACK VISUAL
+  async function executeSave(newValue: string) {
+    // Evita chamadas repetidas desnecessárias
+    if (newValue === value && syncState !== 'error') {
+      setIsOpen(false)
+      return
+    }
+
+    setLocalValue(newValue)
+    setIsOpen(false)
+    setSyncState('saving')
+
+    try {
+      await onSave(operatorId, dateStr, newValue)
+      setSyncState('success')
+      // A bolinha verde de sucesso some após 2 segundos
+      setTimeout(() => setSyncState('idle'), 2000)
+    } catch (err) {
+      setSyncState('error')
+      setLocalValue(value) // Força o valor de volta à realidade visualmente na célula
+    }
+  }
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (cellRef.current && !cellRef.current.contains(event.target as Node)) {
-        // Verifica se clicou dentro do popover (que está no body)
         const popover = document.getElementById("attendance-popover")
         if (popover && popover.contains(event.target as Node)) return
 
         setIsOpen(false)
         if (localValue !== value) {
-          onSave(operatorId, dateStr, localValue)
+          executeSave(localValue)
         }
       }
     }
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [localValue, value, operatorId, dateStr, onSave])
+  }, [localValue, value]) // Dependências focadas no valor
 
-  const currentColorObj = STATUS_OPTIONS.find(
-    opt => opt.value === localValue.toUpperCase()
-  )
+  const currentColorObj = STATUS_OPTIONS.find(opt => opt.value === localValue.toUpperCase())
   const colorClass = currentColorObj?.color ?? ""
-
-  function handleButtonClick(statusVal: string) {
-    setLocalValue(statusVal)
-    setIsOpen(false)
-    onSave(operatorId, dateStr, statusVal)
-  }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter" || e.key === "Tab") {
-      setIsOpen(false)
-      onSave(operatorId, dateStr, localValue)
+      e.preventDefault()
+      executeSave(localValue)
       if (e.key === "Enter") (e.target as HTMLInputElement).blur()
     }
     if (e.key === "Escape") setIsOpen(false)
@@ -88,6 +105,16 @@ export default function AttendanceCell({ operatorId, dateStr, value, isWeekend, 
 
   return (
     <td className={`inputCell ${isWeekend ? "weekend" : ""}`} ref={cellRef}>
+      
+      {/* INDICADOR VISUAL DE STATUS */}
+      {syncState !== 'idle' && (
+        <div className="sync-indicator">
+          {syncState === 'saving' && <div className="sync-spinner" title="Salvando..." />}
+          {syncState === 'error' && <div className="sync-error" title="Erro ao salvar!" />}
+          {syncState === 'success' && <div className="sync-success" title="Salvo com sucesso" />}
+        </div>
+      )}
+
       <input
         type="text"
         maxLength={3}
@@ -95,17 +122,17 @@ export default function AttendanceCell({ operatorId, dateStr, value, isWeekend, 
         value={localValue}
         title={isWeekend ? "Fim de Semana" : "Dia Útil"}
         onChange={e => setLocalValue(e.target.value.toUpperCase())}
-        onFocus={openPopover}  // 🔥 usa openPopover em vez de setIsOpen(true)
+        onFocus={openPopover}
         onKeyDown={handleKeyDown}
+        disabled={syncState === 'saving'} // Bloqueia digitação enquanto salva
       />
 
-      {/* 🔥 PORTAL — renderiza no <body>, nunca será cortado por overflow */}
       {isOpen && typeof window !== "undefined" && createPortal(
         <div
           id="attendance-popover"
           className="statusPopover"
           style={{
-            position: "fixed",          // 🔥 fixed ignora qualquer overflow pai
+            position: "fixed",
             top: popoverPos.top,
             left: popoverPos.left,
             transform: "translateX(-50%)",
@@ -119,8 +146,8 @@ export default function AttendanceCell({ operatorId, dateStr, value, isWeekend, 
                 className={`statusBtn ${opt.color}`}
                 title={opt.label}
                 onMouseDown={e => {
-                  e.preventDefault() // 🔥 evita blur antes do click registrar
-                  handleButtonClick(opt.value)
+                  e.preventDefault() 
+                  executeSave(opt.value)
                 }}
               >
                 {opt.value}
@@ -131,13 +158,13 @@ export default function AttendanceCell({ operatorId, dateStr, value, isWeekend, 
             className="clearBtn"
             onMouseDown={e => {
               e.preventDefault()
-              handleButtonClick("")
+              executeSave("")
             }}
           >
             Limpar Célula
           </button>
         </div>,
-        document.body  // 🔥 destino do portal
+        document.body
       )}
     </td>
   )

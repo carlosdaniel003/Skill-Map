@@ -3,10 +3,9 @@ import { useEffect, useState } from "react"
 import { 
   getProductionLinesWithOperators, 
   getOperatorsByLine, 
-  getAttendanceData, 
-  saveAttendance 
+  getAttendanceData 
 } from "@/services/database/attendanceRepository"
-import { supabase } from "@/services/database/supabaseClient" // Import direto para busca global
+import { supabase } from "@/services/database/supabaseClient"
 
 export function useAttendance() {
   const dataAtual = new Date()
@@ -15,14 +14,16 @@ export function useAttendance() {
   const [selectedYear, setSelectedYear] = useState(dataAtual.getFullYear())
   const [selectedLine, setSelectedLine] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
-  const [allOperators, setAllOperators] = useState<any[]>([]) // Todos para a busca
+  const [allOperators, setAllOperators] = useState<any[]>([])
 
   const [lines, setLines] = useState<string[]>([])
   const [operators, setOperators] = useState<any[]>([])
   const [daysInMonth, setDaysInMonth] = useState<{ day: number, isWeekend: boolean, dateStr: string }[]>([])
   const [attendanceData, setAttendanceData] = useState<Record<string, string>>({})
 
-  // 1. Carrega linhas e TODOS os operadores ativos para o Autocomplete funcionar globalmente
+  // Modal para erros de Rollback
+  const [alertConfig, setAlertConfig] = useState<{title: string, message: string} | null>(null)
+
   useEffect(() => {
     async function loadInitialData() {
       const linesData = await getProductionLinesWithOperators()
@@ -38,7 +39,6 @@ export function useAttendance() {
     loadInitialData()
   }, [])
 
-  // 2. Gerador de dias (mantido)
   useEffect(() => {
     const numDays = new Date(selectedYear, selectedMonth + 1, 0).getDate()
     const days = []
@@ -52,7 +52,6 @@ export function useAttendance() {
     setDaysInMonth(days)
   }, [selectedMonth, selectedYear])
 
-  // 3. Busca operadores da linha (mantido)
   useEffect(() => {
     async function loadOps() {
       if (selectedLine) {
@@ -66,7 +65,6 @@ export function useAttendance() {
     loadOps()
   }, [selectedLine])
 
-  // 4. Busca frequências (mantido)
   useEffect(() => {
     async function fetchAttendance() {
       if (operators.length > 0 && daysInMonth.length > 0) {
@@ -80,28 +78,64 @@ export function useAttendance() {
     fetchAttendance()
   }, [operators, daysInMonth])
 
+  // ============================================================================
+  // MAGIA DA CONCORRÊNCIA E ROLLBACK OTIMISTA
+  // ============================================================================
   async function handleSaveCell(operatorId: string, dateStr: string, value: string) {
     const upperValue = value.trim().toUpperCase()
     const key = `${operatorId}_${dateStr}`
+    const previousValue = attendanceData[key] || ""
+
+    // 1. Atualização Otimista (Interface fica rápida)
     setAttendanceData(prev => ({ ...prev, [key]: upperValue }))
-    await saveAttendance(operatorId, dateStr, upperValue)
+
+    try {
+      if (upperValue === "") {
+        // Se a célula foi limpa, deleta do banco
+        const { error } = await supabase
+          .from("operator_attendance")
+          .delete()
+          .match({ operator_id: operatorId, data_registro: dateStr })
+        
+        if (error) throw error
+      } else {
+        // UPSERT seguro (Requer a constraint UNIQUE(operator_id, data_registro) no banco)
+        const { error } = await supabase
+          .from("operator_attendance")
+          .upsert(
+            { operator_id: operatorId, data_registro: dateStr, status: upperValue },
+            { onConflict: 'operator_id,data_registro' }
+          )
+        
+        if (error) throw error
+      }
+    } catch (error) {
+      console.error("Erro na sincronização:", error)
+      // 2. Rollback Automático em caso de falha (Volta pro valor antigo)
+      setAttendanceData(prev => ({ ...prev, [key]: previousValue }))
+      setAlertConfig({
+        title: "Falha de Sincronização",
+        message: "Não foi possível salvar a frequência no banco de dados. A célula foi revertida."
+      })
+      // 3. Propaga o erro para a Célula mostrar a bolinha vermelha
+      throw error 
+    }
   }
 
-  // Filtro de tabela: Se houver busca, filtra os da linha atual. 
-  // Se não houver linha selecionada, não mostra nada (mantém o padrão)
   const filteredOperators = operators.filter(op => 
     op.nome.toLowerCase().includes(searchQuery.toLowerCase()) || 
     String(op.matricula).includes(searchQuery)
   )
 
   return {
+    modals: { alertConfig, setAlertConfig },
     filters: {
       selectedMonth, setSelectedMonth,
       selectedYear, setSelectedYear,
       selectedLine, setSelectedLine,
       lines,
       searchQuery, setSearchQuery,
-      allOperators // Passamos todos os operadores do sistema aqui
+      allOperators 
     },
     table: {
       operators: filteredOperators,

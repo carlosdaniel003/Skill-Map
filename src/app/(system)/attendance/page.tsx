@@ -9,8 +9,7 @@ import AttendanceTable from "./components/AttendanceTable"
 
 export default function AttendancePage() {
   
-  // O Hook useAttendance centraliza toda a inteligência da página
-  const { filters, table } = useAttendance()
+  const { filters, table, modals } = useAttendance() // <-- Adicionado 'modals'
 
   return (
     <div className="attendancePage">
@@ -21,8 +20,6 @@ export default function AttendancePage() {
       </div>
 
       <div className="corporateCard attendanceCard">
-        
-        {/* Passa todos os filtros, incluindo a lógica de busca global e a lista de operadores */}
         <AttendanceFilters 
           selectedMonth={filters.selectedMonth}
           setSelectedMonth={filters.setSelectedMonth}
@@ -33,12 +30,11 @@ export default function AttendancePage() {
           lines={filters.lines}
           searchQuery={filters.searchQuery}
           setSearchQuery={filters.setSearchQuery}
-          operators={filters.allOperators} // Importante: allOperators para o autocomplete
+          operators={filters.allOperators}
         />
 
         <AttendanceLegend />
 
-        {/* Renderização Condicional: Se não houver linha selecionada, mostra o estado vazio */}
         {!filters.selectedLine ? (
           <div className="emptyAttendance">
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="emptyIcon">
@@ -56,8 +52,26 @@ export default function AttendancePage() {
             onSaveCell={table.handleSaveCell} 
           />
         )}
-
       </div>
+
+      {/* MODAL DE ERRO DE ROLLBACK (NOVO) */}
+      {modals.alertConfig && (
+        <div className="modalOverlay">
+          <div className="corporateModal">
+            <div className="modalHeader">
+              <div className="modalIcon warningIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+              </div>
+              <h3>{modals.alertConfig.title}</h3>
+            </div>
+            <div className="modalBody"><p>{modals.alertConfig.message}</p></div>
+            <div className="modalFooter">
+              <button className="primaryButton" onClick={()=>modals.setAlertConfig(null)}>Entendi</button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }

@@ -12,7 +12,8 @@ interface Props {
   operators: any[]
   daysInMonth: Day[]
   attendanceData: Record<string, string>
-  onSaveCell: (opId: string, date: string, val: string) => void
+  onSaveCell: (opId: string, date: string, val: string) => Promise<void> // <-- ALTERADO PARA PROMISE
+
 }
 
 export default function AttendanceTable({ operators, daysInMonth, attendanceData, onSaveCell }: Props) {

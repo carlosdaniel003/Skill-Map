@@ -99,3 +99,58 @@
 .status-fe { background-color: rgba(37, 99, 235, 0.2) !important; color: #2563eb !important; }
 .status-lp { background-color: rgba(8, 145, 178, 0.2) !important; color: #0891b2 !important; }
 .status-lm { background-color: rgba(219, 39, 119, 0.2) !important; color: #db2777 !important; }
+
+/* src/app/(system)/attendance/components/AttendanceCell.css */
+
+/* INDICADOR VISUAL DE SINCRONIZAÇÃO (NOVO) */
+.sync-indicator {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.sync-spinner {
+  width: 8px;
+  height: 8px;
+  border: 2px solid rgba(0,0,0,0.1);
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spinSync 0.8s linear infinite;
+}
+
+.sync-error {
+  width: 8px;
+  height: 8px;
+  background-color: #dc2626;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
+}
+
+.sync-success {
+  width: 8px;
+  height: 8px;
+  background-color: #16a34a;
+  border-radius: 50%;
+  animation: fadeOutSync 2s forwards;
+}
+
+.excelInput:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@keyframes spinSync {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeOutSync {
+  0% { opacity: 1; transform: scale(1); }
+  80% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0); }
+}

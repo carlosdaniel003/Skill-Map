@@ -19,7 +19,7 @@ export function useOperatorSkills(operatorId: string) {
   const sessionUser = getSession()
 
   const [isLoading, setIsLoading] = useState(true)
-  const [isSaving, setIsSaving] = useState(false) // Trava de botão contra cliques duplos
+  const [isSaving, setIsSaving] = useState(false)
 
   const [operator, setOperator] = useState<any>(null)
   const [skills, setSkills] = useState<any[]>([])
@@ -55,7 +55,6 @@ export function useOperatorSkills(operatorId: string) {
   }
 
   async function loadSkills(op: any){
-    // Se o operador não tiver linha atual, não carrega habilidades. Ele precisa ser alocado primeiro.
     if (!op || !op.linha_atual) {
       setSkills([])
       setOriginalSkills([])
@@ -65,23 +64,31 @@ export function useOperatorSkills(operatorId: string) {
 
     const wss = await getWorkstations()
 
-    // Busca a bagagem dele APENAS na linha que ele está alocado hoje
-    const { data: exp } = await supabase
+    // CORREÇÃO AQUI: Removido o filtro problemático de 'origem'
+    const { data: exp, error } = await supabase
       .from("operator_experience")
       .select("*")
       .eq("operator_id", operatorId)
       .eq("linha", op.linha_atual)
-      .eq("origem", "experiencia")
       .eq("ativo", true)
 
-    // Monta a tela lendo a experiência exata daquela linha
+    if (error) console.error("Erro ao buscar histórico:", error)
+
     const loadedSkills = wss.map(ws => {
-      const existing = exp?.find(e => e.posto.trim() === ws.nome.trim())
+      // CORREÇÃO AQUI: toLowerCase() para garantir que acha a palavra correta ignorando maiúsculas
+      const existingList = exp?.filter(e => e.posto.trim().toLowerCase() === ws.nome.trim().toLowerCase())
+      
+      // Se tiver mais de um registro ativo por acidente, pega o de maior nível
+      let existing = null
+      if (existingList && existingList.length > 0) {
+        existing = existingList.sort((a, b) => b.skill_level - a.skill_level)[0]
+      }
+
       return {
         id: ws.nome, 
         posto: ws.nome,
-        skill_level: existing ? Number(existing.skill_level) : 1, // Se não tiver exp NESSA linha, é nível 1
-        exp_id: existing ? existing.id : null // Guarda o ID do histórico para atualizar depois
+        skill_level: existing ? Number(existing.skill_level) : 1,
+        exp_id: existing ? existing.id : null 
       }
     })
 
@@ -121,7 +128,6 @@ export function useOperatorSkills(operatorId: string) {
       const dataRegistro = new Date().toISOString().split("T")[0]
       const linha = operator.linha_atual
 
-      // 1. Guarda log de auditoria tradicional
       const historyLog = changedSkills.map(skill => {
         const original = originalSkills.find(s => s.id === skill.id)
         return {
@@ -134,7 +140,6 @@ export function useOperatorSkills(operatorId: string) {
       await supabase.from("operator_skills_history").insert(historyLog)
 
       for(const skill of changedSkills) {
-        // 2. Atualiza a bagagem no Histórico para a linha ATUAL
         if (skill.exp_id) {
           await deactivateOperatorExperience(skill.exp_id)
         }
@@ -149,7 +154,6 @@ export function useOperatorSkills(operatorId: string) {
           })
         }
 
-        // 3. Sincroniza na tabela base global para Dashboards
         const { data: existingSkill } = await supabase
           .from("operator_skills")
           .select("id")
