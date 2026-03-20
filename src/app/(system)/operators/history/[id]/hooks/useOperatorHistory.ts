@@ -1,11 +1,9 @@
 // src/app/(system)/operators/history/[id]/hooks/useOperatorHistory.ts
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-
 import { supabase } from "@/services/database/supabaseClient"
 import {
   getProductionLines,
-  getWorkstations,
   addOperatorExperience, 
   getFullOperatorHistory,
   deactivateOperatorExperience,
@@ -15,7 +13,6 @@ import {
   activateOperatorHistory,
   getLineSkillDifficulties 
 } from "@/services/database/operatorRepository"
-
 import { logAction } from "@/services/audit/auditService"
 import { getSession } from "@/services/auth/sessionService"
 
@@ -31,7 +28,6 @@ export function useOperatorHistory(operatorId: string) {
 
   const [operator, setOperator] = useState<any>(null)
   const [lines, setLines] = useState<any[]>([])
-  const [workstations, setWorkstations] = useState<any[]>([])
   const [history, setHistory] = useState<any[]>([])
   const [showInactive, setShowInactive] = useState(false)
 
@@ -40,7 +36,6 @@ export function useOperatorHistory(operatorId: string) {
   const [assessments, setAssessments] = useState<SkillAssessment[]>([])
   const [initialAssessments, setInitialAssessments] = useState<SkillAssessment[]>([])
 
-  // ESTADO DE SALVAMENTO PARA BLOQUEAR O BOTÃO
   const [isSaving, setIsSaving] = useState(false)
 
   const [alertConfig, setAlertConfig] = useState<{title: string, message: string} | null>(null)
@@ -50,7 +45,6 @@ export function useOperatorHistory(operatorId: string) {
     if (operatorId) {
       loadOperator()
       loadLines()
-      loadWorkstations()
       loadHistory()
     }
   }, [operatorId])
@@ -63,23 +57,30 @@ export function useOperatorHistory(operatorId: string) {
         return
       }
       
+      // Busca a "Receita do Bolo" (O Kit do Modelo) do banco de dados
       const diffs = await getLineSkillDifficulties(linha)
+      
+      // Filtra o histórico para pegar as experiências ativas deste modelo específico
       const existingExpForLine = history.filter((h: any) => h.linha === linha && h.origem === "experiencia" && h.ativo !== false)
       
-      const loadedAssessments = workstations.map(ws => {
-        const savedExp = existingExpForLine.find((e: any) => e.posto.trim() === ws.nome.trim())
+      // MÁGICA: Em vez de iterar sobre todas as workstations da fábrica, iteramos apenas sobre as que estão configuradas para ESTA LINHA.
+      const loadedAssessments = Object.keys(diffs).map(skillName => {
+        const savedExp = existingExpForLine.find((e: any) => e.posto.trim() === skillName.trim())
         return {
-          posto: ws.nome,
-          dificuldade: diffs[ws.nome] || 1,
+          posto: skillName,
+          dificuldade: diffs[skillName] || 1,
           level: savedExp ? Number(savedExp.skill_level) : 1
         }
       })
+
+      // Ordena alfabeticamente para ficar bonitinho na tela
+      loadedAssessments.sort((a, b) => a.posto.localeCompare(b.posto))
 
       setAssessments(loadedAssessments)
       setInitialAssessments(loadedAssessments)
     }
     prepareAssessments()
-  }, [linha, workstations, history])
+  }, [linha, history]) // Dependências atualizadas (workstations foi removido pois não é mais usado)
 
   async function loadOperator(){
     const operators = await getOperators()
@@ -90,11 +91,6 @@ export function useOperatorHistory(operatorId: string) {
   async function loadLines(){
     const data = await getProductionLines()
     setLines(data)
-  }
-
-  async function loadWorkstations(){
-    const data = await getWorkstations()
-    setWorkstations(data)
   }
 
   async function loadHistory(){
@@ -144,11 +140,7 @@ export function useOperatorHistory(operatorId: string) {
     loadHistory()
   }
 
-  // =========================================================================
-  // SALVAMENTO ABSOLUTO COM BLOQUEIO DE BOTÃO
-  // =========================================================================
   async function handleSave(){
-    // Evita duplo clique se já estiver salvando
     if (isSaving) return
 
     if(!linha){
@@ -169,14 +161,12 @@ export function useOperatorHistory(operatorId: string) {
        return
     }
 
-    // Bloqueia o botão
     setIsSaving(true)
 
     try {
       const dataRegistro = new Date().toISOString().split("T")[0]
       let savedCount = 0
 
-      // 1. Atualiza a tabela de Histórico APENAS para o que o gestor mudou na tela
       for(const assessment of changedAssessments) {
         const existing = history.find((h:any) => h.linha === linha && h.posto === assessment.posto && h.origem === "experiencia" && h.ativo !== false)
 
@@ -196,7 +186,6 @@ export function useOperatorHistory(operatorId: string) {
         savedCount++
       }
 
-      // 2. SINCRONIZAÇÃO GERAL COM A TELA DE SKILLS BASE
       for(const assessment of assessments) {
         const isExplicitlyChanged = changedAssessments.some(c => c.posto === assessment.posto)
 
@@ -224,7 +213,7 @@ export function useOperatorHistory(operatorId: string) {
 
       setLinha("")
       setAssessments([])
-      await loadHistory() // Aguarda o histórico carregar antes de mostrar a mensagem
+      await loadHistory() 
 
       setAlertConfig({
         title: "Sucesso",
@@ -238,7 +227,6 @@ export function useOperatorHistory(operatorId: string) {
         message: "Ocorreu um erro ao salvar as informações. Tente novamente."
       })
     } finally {
-      // Libera o botão independente de dar certo ou errado
       setIsSaving(false)
     }
   }
@@ -254,7 +242,7 @@ export function useOperatorHistory(operatorId: string) {
       lines,
       linha, setLinha,
       assessments, handleAssessmentChange,
-      isSaving, // <-- Exportamos para o formulário
+      isSaving, 
       handleSave
     },
     table: {

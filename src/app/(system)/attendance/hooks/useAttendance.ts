@@ -2,10 +2,14 @@
 import { useEffect, useState } from "react"
 import { 
   getProductionLinesWithOperators, 
-  getOperatorsByLine, 
-  getAttendanceData 
+  getOperatorsByLine 
 } from "@/services/database/attendanceRepository"
 import { supabase } from "@/services/database/supabaseClient"
+
+export interface AttendanceRecord {
+  status: string
+  observacao: string
+}
 
 export function useAttendance() {
   const dataAtual = new Date()
@@ -19,9 +23,10 @@ export function useAttendance() {
   const [lines, setLines] = useState<string[]>([])
   const [operators, setOperators] = useState<any[]>([])
   const [daysInMonth, setDaysInMonth] = useState<{ day: number, isWeekend: boolean, dateStr: string }[]>([])
-  const [attendanceData, setAttendanceData] = useState<Record<string, string>>({})
+  
+  // Agora guarda tanto o status quanto a observação
+  const [attendanceData, setAttendanceData] = useState<Record<string, AttendanceRecord>>({})
 
-  // Modal para erros de Rollback
   const [alertConfig, setAlertConfig] = useState<{title: string, message: string} | null>(null)
 
   useEffect(() => {
@@ -71,27 +76,42 @@ export function useAttendance() {
         const operatorIds = operators.map(o => o.id)
         const firstDay = daysInMonth[0].dateStr
         const lastDay = daysInMonth[daysInMonth.length - 1].dateStr
-        const data = await getAttendanceData(operatorIds, firstDay, lastDay)
-        setAttendanceData(data)
+        
+        // Busca direto no Supabase para garantir a coluna nova "observacao"
+        const { data } = await supabase
+          .from("operator_attendance")
+          .select("operator_id, data_registro, status, observacao")
+          .in("operator_id", operatorIds)
+          .gte("data_registro", firstDay)
+          .lte("data_registro", lastDay)
+
+        const map: Record<string, AttendanceRecord> = {}
+        if (data) {
+          data.forEach(row => {
+            const key = `${row.operator_id}_${row.data_registro}`
+            map[key] = { status: row.status, observacao: row.observacao || "" }
+          })
+        }
+        setAttendanceData(map)
       }
     }
     fetchAttendance()
   }, [operators, daysInMonth])
 
   // ============================================================================
-  // MAGIA DA CONCORRÊNCIA E ROLLBACK OTIMISTA
+  // MAGIA DA CONCORRÊNCIA E ROLLBACK OTIMISTA COM OBSERVAÇÃO
   // ============================================================================
-  async function handleSaveCell(operatorId: string, dateStr: string, value: string) {
+  async function handleSaveCell(operatorId: string, dateStr: string, value: string, observacao: string) {
     const upperValue = value.trim().toUpperCase()
     const key = `${operatorId}_${dateStr}`
-    const previousValue = attendanceData[key] || ""
+    const previous = attendanceData[key] || { status: "", observacao: "" }
 
     // 1. Atualização Otimista (Interface fica rápida)
-    setAttendanceData(prev => ({ ...prev, [key]: upperValue }))
+    setAttendanceData(prev => ({ ...prev, [key]: { status: upperValue, observacao } }))
 
     try {
-      if (upperValue === "") {
-        // Se a célula foi limpa, deleta do banco
+      if (upperValue === "" && observacao === "") {
+        // Limpou tudo
         const { error } = await supabase
           .from("operator_attendance")
           .delete()
@@ -99,11 +119,11 @@ export function useAttendance() {
         
         if (error) throw error
       } else {
-        // UPSERT seguro (Requer a constraint UNIQUE(operator_id, data_registro) no banco)
+        // Upsert salvando o status E a observação
         const { error } = await supabase
           .from("operator_attendance")
           .upsert(
-            { operator_id: operatorId, data_registro: dateStr, status: upperValue },
+            { operator_id: operatorId, data_registro: dateStr, status: upperValue, observacao },
             { onConflict: 'operator_id,data_registro' }
           )
         
@@ -111,13 +131,12 @@ export function useAttendance() {
       }
     } catch (error) {
       console.error("Erro na sincronização:", error)
-      // 2. Rollback Automático em caso de falha (Volta pro valor antigo)
-      setAttendanceData(prev => ({ ...prev, [key]: previousValue }))
+      // 2. Rollback Automático
+      setAttendanceData(prev => ({ ...prev, [key]: previous }))
       setAlertConfig({
         title: "Falha de Sincronização",
         message: "Não foi possível salvar a frequência no banco de dados. A célula foi revertida."
       })
-      // 3. Propaga o erro para a Célula mostrar a bolinha vermelha
       throw error 
     }
   }

@@ -154,3 +154,187 @@
   80% { opacity: 1; transform: scale(1); }
   100% { opacity: 0; transform: scale(0); }
 }
+
+/* src/app/(system)/attendance/components/AttendanceCell.css */
+
+/* ... (Mantenha o resto que já tinha antes, como status-p, bolinhas de loading, etc) ... */
+
+/* TRIÂNGULO INDICADOR DE OBSERVAÇÃO NA CÉLULA (Estilo Excel) */
+.obs-triangle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-top: 8px solid #d40000;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.popoverDivider {
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 4px 0;
+}
+
+/* BOTÃO DE ADICIONAR OBSERVAÇÃO NO BALÃO */
+.addObsBtn {
+  background: transparent;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 8px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.addObsBtn:hover {
+  background: #f9f9f9;
+  border-color: #cccccc;
+  color: #d40000;
+}
+
+/* =========================================
+   MODAL DE OBSERVAÇÃO (CENTRO DA TELA)
+   ========================================= */
+
+.obsModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  animation: fadeOverlay 0.2s ease-out;
+}
+
+.obsModalCard {
+  width: 100%;
+  max-width: 450px;
+  background: #ffffff;
+  border-top: 6px solid #d40000;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  animation: slideUpModal 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.obsModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 12px;
+}
+
+.obsModalHeader h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111111;
+}
+
+.obsModalDate {
+  font-size: 13px;
+  font-weight: 700;
+  color: #d40000;
+  background: rgba(212, 0, 0, 0.1);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.obsModalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.obsModalBody label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555555;
+}
+
+.obsModalTextarea {
+  width: 100%;
+  min-height: 120px;
+  resize: vertical;
+  padding: 12px;
+  font-size: 14px;
+  color: #333333;
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  outline: none;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.obsModalTextarea:focus {
+  background: #ffffff;
+  border-color: #d40000;
+  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
+}
+
+.obsModalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.obsModalBtn {
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.obsModalBtn.secondary {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  color: #333333;
+}
+
+.obsModalBtn.secondary:hover {
+  background: #f9f9f9;
+  border-color: #cccccc;
+}
+
+.obsModalBtn.primary {
+  background: #d40000;
+  border: none;
+  color: #ffffff;
+}
+
+.obsModalBtn.primary:hover {
+  background: #b30000;
+  transform: translateY(-1px);
+}
+
+@keyframes fadeOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUpModal {
+  from { transform: translateY(20px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}

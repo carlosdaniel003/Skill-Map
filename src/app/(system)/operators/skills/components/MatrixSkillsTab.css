@@ -92,3 +92,111 @@
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* src/app/(system)/operators/skills/components/MatrixSkillsTab.css */
+
+/* ... mantenha o seu CSS atual e adicione no final: ... */
+
+/* ESTILO DA TABELA DE KITS */
+.kitTable th.statusCol, .kitTable td.statusCol {
+  width: 80px;
+  text-align: center;
+}
+
+.kitTable th.globalCol, .kitTable td.globalCol {
+  width: 180px;
+  text-align: right;
+}
+
+.inactiveKitRow td {
+  opacity: 0.5;
+  background-color: #fafafa;
+}
+
+.inactiveKitRow td.statusCol, .inactiveKitRow td.globalCol {
+  opacity: 1; /* O botão de ligar e a ação global não ficam opacos */
+}
+
+/* TOGGLE SWITCH CORPORATIVO */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+input:checked + .slider {
+  background-color: #16a34a; /* Verde quando ativado */
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #16a34a;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* BOTÃO APLICAR A TODOS (GLOBAL) */
+.globalActionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid #e0e0e0;
+  color: #555;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.globalActionBtn:hover {
+  background: #f0f4ff;
+  border-color: #3b82f6;
+  color: #2563eb;
+}
+
+.difficultySelector.disabled {
+  pointer-events: none;
+  filter: grayscale(100%);
+}

@@ -8,7 +8,8 @@ import {
   deactivateOperator,
   getProductionLines,
   getWorkstations,
-  changeOperatorPosition
+  changeOperatorPosition,
+  getLineSkillDifficulties // <-- ADICIONADO PARA LER O KIT
 } from "@/services/database/operatorRepository"
 
 import { logAction } from "@/services/audit/auditService"
@@ -18,10 +19,14 @@ export function useOperators() {
   const router = useRouter()
   const sessionUser = getSession()
 
-  // DADOS DO BANCO
+  // DADOS DO BANCO GLOBAIS
   const [operators, setOperators] = useState<any[]>([])
   const [lines, setLines] = useState<any[]>([])
   const [workstations, setWorkstations] = useState<any[]>([])
+
+  // LISTAS DINÂMICAS PARA OS DROPDOWNS (Respeitam os Kits)
+  const [formWorkstations, setFormWorkstations] = useState<any[]>([])
+  const [filterWorkstations, setFilterWorkstations] = useState<any[]>([])
 
   // ESTADOS DO FORMULÁRIO DE CADASTRO
   const [nome, setNome] = useState("")
@@ -59,6 +64,49 @@ export function useOperators() {
     const data = await getWorkstations()
     setWorkstations(data)
   }
+
+  // =========================================================================
+  // MÁGICA 1: O Dropdown do Formulário se adapta ao Kit do Modelo Selecionado
+  // =========================================================================
+  useEffect(() => {
+    async function syncFormKit() {
+      if (!linha) {
+        setFormWorkstations(workstations) // Se não tem linha, mostra todos
+        return
+      }
+      
+      const diffs = await getLineSkillDifficulties(linha)
+      const allowedPostos = Object.keys(diffs)
+      
+      setFormWorkstations(workstations.filter(w => allowedPostos.includes(w.nome)))
+
+      // Se o posto que estava selecionado não existe na nova linha, limpa ele
+      setPosto(prev => allowedPostos.includes(prev) ? prev : "")
+    }
+    syncFormKit()
+  }, [linha, workstations])
+
+  // =========================================================================
+  // MÁGICA 2: O Dropdown de Filtro de Busca também se adapta ao Kit
+  // =========================================================================
+  useEffect(() => {
+    async function syncFilterKit() {
+      if (!filterLinha) {
+        setFilterWorkstations(workstations) // Se não tem filtro de linha, mostra todos
+        return
+      }
+      
+      const diffs = await getLineSkillDifficulties(filterLinha)
+      const allowedPostos = Object.keys(diffs)
+      
+      setFilterWorkstations(workstations.filter(w => allowedPostos.includes(w.nome)))
+
+      // Se o filtro de posto atual não existe na linha filtrada, limpa ele
+      setFilterPosto(prev => allowedPostos.includes(prev) ? prev : "")
+    }
+    syncFilterKit()
+  }, [filterLinha, workstations])
+
 
   // --- AÇÕES DO FORMULÁRIO ---
   async function handleCreateOperator(){
@@ -151,7 +199,8 @@ export function useOperators() {
       matricula, setMatricula,
       linha, setLinha,
       posto, setPosto,
-      lines, workstations,
+      lines, 
+      workstations: formWorkstations, // <-- Trocado da global para a filtrada (O componente visual não precisa ser alterado!)
       handleCreateOperator
     },
     filters: {
@@ -159,10 +208,11 @@ export function useOperators() {
       searchNome, setSearchNome,
       filterLinha, setFilterLinha,
       filterPosto, setFilterPosto,
-      lines, workstations
+      lines, 
+      workstations: filterWorkstations // <-- Trocado da global para a filtrada
     },
     table: {
-      filteredOperators, lines, workstations,
+      filteredOperators, lines, workstations, // A tabela continua recebendo a global por segurança
       handleRemoveOperator, handleChangePosition
     },
     navigation: {

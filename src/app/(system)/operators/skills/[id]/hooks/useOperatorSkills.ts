@@ -6,7 +6,6 @@ import { supabase } from "@/services/database/supabaseClient"
 import { 
   getOperators, 
   getLineSkillDifficulties, 
-  getWorkstations, 
   addOperatorExperience, 
   deactivateOperatorExperience 
 } from "@/services/database/operatorRepository"
@@ -38,6 +37,7 @@ export function useOperatorSkills(operatorId: string) {
   async function initializePage(){
     setIsLoading(true)
     const op = await loadOperatorAndDifficulties()
+    // Precisamos passar o op E as dificuldades recém carregadas para a próxima função
     await loadSkills(op)
     setIsLoading(false)
   }
@@ -50,11 +50,12 @@ export function useOperatorSkills(operatorId: string) {
     if (op && op.linha_atual) {
       const diffs = await getLineSkillDifficulties(op.linha_atual)
       setLineDifficulties(diffs)
+      return { op, diffs } // Retorna os dois juntos para não depender de estado assíncrono
     }
-    return op
+    return { op, diffs: {} }
   }
 
-  async function loadSkills(op: any){
+  async function loadSkills({ op, diffs }: { op: any, diffs: Record<string, number> }){
     if (!op || !op.linha_atual) {
       setSkills([])
       setOriginalSkills([])
@@ -62,9 +63,7 @@ export function useOperatorSkills(operatorId: string) {
       return
     }
 
-    const wss = await getWorkstations()
-
-    // CORREÇÃO AQUI: Removido o filtro problemático de 'origem'
+    // Busca a experiência dele APENAS na linha atual
     const { data: exp, error } = await supabase
       .from("operator_experience")
       .select("*")
@@ -74,23 +73,29 @@ export function useOperatorSkills(operatorId: string) {
 
     if (error) console.error("Erro ao buscar histórico:", error)
 
-    const loadedSkills = wss.map(ws => {
-      // CORREÇÃO AQUI: toLowerCase() para garantir que acha a palavra correta ignorando maiúsculas
-      const existingList = exp?.filter(e => e.posto.trim().toLowerCase() === ws.nome.trim().toLowerCase())
+    // MÁGICA: Em vez de mapear todas as 'workstations', mapeamos apenas as chaves do 'diffs' (O Kit do Modelo)
+    const allowedSkills = Object.keys(diffs)
+
+    const loadedSkills = allowedSkills.map(skillName => {
+      // Procura se ele já tem nota no histórico para essa skill específica (ignorando maiúsculas/minúsculas por segurança)
+      const existingList = exp?.filter(e => e.posto.trim().toLowerCase() === skillName.trim().toLowerCase())
       
-      // Se tiver mais de um registro ativo por acidente, pega o de maior nível
+      // Se tiver mais de um registro ativo, pega o mais alto
       let existing = null
       if (existingList && existingList.length > 0) {
         existing = existingList.sort((a, b) => b.skill_level - a.skill_level)[0]
       }
 
       return {
-        id: ws.nome, 
-        posto: ws.nome,
-        skill_level: existing ? Number(existing.skill_level) : 1,
+        id: skillName, 
+        posto: skillName,
+        skill_level: existing ? Number(existing.skill_level) : 1, // Começa no 1 (Nunca Fez) se não tiver nada
         exp_id: existing ? existing.id : null 
       }
     })
+
+    // Ordena alfabeticamente para a tabela ficar bonita
+    loadedSkills.sort((a, b) => a.posto.localeCompare(b.posto))
 
     setSkills(loadedSkills)
     setOriginalSkills(JSON.parse(JSON.stringify(loadedSkills)))
@@ -128,6 +133,7 @@ export function useOperatorSkills(operatorId: string) {
       const dataRegistro = new Date().toISOString().split("T")[0]
       const linha = operator.linha_atual
 
+      // 1. Salva na tabela de Log (Auditoria invisível)
       const historyLog = changedSkills.map(skill => {
         const original = originalSkills.find(s => s.id === skill.id)
         return {
@@ -140,10 +146,12 @@ export function useOperatorSkills(operatorId: string) {
       await supabase.from("operator_skills_history").insert(historyLog)
 
       for(const skill of changedSkills) {
+        // 2. Desativa experiência antiga (se existir)
         if (skill.exp_id) {
           await deactivateOperatorExperience(skill.exp_id)
         }
         
+        // 3. Adiciona nova experiência (se for > 1)
         if (skill.skill_level > 1) {
           await addOperatorExperience({
             operator_id: operatorId,
@@ -154,6 +162,7 @@ export function useOperatorSkills(operatorId: string) {
           })
         }
 
+        // 4. Mantém a tabela global de Dashboards atualizada (Upsert Manual)
         const { data: existingSkill } = await supabase
           .from("operator_skills")
           .select("id")
@@ -169,7 +178,6 @@ export function useOperatorSkills(operatorId: string) {
       }
 
       const actionDetails = changedSkills.map(skill => {
-          const original = originalSkills.find(s => s.id === skill.id)
           return `[${skill.posto}: Nvl ${skill.skill_level}]`
       }).join(", ")
 
@@ -179,7 +187,8 @@ export function useOperatorSkills(operatorId: string) {
         `Atualizou skills de ${operator?.nome} na linha ${linha}: ${actionDetails}`
       )
 
-      await loadSkills(operator)
+      // Recarrega tudo (Passando o operador e as dificuldades que já tínhamos no state)
+      await loadSkills({ op: operator, diffs: lineDifficulties })
 
     } catch (error) {
       console.error("Erro ao salvar skills:", error)
