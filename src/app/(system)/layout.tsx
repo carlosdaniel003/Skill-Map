@@ -7,6 +7,9 @@ import { usePathname, useRouter } from "next/navigation"
 import Sidebar from "@/components/sidebar/Sidebar"
 import { getSession } from "@/services/auth/sessionService"
 
+// IMPORTAMOS O NOSSO ASSISTENTE IA AQUI
+import AIConsultant from "@/components/ai/AIConsultant"
+
 export default function SystemLayout({
   children,
 }: {
@@ -65,6 +68,9 @@ export default function SystemLayout({
       <main className="systemMain">
         {children}
       </main>
+
+      {/* O NOSSO ASSISTENTE VIRTUAL IA (FLUTUANTE) */}
+      <AIConsultant />
 
       {/* NOSSO MODAL DE SISTEMA (Substitui os alerts nativos) */}
       {alertConfig && (
