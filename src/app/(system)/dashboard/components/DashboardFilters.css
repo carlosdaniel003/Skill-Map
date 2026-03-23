@@ -24,10 +24,11 @@
   letter-spacing: 0.5px;
 }
 
-/* GRID DO FILTRO */
+/* GRID DO FILTRO (Ajustado para deixar a busca maior) */
 .filtersGrid {
   display: grid;
-  grid-template-columns: 2fr 1.5fr auto;
+  /* 3 partes para a busca, 1.2 partes para a linha, e os botões se ajustam automaticamente */
+  grid-template-columns: 3fr 1.2fr auto;
   gap: 20px;
   align-items: flex-end;
 }
@@ -37,6 +38,11 @@
   flex-direction: column;
   gap: 8px;
   position: relative;
+}
+
+/* Garante que o input de busca não fique espremido em telas médias */
+.filterGroup.searchGroup {
+  min-width: 320px; 
 }
 
 .filterGroup label {
@@ -161,12 +167,23 @@
 }
 
 /* RESPONSIVIDADE */
+@media (max-width: 1024px) {
+  .filtersGrid {
+    /* Em telas um pouco menores, a busca ganha flexibilidade mas ainda é maior */
+    grid-template-columns: 2fr 1fr auto;
+  }
+}
+
 @media (max-width: 900px) {
   .filtersGrid {
     grid-template-columns: 1fr 1fr;
     gap: 16px;
   }
   
+  .filterGroup.searchGroup {
+    min-width: unset; /* Tira o min-width para não quebrar no mobile */
+  }
+
   .filterAction {
     grid-column: span 2;
     justify-content: flex-end;

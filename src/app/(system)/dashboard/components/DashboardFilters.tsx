@@ -91,7 +91,6 @@ export default function DashboardFilters(){
   }
 
   return(
-
     <div className="filtersCard">
       
       <div className="filtersHeader">
@@ -188,7 +187,5 @@ export default function DashboardFilters(){
       </div>
 
     </div>
-
   )
-
 }

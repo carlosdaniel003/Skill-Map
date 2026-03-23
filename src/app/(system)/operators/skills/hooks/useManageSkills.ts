@@ -13,10 +13,11 @@ import {
 import { logAction } from "@/services/audit/auditService"
 import { getSession } from "@/services/auth/sessionService"
 
-// Tipo para controlar o estado da Skill na Linha
+// Atualizado: Agora o Kit guarda também a quantidade necessária de pessoas
 interface SkillMatrixState {
   active: boolean
   diff: number
+  qtd: number 
 }
 
 export function useManageSkills() {
@@ -71,13 +72,13 @@ export function useManageSkills() {
     setLines(data.filter(l => l.ativo))
   }
 
-  // Carrega o "Kit" do banco para a linha selecionada
   async function loadMatrixData(linha: string){
     if (skills.length === 0) return
 
+    // NOVO: Buscando também a qtd_necessaria
     const { data } = await supabase
       .from('line_skill_difficulty')
-      .select('posto, dificuldade')
+      .select('posto, dificuldade, qtd_necessaria')
       .eq('linha', linha)
 
     const newConfig: Record<string, SkillMatrixState> = {}
@@ -85,8 +86,9 @@ export function useManageSkills() {
     skills.forEach(s => {
       const found = data?.find(d => d.posto === s.nome)
       newConfig[s.nome] = { 
-        active: !!found, // Se encontrou no banco, faz parte do kit
-        diff: found ? found.dificuldade : 1 
+        active: !!found,
+        diff: found ? found.dificuldade : 1,
+        qtd: found?.qtd_necessaria || 1 // NOVO: Mapeia a quantidade ou joga 1 como padrão
       }
     })
 
@@ -129,31 +131,23 @@ export function useManageSkills() {
     requestAction(() => setSelectedLine(linha))
   }
 
-  // ================= ABA BASE =================
+  // ================= ABA BASE (MANTIDOS) =================
   async function handleCreateSkill(){
-    if(!newSkill){
-      setAlertConfig({ title:"Atenção", message:"Informe o nome da skill." })
-      return
-    }
+    if(!newSkill){ setAlertConfig({ title:"Atenção", message:"Informe o nome da skill." }); return }
     try{
       await createWorkstation(newSkill)
       await logAction(sessionUser?.username || "sistema", "skill_create", `Criou a skill: ${newSkill}`)
       setNewSkill("")
       loadSkills()
       setAlertConfig({ title:"Sucesso", message:"Nova skill cadastrada." })
-    }catch{
-      setAlertConfig({ title:"Erro", message:"Ocorreu um erro ao salvar." })
-    }
+    }catch{ setAlertConfig({ title:"Erro", message:"Ocorreu um erro ao salvar." }) }
   }
 
   function startEdit(skill:any){ setEditingId(skill.id); setEditName(skill.nome); }
   function cancelEdit(){ setEditingId(null); setEditName(""); }
 
   async function saveEdit(id:string){
-    if(!editName){
-      setAlertConfig({ title:"Nome inválido", message:"O nome não pode ficar vazio." })
-      return
-    }
+    if(!editName){ setAlertConfig({ title:"Nome inválido", message:"O nome não pode ficar vazio." }); return }
     await updateWorkstation(id,editName)
     await logAction(sessionUser?.username || "sistema", "skill_edit", `Editou a skill para: ${editName}`)
     cancelEdit()
@@ -169,9 +163,7 @@ export function useManageSkills() {
           await toggleWorkstation(skill.id, !skill.ativo)
           await logAction(sessionUser?.username || "sistema", "skill_toggle", `${!skill.ativo ? "Reativou" : "Desativou"} a skill: ${skill.nome}`)
           loadSkills()
-        }catch{
-          setAlertConfig({ title:"Erro", message:"Não foi possível alterar." })
-        }
+        }catch{ setAlertConfig({ title:"Erro", message:"Não foi possível alterar." }) }
       }
     })
   }
@@ -185,9 +177,7 @@ export function useManageSkills() {
     reordered.splice(index,0,draggedItem)
     setSkills(reordered)
     setDragIndex(null)
-    for(let i=0;i<reordered.length;i++){
-      await updateWorkstationOrder(reordered[i].id, i)
-    }
+    for(let i=0;i<reordered.length;i++){ await updateWorkstationOrder(reordered[i].id, i) }
     await logAction(sessionUser?.username || "sistema", "skill_edit", `Reordenou a lista de skills`)
   }
 
@@ -204,19 +194,29 @@ export function useManageSkills() {
   function changeDifficultyInLine(posto: string, diff: number) {
     if (!selectedLine) return
     setDraftMatrix(prev => {
-      // Se mudar a dificuldade, liga a skill automaticamente
-      const next = { ...prev, [posto]: { active: true, diff } }
+      const next = { ...prev, [posto]: { ...prev[posto], active: true, diff } }
       setHasMatrixChanges(JSON.stringify(next) !== JSON.stringify(matrixConfig))
       return next
     })
   }
 
-  // A FUNÇÃO MÁGICA: Aplica a configuração atual de uma skill para TODAS as linhas de produção
+  // NOVO: Função para alterar a quantidade
+  function changeQuantityInLine(posto: string, qtd: number) {
+    if (!selectedLine) return
+    setDraftMatrix(prev => {
+      // Força no mínimo 1. Se mudar a qtd, já liga a skill automaticamente.
+      const safeQtd = Math.max(1, qtd)
+      const next = { ...prev, [posto]: { ...prev[posto], active: true, qtd: safeQtd } }
+      setHasMatrixChanges(JSON.stringify(next) !== JSON.stringify(matrixConfig))
+      return next
+    })
+  }
+
   function applySkillToAllLines(posto: string) {
     const draft = draftMatrix[posto]
     const actionText = draft.active 
-      ? `ADICIONADA como Nível ${draft.diff} em TODOS os modelos de produção` 
-      : `REMOVIDA de TODOS os modelos de produção`
+      ? `ADICIONADA (Nível ${draft.diff} | Qtd ${draft.qtd}) em TODOS os modelos` 
+      : `REMOVIDA de TODOS os modelos`
 
     setConfirmConfig({
       title: "Aplicar a todos os modelos?",
@@ -224,18 +224,18 @@ export function useManageSkills() {
       onConfirm: async () => {
         try {
           if (draft.active) {
-            // Upsert em todas as linhas ativas
-            const upserts = lines.map(l => ({ linha: l.nome, posto, dificuldade: draft.diff }))
+            const upserts = lines.map(l => ({ 
+              linha: l.nome, 
+              posto, 
+              dificuldade: draft.diff,
+              qtd_necessaria: draft.qtd // NOVO: Salva a quantidade
+            }))
             await supabase.from('line_skill_difficulty').upsert(upserts, { onConflict: 'linha,posto' })
           } else {
-            // Deleta de todas as linhas
             await supabase.from('line_skill_difficulty').delete().eq('posto', posto)
           }
-
           await logAction(sessionUser?.username || "sistema", "matrix_bulk_update", `Aplicou regra global para skill: ${posto}`)
           setAlertConfig({ title: "Sucesso", message: "Regra aplicada a todos os modelos com sucesso!" })
-          
-          // Se tiver outras alterações na tela, não perde elas. Apenas recarrega a foto do banco.
           loadMatrixData(selectedLine) 
         } catch (error) {
           setAlertConfig({ title: "Erro", message: "Ocorreu um erro ao aplicar a regra global." })
@@ -249,14 +249,19 @@ export function useManageSkills() {
       const toDelete: string[] = []
       const toUpsert: any[] = []
 
-      // Compara o rascunho com a configuração original para saber o que mudou
       Object.entries(draftMatrix).forEach(([posto, draft]) => {
         const original = matrixConfig[posto]
-        if (draft.active !== original.active || draft.diff !== original.diff) {
+        // Compara também se a quantidade mudou
+        if (draft.active !== original.active || draft.diff !== original.diff || draft.qtd !== original.qtd) {
           if (!draft.active) {
-            toDelete.push(posto) // Se desligou, deleta do banco
+            toDelete.push(posto)
           } else {
-            toUpsert.push({ linha: selectedLine, posto, dificuldade: draft.diff }) // Se ligou ou mudou, upsert
+            toUpsert.push({ 
+              linha: selectedLine, 
+              posto, 
+              dificuldade: draft.diff,
+              qtd_necessaria: draft.qtd // NOVO
+            })
           }
         }
       })
@@ -297,7 +302,8 @@ export function useManageSkills() {
       lines,
       selectedLine, handleLineChange,
       skills,
-      draftMatrix, toggleSkillInLine, changeDifficultyInLine, applySkillToAllLines,
+      // NOVO: Exporta a função changeQuantityInLine
+      draftMatrix, toggleSkillInLine, changeDifficultyInLine, changeQuantityInLine, applySkillToAllLines,
       hasMatrixChanges, saveMatrixChanges, cancelMatrixChanges
     },
     handleBackClick

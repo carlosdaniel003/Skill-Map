@@ -14,6 +14,9 @@ function LoginContent(){
   const [username,setUsername] = useState("")
   const [password,setPassword] = useState("")
   const [showPassword,setShowPassword] = useState(false)
+  
+  // 🆕 Estado para monitorar o Caps Lock
+  const [capsLockOn, setCapsLockOn] = useState(false)
 
   const [rememberUser,setRememberUser] = useState(false)
 
@@ -78,6 +81,15 @@ function LoginContent(){
     handleLogin()
   }
 
+  // 🆕 Função que verifica se o Caps Lock está ativo quando o usuário digita
+  const checkCapsLock = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.getModifierState("CapsLock")) {
+      setCapsLockOn(true)
+    } else {
+      setCapsLockOn(false)
+    }
+  }
+
   return(
     <>
       <div className="loginPage">
@@ -107,6 +119,9 @@ function LoginContent(){
                   setPassword(e.target.value)
                   setError("")
                 }}
+                // 🆕 Eventos para capturar o Caps Lock enquanto digita
+                onKeyDown={checkCapsLock}
+                onKeyUp={checkCapsLock}
               />
               <button 
                 className="togglePassword"
@@ -130,6 +145,16 @@ function LoginContent(){
                 )}
               </button>
             </div>
+
+            {/* 🆕 Aviso Visual do Caps Lock ligado */}
+            {capsLockOn && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#d40000', fontSize: '13px', marginTop: '-4px', marginBottom: '8px', fontWeight: 600, animation: 'fadeIn 0.3s' }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2v20"/><path d="m17 7-5-5-5 5"/><path d="M5 22h14"/>
+                </svg>
+                Caps Lock está ativado
+              </div>
+            )}
 
             {error && (
               <div className="loginError">

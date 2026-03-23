@@ -7,20 +7,32 @@
   margin-bottom: 24px;
 }
 
+/* CAMPOS PADRÃO */
 .filterGroup {
   display: flex;
   flex-direction: column;
   gap: 8px;
   flex: 1;
-  max-width: 300px;
+  min-width: 180px;
+  max-width: 240px; /* leve ajuste */
 }
 
+/* 🔥 CAMPO DE BUSCA (DESTAQUE REAL) */
+.searchGroup {
+  position: relative;
+  flex: 3;            /* MAIS IMPORTANTE → cresce mais que todos */
+  min-width: 300px;   /* garante bom tamanho mínimo */
+  max-width: 100%;    /* remove limitação artificial */
+}
+
+/* labels */
 .attendanceFilters label {
   font-size: 13px;
   font-weight: 600;
   color: #555555;
 }
 
+/* inputs */
 .corporateInput {
   width: 100%;
   padding: 10px 14px;
@@ -38,11 +50,7 @@
   box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
 }
 
-/* AUTOCOMPLETE DE BUSCA (CAIXA SUSPENSA) */
-.searchGroup {
-  position: relative;
-}
-
+/* AUTOCOMPLETE */
 .autocompleteDropdown {
   position: absolute;
   top: calc(100% + 4px);

@@ -200,3 +200,52 @@ input:checked + .slider:before {
   pointer-events: none;
   filter: grayscale(100%);
 }
+
+/* src/app/(system)/operators/skills/components/MatrixSkillsTab.css */
+/* (Adicione isso ao final do arquivo existente) */
+
+/* ESTILO DO CAMPO DE QUANTIDADE */
+.qtdSelector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qtdSelector.disabled {
+  pointer-events: none;
+  filter: grayscale(100%);
+  opacity: 0.5;
+}
+
+.qtdInput {
+  width: 50px;
+  height: 32px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 700;
+  color: #333;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.qtdInput:focus {
+  border-color: #d40000;
+  box-shadow: 0 0 0 2px rgba(212, 0, 0, 0.1);
+}
+
+.qtdLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+}
+
+/* Tira as setinhas chatas do input number no Chrome/Safari */
+.qtdInput::-webkit-outer-spin-button,
+.qtdInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.qtdInput[type=number] {
+  -moz-apparance: textfield;
+}

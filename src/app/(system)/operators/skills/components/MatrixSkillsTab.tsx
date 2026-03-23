@@ -5,7 +5,7 @@ import "./MatrixSkillsTab.css"
 export default function MatrixSkillsTab({ data }: { data: any }) {
   const { 
     lines, selectedLine, handleLineChange, 
-    skills, draftMatrix, toggleSkillInLine, changeDifficultyInLine, applySkillToAllLines,
+    skills, draftMatrix, toggleSkillInLine, changeDifficultyInLine, changeQuantityInLine, applySkillToAllLines,
     hasMatrixChanges, saveMatrixChanges, cancelMatrixChanges
   } = data
 
@@ -39,13 +39,14 @@ export default function MatrixSkillsTab({ data }: { data: any }) {
               <tr>
                 <th className="statusCol">Status no Kit</th>
                 <th>Posto / Habilidade Global</th>
+                <th>Qtd. Necessária</th>
                 <th>Nível de Dificuldade (1 a 3)</th>
                 <th className="globalCol">Ação Global</th>
               </tr>
             </thead>
             <tbody>
               {skills.filter((s: any) => s.ativo).map((skill: any) => {
-                const config = draftMatrix[skill.nome] || { active: false, diff: 1 }
+                const config = draftMatrix[skill.nome] || { active: false, diff: 1, qtd: 1 }
 
                 return (
                   <tr key={skill.id} className={!config.active ? 'inactiveKitRow' : ''}>
@@ -62,6 +63,22 @@ export default function MatrixSkillsTab({ data }: { data: any }) {
                     
                     <td className="fontWeight600">{skill.nome}</td>
                     
+                    {/* NOVO CAMPO: Quantidade */}
+                    <td>
+                      <div className={`qtdSelector ${!config.active ? 'disabled' : ''}`}>
+                        <input 
+                          type="number"
+                          min="1"
+                          className="qtdInput"
+                          value={config.qtd}
+                          onChange={(e) => changeQuantityInLine(skill.nome, parseInt(e.target.value) || 1)}
+                          disabled={!config.active}
+                          title="Quantidade de operadores necessários neste posto"
+                        />
+                        <span className="qtdLabel">operador(es)</span>
+                      </div>
+                    </td>
+
                     <td>
                       <div className={`difficultySelector ${!config.active ? 'disabled' : ''}`}>
                         {[1, 2, 3].map(level => (
@@ -70,6 +87,7 @@ export default function MatrixSkillsTab({ data }: { data: any }) {
                             className={`diffBtn ${config.diff === level ? 'active level-'+level : ''}`}
                             onClick={() => changeDifficultyInLine(skill.nome, level)}
                             title={`Nível ${level}`}
+                            disabled={!config.active}
                           >
                             {level}
                           </button>
@@ -102,14 +120,13 @@ export default function MatrixSkillsTab({ data }: { data: any }) {
                 )
               })}
               {skills.filter((s: any) => s.ativo).length === 0 && (
-                <tr><td colSpan={4} className="emptyState">Nenhuma skill global ativa cadastrada.</td></tr>
+                <tr><td colSpan={5} className="emptyState">Nenhuma skill global ativa cadastrada.</td></tr>
               )}
             </tbody>
           </table>
         </div>
       )}
 
-      {/* PAINEL FLUTUANTE DE AVISO: ALTERAÇÕES NÃO SALVAS */}
       {hasMatrixChanges && (
         <div className="actionFooter">
           <span className="warningText">
