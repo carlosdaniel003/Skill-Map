@@ -16,6 +16,7 @@ export default function DashboardFilters(){
     pendingFilters,
     setPendingOperator,
     setPendingLinha,
+    setPendingTurno, // 🆕 Importado do Hook
     applyFilters
   } = useDashboardFilters()
 
@@ -84,6 +85,7 @@ export default function DashboardFilters(){
     
     setPendingOperator(null)
     setPendingLinha(null)
+    setPendingTurno(null) // 🆕 Limpa o turno também
 
     setTimeout(() => {
       applyFilters()
@@ -97,7 +99,7 @@ export default function DashboardFilters(){
         <h2>Filtros Analíticos</h2>
       </div>
 
-      <div className="filtersGrid">
+      <div className="filtersGrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', alignItems: 'end' }}>
 
         {/* BUSCA OPERADOR */}
         <div className="filterGroup searchGroup">
@@ -144,11 +146,7 @@ export default function DashboardFilters(){
           <select
             className="corporateInput"
             value={pendingFilters.linha ?? ""}
-            onChange={e =>
-              setPendingLinha(
-                e.target.value || null
-              )
-            }
+            onChange={e => setPendingLinha(e.target.value || null)}
           >
             <option value="">TODOS OS MODELOS</option>
             {lines.map(line =>(
@@ -159,13 +157,27 @@ export default function DashboardFilters(){
           </select>
         </div>
 
+        {/* 🆕 TURNO */}
+        <div className="filterGroup">
+          <label>Turno (Equipe)</label>
+          <select
+            className="corporateInput"
+            value={pendingFilters.turno ?? ""}
+            onChange={e => setPendingTurno(e.target.value || null)}
+          >
+            <option value="">TODOS OS TURNOS</option>
+            <option value="1º Turno">1º Turno</option>
+            <option value="2º Turno">2º Turno</option>
+          </select>
+        </div>
+
         {/* BOTÕES DE AÇÃO */}
-        <div className="filterAction">
-          
+        <div className="filterAction" style={{ display: 'flex', gap: '8px' }}>
           <button
             className="secondaryButton clearButton"
             onClick={handleClearFilters}
             title="Limpar todos os filtros"
+            style={{ padding: '12px', flex: 1 }}
           >
             Limpar Filtros
           </button>
@@ -174,6 +186,7 @@ export default function DashboardFilters(){
             className="primaryButton searchButton"
             onClick={applyFilters}
             title="Aplicar Filtros"
+            style={{ padding: '12px', flex: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8"/>
@@ -181,7 +194,6 @@ export default function DashboardFilters(){
             </svg>
             Buscar Dados
           </button>
-
         </div>
 
       </div>

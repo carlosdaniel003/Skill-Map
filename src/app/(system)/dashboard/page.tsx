@@ -6,16 +6,19 @@ import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 
 import { canAccess } from "@/services/auth/routeGuard"
-
 import { DashboardFilterProvider } from "./context/DashboardFilterContext"
 
 import DashboardFilters from "./components/DashboardFilters"
 import OperatorKPIs from "./components/OperatorKPIs"
+import TalentMatrix from "./components/TalentMatrix" 
+import PolyvalenceRanking from "./components/PolyvalenceRanking" 
 import OperatorSkillsRadar from "./components/OperatorSkillsRadar"
 import LineSkillsRadar from "./components/LineSkillsRadar"
 import OperatorSkillGrade from "./components/OperatorSkillGrade"
-import SkillMatrixHeatmap from "./components/SkillMatrixHeatmap"
 import LineOperatorsRadar from "./components/LineOperatorsRadar"
+import StartupBleedingChart from "./components/StartupBleedingChart"
+import LineEngagementThermometer from "./components/LineEngagementThermometer" // 🆕 IMPORTADO
+import SkillMatrixHeatmap from "./components/SkillMatrixHeatmap"
 
 export default function DashboardPage(){
 
@@ -48,6 +51,12 @@ export default function DashboardPage(){
           <OperatorKPIs />
         </div>
 
+        {/* BLOCO ESTRATÉGICO (50/50) - Matriz de Talentos & Ranking de Polivalência */}
+        <div className="dashboardGrid">
+          <TalentMatrix />
+          <PolyvalenceRanking />
+        </div>
+
         {/* BLOCO OPERADOR (50/50) */}
         <div className="dashboardGrid operatorGrid">
           <OperatorSkillGrade />
@@ -58,6 +67,12 @@ export default function DashboardPage(){
         <div className="dashboardGrid dualRadarGrid">
           <LineSkillsRadar />
           <LineOperatorsRadar />
+        </div>
+
+        {/* 🆕 BLOCO CULTURA E ASSIDUIDADE (50/50) - Sangramento & Engajamento */}
+        <div className="dashboardGrid">
+          <StartupBleedingChart />
+          <LineEngagementThermometer />
         </div>
         
         {/* BLOCO LINHA - HEATMAP (100% DE LARGURA) */}

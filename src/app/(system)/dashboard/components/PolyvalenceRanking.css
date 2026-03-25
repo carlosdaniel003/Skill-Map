@@ -1,0 +1,162 @@
+/* src/app/(system)/dashboard/components/PolyvalenceRanking.css */
+
+.polyvalenceCard {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border-top: 6px solid #0078d4; /* Azul corporativo para destacar Skills */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.polyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.polyTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111;
+}
+
+.polySubtitle {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #666;
+}
+
+/* KPI PRINCIPAL */
+.polyKpiBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.polyKpiInfo h4 {
+  margin: 0;
+  font-size: 14px;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.polyKpiValue {
+  font-size: 32px;
+  font-weight: 900;
+  color: #0f172a;
+  margin-top: 4px;
+}
+
+.polyKpiValue span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  margin-left: 4px;
+}
+
+.polyKpiStatus {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.polyKpiStatus.vulnerable { background: #fee2e2; color: #b91c1c; }
+.polyKpiStatus.developing { background: #fef3c7; color: #b45309; }
+.polyKpiStatus.resilient { background: #dcfce7; color: #15803d; }
+
+/* LEADERBOARD (RANKING) */
+.polyRanking {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.polyRanking h4 {
+  margin: 0 0 8px 0;
+  font-size: 15px;
+  color: #111;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.rankingItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 6px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.rankingItem:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-color: #e2e8f0;
+}
+
+.rankPos {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 800;
+  font-size: 14px;
+  color: #fff;
+  background: #94a3b8;
+  margin-right: 12px;
+}
+
+.rankPos.gold { background: #fbbf24; box-shadow: 0 0 10px rgba(251, 191, 36, 0.4); }
+.rankPos.silver { background: #9ca3af; }
+.rankPos.bronze { background: #b45309; }
+
+.rankInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.rankInfo strong {
+  font-size: 14px;
+  color: #111;
+}
+
+.rankInfo span {
+  font-size: 12px;
+  color: #666;
+}
+
+.rankScore {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f0f9ff;
+  color: #0369a1;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.emptyRanking {
+  text-align: center;
+  padding: 20px;
+  color: #888;
+  font-size: 14px;
+  background: #f8fafc;
+  border-radius: 6px;
+  border: 1px dashed #cbd5e1;
+}

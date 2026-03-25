@@ -1,0 +1,97 @@
+/* src/app/(system)/dashboard/components/LineEngagementThermometer.css */
+
+.engagementCard {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border-top: 6px solid #8b5cf6; /* Roxo para representar "Cultura/Pessoas" */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
+}
+
+.engHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.engTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111;
+}
+
+.engSubtitle {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.engRankingList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.engLineItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.engLineInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.engLineName {
+  font-size: 14px;
+  font-weight: 700;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.engLineScore {
+  font-size: 15px;
+  font-weight: 800;
+  color: #111;
+}
+
+.engLineScore span {
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-left: 4px;
+}
+
+/* A BARRA DE TERMÔMETRO */
+.engBarTrack {
+  width: 100%;
+  height: 10px;
+  background-color: #f1f5f9;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.engBarFill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 1s ease-out;
+}
+
+/* Cores de Saúde */
+.health-excellent { background-color: #22c55e; } /* Verde > 90 */
+.health-warning { background-color: #f59e0b; } /* Amarelo 80-89 */
+.health-critical { background-color: #ef4444; } /* Vermelho < 80 */
+
+.engMedal {
+  font-size: 16px;
+}
