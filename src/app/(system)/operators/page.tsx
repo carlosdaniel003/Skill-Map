@@ -42,7 +42,6 @@ export default function OperatorsPage() {
           workstations={table.workstations}
           onRemove={table.handleRemoveOperator}
           onChangeLine={table.handleChangePosition}
-          onChangePosto={table.handleChangePosition}
         />
       </div>
 
