@@ -1,14 +1,14 @@
 // src/app/(system)/attendance/components/ShiftManagementTab.tsx
 import { useState } from "react"
 import "./ShiftManagementTab.css"
-import EmergencyAllocation from "./EmergencyAllocation" // 🆕 Modal de IA
+import EmergencyAllocation from "./EmergencyAllocation" 
 
 interface ShiftManagementProps {
   filters: {
     selectedLine: string
     setSelectedLine: (l: string) => void
-    selectedTurno: string // 🆕 Filtro de Turno
-    setSelectedTurno: (t: string) => void // 🆕 Set do Filtro de Turno
+    selectedTurno: string 
+    setSelectedTurno: (t: string) => void 
     lines: string[]
   }
   shift: {
@@ -26,26 +26,29 @@ interface ShiftManagementProps {
 
 export default function ShiftManagementTab({ filters, shift }: ShiftManagementProps) {
   
-  // 🆕 ESTADOS PARA CONTROLAR O MODAL DE EMERGÊNCIA
   const [isEmergencyModalOpen, setIsEmergencyModalOpen] = useState(false)
   const [emergencyTargetPosto, setEmergencyTargetPosto] = useState<string>("")
 
-  // Função para abrir o modal de forma limpa (Global)
   const handleOpenGlobalEmergency = () => {
     setEmergencyTargetPosto("")
     setIsEmergencyModalOpen(true)
   }
 
-  // Função para abrir o modal focado na substituição de alguém específico
   const handleReplaceOperator = (posto: string) => {
     setEmergencyTargetPosto(posto)
     setIsEmergencyModalOpen(true)
   }
 
+  // 🆕 SEGURANÇA CONTRA NaN: Garantindo valores válidos para exibição
+  const safeTotalAlocados = shift.metrics.totalAlocados || 0;
+  const safeTotalNecessario = shift.metrics.totalNecessario || 0;
+  const safeGap = shift.metrics.gapTotal || 0;
+  const safeProntidao = isNaN(shift.metrics.prontidao) ? 0 : shift.metrics.prontidao;
+  const safeRisco = shift.metrics.operadoresEmRisco || 0;
+
   return (
     <div className="shiftManagementTab animateFadeIn">
       
-      {/* 🆕 FILTRO MELHORADO COM LINHA E TURNO */}
       <div className="corporateCard shiftFilterCard">
         <div className="shiftFilterRow" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
           
@@ -70,10 +73,9 @@ export default function ShiftManagementTab({ filters, shift }: ShiftManagementPr
               value={filters.selectedTurno} 
               onChange={(e) => filters.setSelectedTurno(e.target.value)}
             >
-              <option value="">Todos (Turno Misto)</option>
+              <option value="">Todos os turnos</option>
               <option value="1º Turno">1º Turno</option>
               <option value="2º Turno">2º Turno</option>
-              <option value="Comercial">Comercial</option>
             </select>
           </div>
 
@@ -95,19 +97,20 @@ export default function ShiftManagementTab({ filters, shift }: ShiftManagementPr
           <div className="readinessCockpit">
             <div className="readinessCard neutral">
               <h4>Postos Alocados</h4>
-              <div className="readinessValue">{shift.metrics.totalAlocados} <span>/ {shift.metrics.totalNecessario}</span></div>
-              <p className="readinessSub">GAP: {shift.metrics.gapTotal} postos vazios</p>
+              {/* 🆕 USANDO AS VARIÁVEIS SEGURAS AQUI */}
+              <div className="readinessValue">{safeTotalAlocados} <span>/ {safeTotalNecessario}</span></div>
+              <p className="readinessSub">GAP: {safeGap} postos vazios</p>
             </div>
             
             <div className="readinessCard success">
               <h4>Prontidão Real</h4>
-              <div className="readinessValue">{shift.metrics.prontidao}%</div>
+              <div className="readinessValue">{safeProntidao}%</div>
               <p className="readinessSub">Considerando risco de falta</p>
             </div>
 
-            <div className={`readinessCard ${shift.metrics.operadoresEmRisco > 0 ? 'danger' : 'success'}`}>
+            <div className={`readinessCard ${safeRisco > 0 ? 'danger' : 'success'}`}>
               <h4>Alerta Crítico</h4>
-              <div className="readinessValue">{shift.metrics.operadoresEmRisco}</div>
+              <div className="readinessValue">{safeRisco}</div>
               <p className="readinessSub">Operadores em risco alto (Vermelho)</p>
             </div>
           </div>
@@ -116,7 +119,6 @@ export default function ShiftManagementTab({ filters, shift }: ShiftManagementPr
             <div className="radarHeader">
               <h3>Radar de Risco Diário</h3>
               
-              {/* BOTÃO GLOBAL QUE ABRE O MODAL VAZIO */}
               <button 
                 className="primaryButton smartAllocBtn"
                 onClick={handleOpenGlobalEmergency}
@@ -144,7 +146,6 @@ export default function ShiftManagementTab({ filters, shift }: ShiftManagementPr
                       </div>
                     </div>
                     
-                    {/* BOTÃO ESPECÍFICO QUE ABRE O MODAL PREENCHIDO */}
                     <button 
                       className="secondaryButton replaceBtn"
                       onClick={() => handleReplaceOperator(op.posto_atual)}
@@ -159,7 +160,6 @@ export default function ShiftManagementTab({ filters, shift }: ShiftManagementPr
         </>
       )}
 
-      {/* 🆕 RENDERIZA O MODAL DO MOTOR DE EMERGÊNCIA */}
       <EmergencyAllocation 
         isOpen={isEmergencyModalOpen}
         onClose={() => setIsEmergencyModalOpen(false)}

@@ -17,7 +17,7 @@ export function useAttendance() {
   const [selectedMonth, setSelectedMonth] = useState(dataAtual.getMonth())
   const [selectedYear, setSelectedYear] = useState(dataAtual.getFullYear())
   const [selectedLine, setSelectedLine] = useState("")
-  const [selectedTurno, setSelectedTurno] = useState("") // ESTADO DO TURNO
+  const [selectedTurno, setSelectedTurno] = useState("") 
   const [searchQuery, setSearchQuery] = useState("")
   const [allOperators, setAllOperators] = useState<any[]>([])
 
@@ -84,7 +84,7 @@ export function useAttendance() {
   }, [selectedLine])
 
   // ============================================================================
-  // MOTOR DE DADOS: GESTÃO DO TURNO (CRUZAMENTO DE RISCO E GAP) - AGORA VÊ O TURNO
+  // MOTOR DE DADOS: GESTÃO DO TURNO (CRUZAMENTO DE RISCO E GAP COM NOVA MATEMÁTICA)
   // ============================================================================
   useEffect(() => {
     async function loadShiftData() {
@@ -92,12 +92,20 @@ export function useAttendance() {
       setLoadingShift(true)
 
       try {
-        const { data: coverage } = await supabase
+        // 1. Busca a View de Cobertura (GAP)
+        let queryCoverage = supabase
           .from('vw_line_coverage')
           .select('*')
           .eq('linha', selectedLine)
 
-        // 🆕 APLICANDO O FILTRO DE TURNO TAMBÉM NA VIEW DO RADAR DE RISCO
+        // Se escolheu turno, traz as metas e a ocupação DELE. 
+        if (selectedTurno) {
+           queryCoverage = queryCoverage.eq('turno_alocado', selectedTurno)
+        }
+
+        const { data: coverage } = await queryCoverage
+
+        // 2. Busca o Risco de Assiduidade
         let queryAnalytics = supabase
           .from('vw_operator_analytics')
           .select('*')
@@ -116,25 +124,52 @@ export function useAttendance() {
         let totalAloc = 0
         let gap = 0
 
-        // Se houver um filtro de turno, o GAP geral da linha ainda vale?
-        // Sim, mas a capacidade alocada visível é apenas a daquele turno.
+        // 3. MATEMÁTICA CORRIGIDA: Agrupa por Posto para a Meta não ficar distorcida (0/0)
+        // Isso impede que postos vazios, ou com metas múltiplas quebrem o indicador
+        const postosUnicos = new Map()
+
         cov.forEach(c => {
-          totalNec += c.quantidade_necessaria
-          totalAloc += c.alocados
-          gap += c.gap > 0 ? c.gap : 0 
+           if (!postosUnicos.has(c.posto)) {
+              // Primeira vez que achou o posto, grava a meta dele
+              postosUnicos.set(c.posto, { nec: c.quantidade_necessaria || 0, aloc: 0 })
+           }
+           const p = postosUnicos.get(c.posto)
+           p.aloc += (c.alocados || 0) // Soma as pessoas que já estão trabalhando nele
+        })
+
+        // 4. Soma final dos Cards
+        postosUnicos.forEach(p => {
+           totalNec += p.nec
+           totalAloc += p.aloc
+           const falta = p.nec - p.aloc
+           if (falta > 0) gap += falta
         })
 
         const vermelhos = an.filter(o => o.risco_assiduidade === 'Vermelho')
         const amarelos = an.filter(o => o.risco_assiduidade === 'Amarelo')
 
-        // 🆕 ATENÇÃO: Como filtramos o turno na query, o "totalAloc" deve 
-        // refletir apenas as pessoas que retornaram no array 'an' para a Prontidão não bugar.
-        const alocadosTurno = selectedTurno ? an.length : totalAloc;
+        // Usa o totalAloc (pessoas achadas no turno atual) para não conflitar com a tela.
+        const alocadosTurno = selectedTurno ? an.length : totalAloc; 
         
+        // Prontidão: Alocados - Operadores de Alto Risco / Necessário. Mínimo zero, máximo cem.
         const alocadosSeguros = Math.max(0, alocadosTurno - vermelhos.length)
         const prontidao = totalNec > 0 ? Math.round((alocadosSeguros / totalNec) * 100) : 100
 
-        const radar = [...vermelhos, ...amarelos].sort((a, b) => Number(a.score_assiduidade) - Number(b.score_assiduidade))
+        // 🆕 LISTA TODOS OS OPERADORES NO RADAR ORDENADOS POR COR E SCORE
+        const ordemCores: Record<string, number> = { 'Vermelho': 1, 'Amarelo': 2, 'Verde': 3 };
+
+        const radar = [...an].sort((a, b) => {
+          const pesoA = ordemCores[a.risco_assiduidade] || 4;
+          const pesoB = ordemCores[b.risco_assiduidade] || 4;
+          
+          // Se forem de cores diferentes, ordena pela cor (Vermelho > Amarelo > Verde)
+          if (pesoA !== pesoB) {
+            return pesoA - pesoB;
+          }
+          
+          // Se forem da mesma cor, ordena do MAIOR score para o MENOR score
+          return Number(b.score_assiduidade) - Number(a.score_assiduidade);
+        })
 
         setShiftMetrics({
           totalAlocados: alocadosTurno,
@@ -153,7 +188,7 @@ export function useAttendance() {
     }
 
     loadShiftData()
-  }, [selectedLine, selectedTurno]) // 🆕 Recalcula se ele mudar de turno
+  }, [selectedLine, selectedTurno])
 
   // Carrega Apontamentos do Mês
   useEffect(() => {
@@ -205,7 +240,6 @@ export function useAttendance() {
     }
   }
 
-  // LÓGICA DE FILTRAGEM ATUALIZADA COM O TURNO PARA A TABELA MENSAL
   const filteredOperators = operators.filter(op => {
     const matchBusca = op.nome.toLowerCase().includes(searchQuery.toLowerCase()) || String(op.matricula).includes(searchQuery)
     const matchTurno = selectedTurno === "" || op.turno === selectedTurno
