@@ -6,6 +6,7 @@ export default function OperatorForm({ data }: { data: any }) {
   const {
     nome, setNome,
     matricula, setMatricula,
+    turno, setTurno, 
     linha, setLinha,
     posto, setPosto,
     lines, workstations,
@@ -19,7 +20,7 @@ export default function OperatorForm({ data }: { data: any }) {
       <div className="formGrid">
         <input
           className="corporateInput"
-          placeholder="Matrícula"
+          placeholder="Matrícula *"
           value={matricula}
           inputMode="numeric"
           maxLength={6}
@@ -31,7 +32,7 @@ export default function OperatorForm({ data }: { data: any }) {
 
         <input
           className="corporateInput"
-          placeholder="Nome completo"
+          placeholder="Nome completo *"
           maxLength={50}
           value={nome}
           onChange={e=>setNome(e.target.value)}
@@ -39,21 +40,33 @@ export default function OperatorForm({ data }: { data: any }) {
 
         <select
           className="corporateInput"
+          value={turno}
+          onChange={e=>setTurno(e.target.value)}
+        >
+          <option value="">Selecionar turno *</option>
+          <option value="1º Turno">1º Turno</option>
+          <option value="2º Turno">2º Turno</option>
+        </select>
+
+        {/* 🆕 CAMPO DE LINHA (AGORA OBRIGATÓRIO) */}
+        <select
+          className="corporateInput"
           value={linha}
           onChange={e=>setLinha(e.target.value)}
         >
-          <option value="">Selecionar modelo (Opcional)</option>
+          <option value="">Selecionar modelo *</option>
           {lines.map((line: any) => (
             <option key={line.id} value={line.nome}>{line.nome}</option>
           ))}
         </select>
 
+        {/* 🆕 CAMPO DE POSTO (AGORA OBRIGATÓRIO) */}
         <select
           className="corporateInput"
           value={posto}
           onChange={e=>setPosto(e.target.value)}
         >
-          <option value="">Selecionar posto (Opcional)</option>
+          <option value="">Selecionar posto *</option>
           {workstations.map((ws: any) => (
             <option key={ws.id} value={ws.nome}>{ws.nome}</option>
           ))}
@@ -63,7 +76,8 @@ export default function OperatorForm({ data }: { data: any }) {
       <button
         className="primaryButton fullWidth mt-3"
         onClick={handleCreateOperator}
-        disabled={!nome || matricula.length !== 6}
+        /* 🆕 BLOQUEIA O BOTÃO SE LINHA OU POSTO ESTIVEREM VAZIOS */
+        disabled={!nome || matricula.length !== 6 || !turno || !linha || !posto} 
       >
         Cadastrar Operador
       </button>

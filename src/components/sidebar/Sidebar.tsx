@@ -102,15 +102,22 @@ export default function Sidebar(){
 
       setSessionTime(formatTime(elapsed > 0 ? elapsed : 0))
 
+      // CORREÇÃO AQUI: Se o tempo acabou ou está negativo, encerra tudo na hora
       if(remaining <= 0){
-        logout()
-        router.push("/login?expired=true")
+        clearInterval(interval)
+        setShowRenewModal(false) // Garante que o modal suma para não prender a tela
+        setRemainingTime("00:00")
+        logout() // Limpa os dados de sessão do localStorage
+        
+        // Usa o window.location para um redirecionamento "duro" em vez do router.push, 
+        // garantindo que ele vá para o login independentemente do estado do React.
+        window.location.href = "/login?expired=true"
         return
       }
 
       setRemainingTime(formatTime(remaining))
 
-      if(remaining < 2 * 60 * 1000){
+      if(remaining < 2 * 60 * 1000){ // 2 minutos de aviso
         setIsWarning(true)
         setShowRenewModal(true)
       }else{
@@ -139,6 +146,16 @@ export default function Sidebar(){
   }
 
   function handleRenewSession() {
+    // CORREÇÃO AQUI: Validação de segurança ao clicar em renovar.
+    // Se o usuário deixou a tela aberta muito tempo e tentou renovar quando já tinha passado...
+    const sessionData = getSessionData()
+    if(!sessionData || (sessionData.expiresAt - Date.now()) <= 0) {
+        setShowRenewModal(false)
+        logout()
+        window.location.href = "/login?expired=true"
+        return
+    }
+
     renewSession()
     setShowRenewModal(false)
     setIsWarning(false)
@@ -148,8 +165,6 @@ export default function Sidebar(){
 
   const user = session.user
 
-  // REGRA APLICADA: APENAS O MASTER VÊ O MENU TODO AUTOMATICAMENTE
-  // Os outros (inclusive Admin) só veem o que o Master marcou no banco
   const allowedMenu = user.role === "master"
       ? MENU
       : MENU.filter(item => user.allowedPages.includes(item.path))

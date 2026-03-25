@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server"
 import { GoogleGenerativeAI, SchemaType, Tool } from "@google/generative-ai"
 import { supabase } from "@/services/database/supabaseClient"
 
-// Importamos nosso novo arsenal de ferramentas
 import { 
   getLineCoverage, 
   getOperatorRisk, 
@@ -11,20 +10,11 @@ import {
   getOperatorContext360
 } from "@/services/database/aiRepository"
 
-// =======================================================================
-    // 🕵️ DETETIVE: Pede pro Google listar os modelos que sua chave tem acesso
-    // =======================================================================
-    const debugRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${process.env.GEMINI_API_KEY}`)
-    const debugData = await debugRes.json()
-    console.log("🛠️ MODELOS DISPONÍVEIS NA SUA CHAVE:")
-    console.log(debugData.models?.map((m: any) => m.name).filter((name: string) => name.includes("gemini")))
-    // =======================================================================*/
-
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
 
 export async function POST(req: NextRequest) {
   try {
-    const { message } = await req.json()
+    const { message, history = [] } = await req.json()
 
     if (!process.env.GEMINI_API_KEY) {
       throw new Error("A GEMINI_API_KEY não foi encontrada no .env.local.")
@@ -46,7 +36,7 @@ export async function POST(req: NextRequest) {
         },
         {
           name: "get_line_coverage",
-          description: "Analisa a cobertura atual de uma linha de produção. Retorna os postos, a quantidade necessária e o GAP (buraco).",
+          description: "Analisa a cobertura atual de uma linha de produção.",
           parameters: {
             type: SchemaType.OBJECT,
             properties: { linha: { type: SchemaType.STRING, description: "Nome exato da linha" } },
@@ -55,7 +45,7 @@ export async function POST(req: NextRequest) {
         },
         {
           name: "get_operator_risk",
-          description: "Busca o mapa de risco de assiduidade dos operadores. Traz o Score (0 a 100), tendências (30/60/90 dias) e os motivos registrados (observações).",
+          description: "Busca o mapa de risco de assiduidade dos operadores. Traz Score, tendências e observações.",
           parameters: {
             type: SchemaType.OBJECT,
             properties: { linha: { type: SchemaType.STRING, description: "Opcional. Filtrar por linha" } }
@@ -63,7 +53,7 @@ export async function POST(req: NextRequest) {
         },
         {
           name: "get_critical_training_needs",
-          description: "Gera um relatório das linhas e postos críticos que estão com GAP (falta de pessoas) na fábrica inteira para planejamento de treinamento.",
+          description: "Gera relatório de linhas/postos críticos com GAP (falta de pessoas).",
           parameters: {
             type: SchemaType.OBJECT,
             properties: {}
@@ -71,7 +61,7 @@ export async function POST(req: NextRequest) {
         },
         {
           name: "get_operator_context_360",
-          description: "Visão global de todos os operadores da linha: Lista operadores, skills e 'dias_desde_ultima_execucao' (ferrugem). Útil para planejar o time do dia ou verificar reciclagem.",
+          description: "Visão global: Lista operadores, skills e 'dias_desde_ultima_execucao' (ferrugem).",
           parameters: {
             type: SchemaType.OBJECT,
             properties: { linha: { type: SchemaType.STRING, description: "Opcional. Filtrar por linha" } }
@@ -84,76 +74,94 @@ export async function POST(req: NextRequest) {
     // 2. INSTRUÇÕES DO MOTOR DE DECISÃO
     // ==========================================
     const model = genAI.getGenerativeModel({
-  model: "gemini-2.5-flash",
+      model: "gemini-2.5-flash-lite", 
       systemInstruction: `Você é um Arquiteto de Decisão Industrial integrado ao sistema Skill Map.
 Sua missão é atuar no planejamento, risco e alocação da fábrica.
 REGRAS DA CAMADA SEMÂNTICA:
-- 'Score de Assiduidade' vai de 0 a 100 (100 é perfeito). Status: Verde (>=90, Baixo Risco), Amarelo (70 a 89, Risco Moderado), Vermelho (<70, Alto Risco de falta).
-- Se o usuário perguntar por operadores com "risco" ou "chance de faltar", inclua sempre na sua tabela os operadores de status AMARELO e VERMELHO.
-- 'Gap': Se for maior que 0, significa que a linha está desfalcada naquele posto e precisa de gente.
+- 'Score de Assiduidade' vai de 0 a 100. Status: Verde (>=90, Baixo Risco), Amarelo (70 a 89, Risco Moderado), Vermelho (<70, Alto Risco de falta).
+- Se o usuário perguntar por operadores com "risco" ou "chance de faltar", inclua sempre os operadores de status AMARELO e VERMELHO.
+- 'Gap': Se for maior que 0, significa que a linha está desfalcada.
 - 'Criticidade': Alta, Média ou Baixa.
-- 'Ferrugem' (dias_desde_ultima_execucao): Se este valor for alto (ex: > 30), o operador está enferrujado no posto. Se for 999, ele nunca operou formalmente ou não tem histórico.
+- 'Ferrugem' (dias_desde_ultima_execucao): Se > 30, o operador está enferrujado. Se 999, não tem histórico formal recente.
 DIRETRIZES DE RESPOSTA:
-1. Sempre use as Ferramentas (Tools) disponíveis para embasar sua resposta com dados reais.
-2. Quando retornar análises, seja analítico, direto e use o formato Markdown para criar tabelas corporativas (ex: | Operador | Score | Status | Observação |).
-3. Se a ferramenta trouxer "ultimas_observacoes" em um operador com risco de falta, cite o motivo na tabela ou na justificativa para o gestor entender o contexto.
+1. Sempre use as Ferramentas para embasar sua resposta com dados reais. Se precisar usar 2 ou 3 ferramentas para cruzar os dados, faça isso antes de responder!
+2. Seja analítico, direto e use o formato Markdown para tabelas (ex: | Operador | Nível | Score | Status | Observação | Ferrugem |).
+3. Cite o motivo da falta (se houver em ultimas_observacoes) na tabela ou no texto.
 4. Se um operador chave para um posto de 'Alta' criticidade estiver no 'Vermelho', emita um ALERTA ANTECIPADO.`,
       tools
     })
 
-    const chat = model.startChat()
-    const result = await chat.sendMessage(message)
-    const response = result.response
-    const functionCalls = response.functionCalls()
+    const chat = model.startChat({
+      history: history.map((msg: any) => ({
+        role: msg.role === 'user' ? 'user' : 'model',
+        parts: [{ text: msg.text }]
+      }))
+    })
 
     // ==========================================
-    // 3. EXECUÇÃO INTELIGENTE DAS FERRAMENTAS
+    // 3. O LOOP DE RACIOCÍNIO CONTÍNUO
     // ==========================================
-    if (functionCalls && functionCalls.length > 0) {
-      const call = functionCalls[0]
-      let data: any = null
+    let result = await chat.sendMessage(message)
+    let functionCalls = result.response.functionCalls()
 
-      // Roteador de Ferramentas
-      switch (call.name) {
-        case "get_alocacao_sugestao":
-          const argsAloc = call.args as { linha: string, posto: string }
-          const res = await supabase.rpc('get_alocacao_sugestao', { p_linha: argsAloc.linha, p_posto: argsAloc.posto })
-          if (res.error) throw new Error(res.error.message)
-          data = res.data
-          break;
+    // O "while" permite que a IA chame várias ferramentas, uma após a outra, 
+    // ou ao mesmo tempo, até ter todas as peças do quebra-cabeça.
+    while (functionCalls && functionCalls.length > 0) {
+      
+      // Promise.all processa as chamadas caso a IA peça 2 tabelas simultaneamente
+      const functionResponses = await Promise.all(
+        functionCalls.map(async (call) => {
+          let data: any = null
 
-        case "get_line_coverage":
-          const argsCov = call.args as { linha: string }
-          data = await getLineCoverage(argsCov.linha)
-          break;
+          try {
+            switch (call.name) {
+              case "get_alocacao_sugestao":
+                const argsAloc = call.args as { linha: string, posto: string }
+                const res = await supabase.rpc('get_alocacao_sugestao', { p_linha: argsAloc.linha, p_posto: argsAloc.posto })
+                if (res.error) throw new Error(res.error.message)
+                data = res.data
+                break;
+              case "get_line_coverage":
+                data = await getLineCoverage((call.args as { linha: string }).linha)
+                break;
+              case "get_operator_risk":
+                data = await getOperatorRisk((call.args as { linha?: string }).linha)
+                break;
+              case "get_critical_training_needs":
+                data = await getCriticalTrainingNeeds()
+                break;
+              case "get_operator_context_360":
+                data = await getOperatorContext360((call.args as { linha?: string }).linha)
+                break;
+            }
+          } catch (err) {
+            console.error(`Erro na tool ${call.name}:`, err)
+            data = { error: "Não foi possível buscar estes dados no momento." }
+          }
 
-        case "get_operator_risk":
-          const argsRisk = call.args as { linha?: string }
-          data = await getOperatorRisk(argsRisk.linha)
-          break;
+          return {
+            functionResponse: {
+              name: call.name,
+              response: { content: data || [] }
+            }
+          }
+        })
+      )
 
-        case "get_critical_training_needs":
-          data = await getCriticalTrainingNeeds()
-          break;
-
-        case "get_operator_context_360":
-          const argsContext = call.args as { linha?: string }
-          data = await getOperatorContext360(argsContext.linha)
-          break;
-      }
-
-      // Devolve a tabela mastigada do banco para a IA ler
-      const finalResult = await chat.sendMessage([{
-        functionResponse: {
-          name: call.name,
-          response: { content: data || [] }
-        }
-      }])
-
-      return NextResponse.json({ reply: finalResult.response.text() })
+      // Devolvemos o bloco de dados para a IA continuar o fluxo de raciocínio dela
+      result = await chat.sendMessage(functionResponses)
+      
+      // Verificamos se ela gerou novas chamadas ou se finalmente gerou o texto final
+      functionCalls = result.response.functionCalls()
     }
 
-    return NextResponse.json({ reply: response.text() })
+    const finalReply = result.response.text()
+
+    if (!finalReply) {
+      return NextResponse.json({ reply: "Acessei os dados, mas tive um problema ao formular o texto. Pode repetir a pergunta de outra forma?" })
+    }
+
+    return NextResponse.json({ reply: finalReply })
 
   } catch (error: any) {
     console.error("Erro no Chatbot AI:", error)

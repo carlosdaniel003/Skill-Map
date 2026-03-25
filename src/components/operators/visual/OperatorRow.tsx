@@ -14,8 +14,8 @@ interface Props{
   workstations:any[]
 
   onRemove:(id:string)=>void
-  onChangeLine:(operatorId:string,linha:string,posto:string)=>void
-  onChangePosto:(operatorId:string,linha:string,posto:string)=>void
+  // 🆕 A interface agora exige o turno
+  onChangeLine:(operatorId:string, linha:string, posto:string, turno:string)=>void 
 }
 
 export default function OperatorRow({
@@ -23,8 +23,7 @@ export default function OperatorRow({
   lines,
   workstations,
   onRemove,
-  onChangeLine,
-  onChangePosto
+  onChangeLine
 }:Props){
 
   const router = useRouter()
@@ -34,6 +33,7 @@ export default function OperatorRow({
 
   const [linha,setLinha] = useState(operator.linha_atual || "")
   const [posto,setPosto] = useState(operator.posto_atual || "")
+  const [turno,setTurno] = useState(operator.turno || "") // 🆕 Novo estado
 
   // Busca a dificuldade atual daquele posto naquela linha específica
   useEffect(() => {
@@ -49,13 +49,15 @@ export default function OperatorRow({
   }, [operator.linha_atual, operator.posto_atual])
 
   function handleSave(){
-    onChangeLine(operator.id,linha,posto)
+    // 🆕 Passa o turno atualizado
+    onChangeLine(operator.id, linha, posto, turno)
     setEditing(false)
   }
 
   function handleCancel(){
     setLinha(operator.linha_atual || "")
     setPosto(operator.posto_atual || "")
+    setTurno(operator.turno || "") // 🆕 Reseta o turno
     setEditing(false)
   }
 
@@ -67,7 +69,6 @@ export default function OperatorRow({
     router.push(`/operators/skills/${operator.id}`)
   }
 
-  // Função utilitária para renderizar a etiqueta com a cor certa
   function renderDifficultyBadge(level: number) {
     if (level === 1) return <span className="rowDiffBadge diff-simple">Simples</span>
     if (level === 2) return <span className="rowDiffBadge diff-medium">Médio</span>
@@ -82,6 +83,31 @@ export default function OperatorRow({
       <td className="fontWeight600">{operator.matricula}</td>
 
       <td className="operatorName">{operator.nome}</td>
+
+      {/* 🆕 COLUNA DO TURNO */}
+      <td>
+        {editing ? (
+          <select
+            className="corporateSelect smallSelect"
+            value={turno}
+            onChange={e=>setTurno(e.target.value)}
+          >
+            <option value="1º Turno">1º Turno</option>
+            <option value="2º Turno">2º Turno</option>
+          </select>
+        ) : (
+          <span style={{
+            backgroundColor: '#f0f0f0', 
+            color: '#555', 
+            padding: '4px 8px', 
+            borderRadius: '4px', 
+            fontSize: '12px', 
+            fontWeight: 600 
+          }}>
+            {operator.turno || "Não Definido"}
+          </span>
+        )}
+      </td>
 
       {/* COLUNA DO MODELO (LINHA) */}
       <td>
@@ -125,7 +151,6 @@ export default function OperatorRow({
             <span className={!operator.posto_atual ? "emptyText" : "postoName"}>
               {operator.posto_atual || "Não alocado"}
             </span>
-            {/* Renderiza a etiqueta de dificuldade ao lado do posto */}
             {operator.posto_atual && dificuldade && renderDifficultyBadge(dificuldade)}
           </div>
         )}
@@ -161,7 +186,7 @@ export default function OperatorRow({
               <button 
                 className="actionIconBtn editBtn" 
                 onClick={()=>setEditing(true)}
-                title="Editar locação"
+                title="Editar locação e turno"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>

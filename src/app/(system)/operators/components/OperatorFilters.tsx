@@ -6,6 +6,7 @@ export default function OperatorFilters({ data }: { data: any }) {
   const {
     searchMatricula, setSearchMatricula,
     searchNome, setSearchNome,
+    filterTurno, setFilterTurno, // 🆕 Adicionado
     filterLinha, setFilterLinha,
     filterPosto, setFilterPosto,
     lines, workstations
@@ -32,6 +33,17 @@ export default function OperatorFilters({ data }: { data: any }) {
           value={searchNome}
           onChange={e=>setSearchNome(e.target.value)}
         />
+
+        {/* 🆕 FILTRO DE TURNO */}
+        <select
+          className="corporateInput"
+          value={filterTurno}
+          onChange={e=>setFilterTurno(e.target.value)}
+        >
+          <option value="">Todos os turnos</option>
+          <option value="1º Turno">1º Turno</option>
+          <option value="2º Turno">2º Turno</option>
+        </select>
 
         <select
           className="corporateInput"

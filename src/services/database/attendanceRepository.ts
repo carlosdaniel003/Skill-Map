@@ -36,7 +36,8 @@ export async function getProductionLinesWithOperators() {
 export async function getOperatorsByLine(linha: string) {
   const { data, error } = await supabase
     .from("operators")
-    .select("id, matricula, nome, posto_atual, linha_atual")
+    // 🆕 AQUI ESTÁ A CORREÇÃO: O turno foi adicionado na listagem de colunas que vêm do banco
+    .select("id, matricula, nome, posto_atual, linha_atual, turno") 
     .eq("linha_atual", linha)
     .eq("ativo", true)
     .order("nome")

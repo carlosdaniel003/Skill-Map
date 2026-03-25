@@ -1,0 +1,201 @@
+/* src/app/(system)/attendance/components/EmergencyAllocation.css */
+
+.emergencyModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.emergencyModalCard {
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  background: #ffffff;
+  border-top: 6px solid #d40000;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  overflow: hidden;
+}
+
+.emergencyHeader {
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  background: #fdfdfd;
+}
+
+.emergencyTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.emergencyTitle h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111;
+}
+
+.emergencyIcon {
+  color: #d40000;
+  display: flex;
+}
+
+.closeEmergencyBtn {
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.closeEmergencyBtn:hover {
+  background: #f0f0f0;
+  color: #111;
+}
+
+.emergencyBody {
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.searchPostoContainer {
+  display: flex;
+  gap: 12px;
+}
+
+.searchPostoInput {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #f9f9f9;
+}
+
+.searchPostoInput:focus {
+  border-color: #d40000;
+  background: #fff;
+}
+
+.emergencyResults {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.suggestionCard {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.suggestionCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-color: #d40000;
+}
+
+.suggestionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.suggestionName {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.suggestionCurrentLine {
+  font-size: 12px;
+  color: #666;
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.suggestionMetrics {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: #555;
+}
+
+.metricBadge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.metricBadge.green { color: #00b050; }
+.metricBadge.yellow { color: #f59e0b; }
+.metricBadge.red { color: #d40000; }
+
+.suggestionAction {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.scoreCircle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+  color: white;
+}
+
+.scoreCircle.green { background: #00b050; }
+.scoreCircle.yellow { background: #f39c12; }
+.scoreCircle.red { background: #d40000; }
+
+@keyframes slideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px 20px;
+  color: #888;
+  font-size: 14px;
+}

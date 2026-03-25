@@ -37,7 +37,7 @@ export default function MatrixSkillsTab({ data }: { data: any }) {
           <table className="corporateTable kitTable">
             <thead>
               <tr>
-                <th className="statusCol">Status no Kit</th>
+                <th className="statusCol">Status</th>
                 <th>Posto / Habilidade Global</th>
                 <th>Qtd. Necessária</th>
                 <th>Nível de Dificuldade (1 a 3)</th>

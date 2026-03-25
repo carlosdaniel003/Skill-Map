@@ -31,7 +31,7 @@
   bottom: 24px;
   right: 24px;
   width: 360px;
-  height: 540px; /* Um pouco mais alto para comportar o chat melhor */
+  height: 540px; 
   background: white;
   border-radius: 12px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
@@ -40,9 +40,11 @@
   z-index: 9999;
   overflow: hidden;
   border: 1px solid #e0e0e0;
-  /* Animação suave de entrada */
-  animation: slideUpChat 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  
+  /* Transição suave para redimensionamento de janela */
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   transform-origin: bottom right;
+  animation: slideUpChat 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
 @keyframes slideUpChat {
@@ -50,6 +52,38 @@
   to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
+/* 🆕 MODO TELA CHEIA (FULLSCREEN) */
+.ai-chat-window.fullscreen {
+  bottom: 0;
+  right: 0;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+}
+
+/* 🆕 MODO MINIMIZADO */
+.ai-chat-window.minimized {
+  height: 56px; /* Altura exata apenas do cabeçalho */
+  width: 300px;
+  bottom: 0;
+  right: 24px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  cursor: pointer;
+}
+
+.ai-chat-window.minimized .ai-chat-body,
+.ai-chat-window.minimized .ai-chat-footer {
+  display: none; /* Esconde o conteúdo interno quando minimizado */
+}
+
+/* =======================================
+   CABEÇALHO E CONTROLES
+   ======================================= */
 .ai-chat-header {
   background: #d40000;
   color: white;
@@ -57,6 +91,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  min-height: 56px;
 }
 
 .ai-header-info {
@@ -66,20 +101,40 @@
   font-weight: 700;
 }
 
-.ai-close-btn {
+.ai-window-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ai-control-btn {
   background: transparent;
   border: none;
   color: white;
   cursor: pointer;
-  opacity: 0.8;
-  transition: opacity 0.2s;
+  opacity: 0.7;
+  transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
 }
 
-.ai-close-btn:hover { opacity: 1; }
+.ai-control-btn:hover { 
+  opacity: 1; 
+  background: rgba(255, 255, 255, 0.2);
+}
 
+.ai-control-btn.close:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+
+/* =======================================
+   MENSAGENS E BOLHAS
+   ======================================= */
 .ai-chat-body {
   flex: 1;
   padding: 16px;
@@ -90,9 +145,6 @@
   gap: 16px;
 }
 
-/* =======================================
-   MENSAGENS E BOLHAS
-   ======================================= */
 .ai-message-row {
   display: flex;
   width: 100%;
@@ -107,6 +159,11 @@
   max-width: 85%;
 }
 .ai-message-row.user .ai-bubble-container { align-items: flex-end; }
+
+/* Na tela cheia, as bolhas podem ser mais largas para facilitar a leitura */
+.ai-chat-window.fullscreen .ai-bubble-container {
+  max-width: 60%;
+}
 
 .ai-bubble {
   padding: 10px 14px;
@@ -131,7 +188,6 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.02);
 }
 
-/* Botão "Expandir" debaixo da bolha da IA */
 .ai-expand-btn {
   background: transparent;
   border: none;
@@ -210,7 +266,7 @@
 }
 
 /* =======================================
-   MARKDOWN NO CHAT (Pequeno)
+   MARKDOWN NO CHAT
    ======================================= */
 .markdown-body { font-family: inherit; }
 .markdown-body p { margin-top: 0; margin-bottom: 8px; }
@@ -222,11 +278,19 @@
   border-collapse: collapse;
   margin-top: 8px;
   margin-bottom: 8px;
-  font-size: 11px; /* Tabela pequenininha no chat */
+  font-size: 11px;
   display: block;
   overflow-x: auto;
   white-space: nowrap;
 }
+
+/* No modo tela cheia a tabela fica em 100% livre e maior */
+.ai-chat-window.fullscreen .ai-bubble.ai .markdown-body table {
+  font-size: 13px;
+  display: table;
+  white-space: normal;
+}
+
 .ai-bubble.ai .markdown-body th {
   background: #f0f0f0;
   padding: 4px 6px;
@@ -248,7 +312,7 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px); /* Fundo desfocado luxuoso */
+  backdrop-filter: blur(4px);
   z-index: 10000;
   display: flex;
   align-items: center;
@@ -263,7 +327,7 @@
 
 .ai-expanded-container {
   width: 95%;
-  max-width: 900px; /* Mais contido para texto não ficar longo demais */
+  max-width: 900px;
   height: 85%;
   background: white;
   border-radius: 12px;

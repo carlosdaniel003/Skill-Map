@@ -25,21 +25,20 @@ export default function AttendanceTable({ operators, daysInMonth, attendanceData
             <th className="stickyCol col-id">ID</th>
             <th className="stickyCol col-matricula">MATRÍCULA</th>
             <th className="stickyCol col-nome">NOME COLABORADOR</th>
+            {/* 🆕 COLUNA DO TURNO */}
+            <th className="stickyCol col-turno">TURNO</th> 
             <th className="stickyCol col-posto">POSTO</th>
             <th className="stickyCol col-linha">LINHA</th>
             {daysInMonth.map(d => {
-              // Descobre o nome do dia da semana em português
-              // O 'T12:00:00' evita bugs de fuso horário dependendo de onde o usuário está
               const dataObj = new Date(`${d.dateStr}T12:00:00`)
               let nomeDia = dataObj.toLocaleDateString('pt-BR', { weekday: 'long' })
-              // Coloca a primeira letra maiúscula (ex: "segunda-feira" -> "Segunda-feira")
               nomeDia = nomeDia.charAt(0).toUpperCase() + nomeDia.slice(1)
 
               return (
                 <th 
                   key={d.day} 
                   className={`dayCol ${d.isWeekend ? 'weekend' : ''}`}
-                  title={`${d.day} - ${nomeDia}`} // <-- O HOVER É GERADO AQUI
+                  title={`${d.day} - ${nomeDia}`}
                 >
                   {d.day}
                 </th>
@@ -53,6 +52,14 @@ export default function AttendanceTable({ operators, daysInMonth, attendanceData
               <td className="stickyCol col-id text-center">{index + 1}</td>
               <td className="stickyCol col-matricula text-center">{op.matricula}</td>
               <td className="stickyCol col-nome fw-bold">{op.nome}</td>
+              
+              {/* 🆕 COLUNA DO TURNO COM PEQUENO DESTAQUE VISUAL */}
+              <td className="stickyCol col-turno text-center">
+                <span style={{ fontSize: '12px', fontWeight: 600, color: '#666', background: '#f0f0f0', padding: '2px 6px', borderRadius: '4px' }}>
+                  {op.turno || "-"}
+                </span>
+              </td>
+              
               <td className="stickyCol col-posto">{op.posto_atual}</td>
               <td className="stickyCol col-linha">{op.linha_atual}</td>
               
@@ -77,7 +84,8 @@ export default function AttendanceTable({ operators, daysInMonth, attendanceData
           
           {operators.length === 0 && (
             <tr>
-              <td colSpan={5 + daysInMonth.length} className="noDataCell">
+              {/* 🆕 Aumentado o colSpan de 5 para 6 devido à nova coluna Turno */}
+              <td colSpan={6 + daysInMonth.length} className="noDataCell">
                 Nenhum operador encontrado.
               </td>
             </tr>

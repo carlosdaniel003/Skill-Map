@@ -2,59 +2,91 @@
 "use client"
 
 import "./page.css"
+import { useState } from "react"
 import { useAttendance } from "./hooks/useAttendance"
 import AttendanceFilters from "./components/AttendanceFilters"
 import AttendanceLegend from "./components/AttendanceLegend"
 import AttendanceTable from "./components/AttendanceTable"
+import ShiftManagementTab from "./components/ShiftManagementTab" 
 
 export default function AttendancePage() {
   
-  const { filters, table, modals } = useAttendance() // <-- Adicionado 'modals'
+  const { filters, table, modals, shift } = useAttendance()
+  const [activeTab, setActiveTab] = useState<'shift' | 'monthly'>('shift')
 
   return (
     <div className="attendancePage">
       
       <div className="pageHeader">
-        <h1 className="pageTitle">Controle de Frequência</h1>
-        <p className="pageSubtitle">Acompanhamento diário de assiduidade e apontamentos da equipe.</p>
+        <div className="headerTitles">
+          <h1 className="pageTitle">Controle de Frequência</h1>
+          <p className="pageSubtitle">Acompanhamento diário de assiduidade e apontamentos da equipe.</p>
+        </div>
+
+        <div className="tabNavigation">
+          <button 
+            className={`tabBtn ${activeTab === 'shift' ? 'active' : ''}`}
+            onClick={() => setActiveTab('shift')}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Gestão do Turno (Hoje)
+          </button>
+          <button 
+            className={`tabBtn ${activeTab === 'monthly' ? 'active' : ''}`}
+            onClick={() => setActiveTab('monthly')}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Apontamento Mensal
+          </button>
+        </div>
       </div>
 
-      <div className="corporateCard attendanceCard">
-        <AttendanceFilters 
-          selectedMonth={filters.selectedMonth}
-          setSelectedMonth={filters.setSelectedMonth}
-          selectedYear={filters.selectedYear}
-          setSelectedYear={filters.setSelectedYear}
-          selectedLine={filters.selectedLine}
-          setSelectedLine={filters.setSelectedLine}
-          lines={filters.lines}
-          searchQuery={filters.searchQuery}
-          setSearchQuery={filters.setSearchQuery}
-          operators={filters.allOperators}
-        />
+      {/* ABA 1: GESTÃO DO TURNO */}
+      {activeTab === 'shift' && (
+        <ShiftManagementTab filters={filters} shift={shift} />
+      )}
 
-        <AttendanceLegend />
-
-        {!filters.selectedLine ? (
-          <div className="emptyAttendance">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="emptyIcon">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-              <line x1="3" y1="9" x2="21" y2="9"/>
-              <line x1="9" y1="21" x2="9" y2="9"/>
-            </svg>
-            <p>Selecione um Modelo de Produção ou busque um colaborador para abrir a planilha.</p>
-          </div>
-        ) : (
-          <AttendanceTable 
-            operators={table.operators}
-            daysInMonth={table.daysInMonth}
-            attendanceData={table.attendanceData}
-            onSaveCell={table.handleSaveCell} 
+      {/* ABA 2: APONTAMENTO MENSAL */}
+      {activeTab === 'monthly' && (
+        <div className="corporateCard attendanceCard animateFadeIn">
+          <AttendanceFilters 
+            selectedMonth={filters.selectedMonth}
+            setSelectedMonth={filters.setSelectedMonth}
+            selectedYear={filters.selectedYear}
+            setSelectedYear={filters.setSelectedYear}
+            selectedLine={filters.selectedLine}
+            setSelectedLine={filters.setSelectedLine}
+            selectedTurno={filters.selectedTurno} // 🆕 REPASSA O STATE
+            setSelectedTurno={filters.setSelectedTurno} // 🆕 REPASSA A FUNÇÃO
+            lines={filters.lines}
+            searchQuery={filters.searchQuery}
+            setSearchQuery={filters.setSearchQuery}
+            operators={filters.allOperators}
           />
-        )}
-      </div>
 
-      {/* MODAL DE ERRO DE ROLLBACK (NOVO) */}
+          <AttendanceLegend />
+
+          {!filters.selectedLine ? (
+            <div className="emptyAttendance">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="emptyIcon">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <line x1="3" y1="9" x2="21" y2="9"/>
+                <line x1="9" y1="21" x2="9" y2="9"/>
+              </svg>
+              <p>Selecione um Modelo de Produção ou busque um colaborador para abrir a planilha.</p>
+            </div>
+          ) : (
+            <AttendanceTable 
+              operators={table.operators}
+              daysInMonth={table.daysInMonth}
+              attendanceData={table.attendanceData}
+              onSaveCell={table.handleSaveCell} 
+            />
+          )}
+        </div>
+      )}
+
+      {/* MODAL DE ERRO DE ROLLBACK */}
       {modals.alertConfig && (
         <div className="modalOverlay">
           <div className="corporateModal">

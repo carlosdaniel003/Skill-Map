@@ -14,16 +14,19 @@ interface Props {
   setSelectedYear: (y: number) => void
   selectedLine: string
   setSelectedLine: (l: string) => void
+  selectedTurno: string // 🆕
+  setSelectedTurno: (t: string) => void // 🆕
   lines: string[]
   searchQuery: string
   setSearchQuery: (s: string) => void
-  operators: any[] // Esta deve ser a lista allOperators vinda do hook
+  operators: any[]
 }
 
 export default function AttendanceFilters({
   selectedMonth, setSelectedMonth,
   selectedYear, setSelectedYear,
   selectedLine, setSelectedLine,
+  selectedTurno, setSelectedTurno, // 🆕
   lines,
   searchQuery, setSearchQuery,
   operators
@@ -32,7 +35,6 @@ export default function AttendanceFilters({
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
 
-  // Fecha a caixinha se clicar fora dela
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -46,7 +48,6 @@ export default function AttendanceFilters({
   const currentYear = new Date().getFullYear()
   const years = [currentYear - 1, currentYear, currentYear + 1]
 
-  // Gera as sugestões filtrando por Nome ou Matrícula
   const suggestions = operators.filter(op => 
     op.nome.toLowerCase().includes(searchQuery.toLowerCase()) || 
     String(op.matricula).includes(searchQuery)
@@ -87,7 +88,16 @@ export default function AttendanceFilters({
           </select>
         </div>
 
-        {/* CAMPO DE BUSCA COM AUTOCOMPLETE GLOBAL */}
+        {/* 🆕 FILTRO DE TURNO */}
+        <div className="filterGroup">
+          <label>Turno</label>
+          <select className="corporateInput" value={selectedTurno} onChange={(e) => setSelectedTurno(e.target.value)}>
+            <option value="">Todos os Turnos</option>
+            <option value="1º Turno">1º Turno</option>
+            <option value="2º Turno">2º Turno</option>
+          </select>
+        </div>
+
         <div className="filterGroup searchGroup" ref={searchRef}>
           <label>Buscar Operador</label>
           <input 
@@ -102,7 +112,6 @@ export default function AttendanceFilters({
             onFocus={() => setIsSearchOpen(true)}
           />
 
-          {/* CAIXA SUSPENSA DE SUGESTÕES */}
           {isSearchOpen && searchQuery && (
             <div className="autocompleteDropdown">
               {suggestions.length > 0 ? (
@@ -111,7 +120,6 @@ export default function AttendanceFilters({
                     key={op.id} 
                     className="autocompleteItem"
                     onClick={() => {
-                      // MÁGICA AQUI: Seta a linha do operador para a tabela carregar os dados dele
                       setSelectedLine(op.linha_atual) 
                       setSearchQuery(op.nome) 
                       setIsSearchOpen(false)

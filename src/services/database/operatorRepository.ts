@@ -1,14 +1,13 @@
-// src\services\database\operatorRepository.ts
+// src/services/database/operatorRepository.ts
 import { supabase } from "./supabaseClient"
 
 export interface Operator{
-
   id?:string
   matricula:string
   nome:string
+  turno:string // 🆕 ADICIONADO AQUI
   linha_atual:string
   posto_atual:string
-
 }
 
 export async function updateWorkstationOrder(
@@ -490,10 +489,12 @@ export async function addOperator(operator:Operator){
 
 /* MUDAR LINHA OU POSTO */
 
+/* MUDAR LINHA, POSTO OU TURNO */
 export async function changeOperatorPosition(
   operatorId:string,
   linha:string,
-  posto:string
+  posto:string,
+  turno?:string // 🆕 Agora recebe o turno (opcional por segurança legada)
 ){
 
   const { data:operator, error:opError } = await supabase
@@ -503,53 +504,61 @@ export async function changeOperatorPosition(
     .single()
 
   if(opError){
-
     console.error(opError)
     throw opError
-
   }
 
   const linhaAtual = operator.linha_atual
   const postoAtual = operator.posto_atual
+  const turnoAtual = operator.turno
 
-  if(linhaAtual === linha && postoAtual === posto){
-
+  // Se nada mudou (nem linha, nem posto, nem turno), aborta a operação.
+  if(linhaAtual === linha && postoAtual === posto && (turno === undefined || turnoAtual === turno)){
     return
+  }
 
+  // 1. Finaliza o histórico atual SE a linha ou o posto mudaram
+  if (linhaAtual !== linha || postoAtual !== posto) {
+    await supabase
+      .from("operator_history")
+      .update({
+        data_fim:new Date()
+      })
+      .eq("operator_id",operatorId)
+      .is("data_fim",null)
+  }
+
+  // 2. Cria o pacote de atualização para o cadastro principal do operador
+  const updatePayload: any = {
+    linha_atual: linha,
+    posto_atual: posto
+  }
+
+  // Só adiciona o turno no pacote de update se ele foi enviado
+  if (turno !== undefined) {
+    updatePayload.turno = turno
   }
 
   await supabase
-    .from("operator_history")
-    .update({
-      data_fim:new Date()
-    })
-    .eq("operator_id",operatorId)
-    .is("data_fim",null)
-
-  await supabase
     .from("operators")
-    .update({
-      linha_atual:linha,
-      posto_atual:posto
-    })
+    .update(updatePayload)
     .eq("id",operatorId)
 
-  const { error } = await supabase
-    .from("operator_history")
-    .insert({
+  // 3. Cria um novo registro de histórico SE a linha ou posto mudaram
+  if (linhaAtual !== linha || postoAtual !== posto) {
+    const { error } = await supabase
+      .from("operator_history")
+      .insert({
+        operator_id:operatorId,
+        linha,
+        posto,
+        data_inicio:new Date()
+      })
 
-      operator_id:operatorId,
-      linha,
-      posto,
-      data_inicio:new Date()
-
-    })
-
-  if(error){
-
-    console.error(error)
-    throw error
-
+    if(error){
+      console.error(error)
+      throw error
+    }
   }
 
 }
@@ -733,7 +742,8 @@ export async function updateOperator(operator:Operator){
 
   const { error } = await supabase
     .from("operators")
-    .update(operator)
+    // 🆕 GARANTE QUE O SUPABASE VAI RECEBER QUALQUER ATUALIZAÇÃO NO TURNO
+    .update(operator) 
     .eq("id",operator.id)
 
   if(error){

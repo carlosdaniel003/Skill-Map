@@ -9,7 +9,7 @@ import {
   getProductionLines,
   getWorkstations,
   changeOperatorPosition,
-  getLineSkillDifficulties // <-- ADICIONADO PARA LER O KIT
+  getLineSkillDifficulties 
 } from "@/services/database/operatorRepository"
 
 import { logAction } from "@/services/audit/auditService"
@@ -19,24 +19,30 @@ export function useOperators() {
   const router = useRouter()
   const sessionUser = getSession()
 
-  // DADOS DO BANCO GLOBAIS
+  // DADOS DO BANCO GLOBAIS (Fonte da Verdade Imutável)
   const [operators, setOperators] = useState<any[]>([])
   const [lines, setLines] = useState<any[]>([])
   const [workstations, setWorkstations] = useState<any[]>([])
 
-  // LISTAS DINÂMICAS PARA OS DROPDOWNS (Respeitam os Kits)
+  // LISTAS DINÂMICAS PARA OS DROPDOWNS DO FORMULÁRIO
+  const [formLines, setFormLines] = useState<any[]>([])
   const [formWorkstations, setFormWorkstations] = useState<any[]>([])
+  
+  // LISTAS DINÂMICAS PARA OS DROPDOWNS DOS FILTROS
+  const [filterLines, setFilterLines] = useState<any[]>([])
   const [filterWorkstations, setFilterWorkstations] = useState<any[]>([])
 
   // ESTADOS DO FORMULÁRIO DE CADASTRO
   const [nome, setNome] = useState("")
   const [matricula, setMatricula] = useState("")
+  const [turno, setTurno] = useState("")
   const [linha, setLinha] = useState("")
   const [posto, setPosto] = useState("")
 
   // ESTADOS DOS FILTROS
   const [searchMatricula, setSearchMatricula] = useState("")
   const [searchNome, setSearchNome] = useState("")
+  const [filterTurno, setFilterTurno] = useState("")
   const [filterLinha, setFilterLinha] = useState("")
   const [filterPosto, setFilterPosto] = useState("")
 
@@ -58,60 +64,130 @@ export function useOperators() {
   async function loadLines(){
     const data = await getProductionLines()
     setLines(data)
+    setFormLines(data)
+    setFilterLines(data)
   }
 
   async function loadWorkstations(){
     const data = await getWorkstations()
     setWorkstations(data)
+    setFormWorkstations(data)
+    setFilterWorkstations(data)
   }
 
   // =========================================================================
-  // MÁGICA 1: O Dropdown do Formulário se adapta ao Kit do Modelo Selecionado
+  // MÁGICA 1: Dropdowns Bidirecionais do FORMULÁRIO
   // =========================================================================
   useEffect(() => {
-    async function syncFormKit() {
-      if (!linha) {
-        setFormWorkstations(workstations) // Se não tem linha, mostra todos
+    async function syncFormKits() {
+      // Cenário 1: Tudo vazio (Mostra tudo)
+      if (!linha && !posto) {
+        setFormWorkstations(workstations)
+        setFormLines(lines)
         return
       }
-      
-      const diffs = await getLineSkillDifficulties(linha)
-      const allowedPostos = Object.keys(diffs)
-      
-      setFormWorkstations(workstations.filter(w => allowedPostos.includes(w.nome)))
 
-      // Se o posto que estava selecionado não existe na nova linha, limpa ele
-      setPosto(prev => allowedPostos.includes(prev) ? prev : "")
+      // Cenário 2: Tem Linha selecionada (Filtra postos)
+      if (linha) {
+        const diffs = await getLineSkillDifficulties(linha)
+        const allowedPostos = Object.keys(diffs)
+        
+        setFormWorkstations(workstations.filter(w => allowedPostos.includes(w.nome)))
+        setFormLines(lines) 
+        
+        // Limpa o posto selecionado se não for válido para a nova linha
+        setPosto(prev => allowedPostos.includes(prev) ? prev : "")
+        return
+      }
+
+      // Cenário 3: Tem Posto selecionado, mas não Linha (Filtra linhas usando Promise.all para evitar gargalo)
+      if (posto && !linha) {
+        setFormWorkstations(workstations) 
+        
+        const linhasValidas = []
+        // Dispara as consultas em paralelo para ser mais rápido
+        const checks = await Promise.all(
+          lines.map(async (l) => {
+            const diffs = await getLineSkillDifficulties(l.nome)
+            return {
+              linha: l,
+              temPosto: Object.keys(diffs).includes(posto)
+            }
+          })
+        )
+
+        for (const check of checks) {
+          if (check.temPosto) {
+            linhasValidas.push(check.linha)
+          }
+        }
+        
+        setFormLines(linhasValidas)
+      }
     }
-    syncFormKit()
-  }, [linha, workstations])
+    
+    if (lines.length > 0 && workstations.length > 0) {
+      syncFormKits()
+    }
+  }, [linha, posto, lines, workstations]) 
 
   // =========================================================================
-  // MÁGICA 2: O Dropdown de Filtro de Busca também se adapta ao Kit
+  // MÁGICA 2: Dropdowns Bidirecionais dos FILTROS
   // =========================================================================
   useEffect(() => {
-    async function syncFilterKit() {
-      if (!filterLinha) {
-        setFilterWorkstations(workstations) // Se não tem filtro de linha, mostra todos
+    async function syncFilterKits() {
+      if (!filterLinha && !filterPosto) {
+        setFilterWorkstations(workstations)
+        setFilterLines(lines)
         return
       }
-      
-      const diffs = await getLineSkillDifficulties(filterLinha)
-      const allowedPostos = Object.keys(diffs)
-      
-      setFilterWorkstations(workstations.filter(w => allowedPostos.includes(w.nome)))
 
-      // Se o filtro de posto atual não existe na linha filtrada, limpa ele
-      setFilterPosto(prev => allowedPostos.includes(prev) ? prev : "")
+      if (filterLinha) {
+        const diffs = await getLineSkillDifficulties(filterLinha)
+        const allowedPostos = Object.keys(diffs)
+        
+        setFilterWorkstations(workstations.filter(w => allowedPostos.includes(w.nome)))
+        setFilterLines(lines)
+        
+        setFilterPosto(prev => allowedPostos.includes(prev) ? prev : "")
+        return
+      }
+
+      if (filterPosto && !filterLinha) {
+        setFilterWorkstations(workstations)
+        
+        const linhasValidas = []
+        // Promise.all aqui também
+        const checks = await Promise.all(
+          lines.map(async (l) => {
+            const diffs = await getLineSkillDifficulties(l.nome)
+            return {
+              linha: l,
+              temPosto: Object.keys(diffs).includes(filterPosto)
+            }
+          })
+        )
+
+        for (const check of checks) {
+          if (check.temPosto) {
+            linhasValidas.push(check.linha)
+          }
+        }
+
+        setFilterLines(linhasValidas)
+      }
     }
-    syncFilterKit()
-  }, [filterLinha, workstations])
+    
+    if (lines.length > 0 && workstations.length > 0) {
+      syncFilterKits()
+    }
+  }, [filterLinha, filterPosto, lines, workstations])
 
 
   // --- AÇÕES DO FORMULÁRIO ---
   async function handleCreateOperator(){
-    if(!nome || matricula.length !== 6){
-      setAlertConfig({ title: "Campos Obrigatórios", message: "A matricula deve conter exatamente 6 dígitos." })
+    if(!nome || matricula.length !== 6 || !turno || !linha || !posto){ 
+      setAlertConfig({ title: "Campos Obrigatórios", message: "Todos os campos (Matrícula, Nome, Turno, Modelo e Posto) são obrigatórios." })
       return
     }
 
@@ -119,19 +195,20 @@ export function useOperators() {
       await addOperator({
         nome,
         matricula,
+        turno,
         linha_atual: linha,
         posto_atual: posto
       })
 
-      const detalhesAlocacao = (linha || posto) ? ` na linha ${linha || '-'} e posto ${posto || '-'}` : ''
       await logAction(
         sessionUser?.username || "sistema", 
         "operator_create", 
-        `Cadastrou o operador: ${nome} (${matricula})${detalhesAlocacao}`
+        `Cadastrou o operador: ${nome} (${matricula}) no ${turno} na linha ${linha} e posto ${posto}`
       )
 
       setNome("")
       setMatricula("")
+      setTurno("")
       setLinha("")
       setPosto("")
       loadOperators()
@@ -167,16 +244,16 @@ export function useOperators() {
     })
   }
 
-  async function handleChangePosition(operatorId: string, novaLinha: string, novoPosto: string){
+ async function handleChangePosition(operatorId: string, novaLinha: string, novoPosto: string, novoTurno: string){
     const operadorAlvo = operators.find(op => op.id === operatorId)
 
-    await changeOperatorPosition(operatorId, novaLinha, novoPosto)
+    await changeOperatorPosition(operatorId, novaLinha, novoPosto, novoTurno)
 
     if(operadorAlvo) {
       await logAction(
         sessionUser?.username || "sistema", 
         "operator_change_position", 
-        `Moveu ${operadorAlvo.nome} (${operadorAlvo.matricula}) para: ${novaLinha || 'Nenhuma linha'} / ${novoPosto || 'Nenhum posto'}`
+        `Moveu ${operadorAlvo.nome} (${operadorAlvo.matricula}) para: ${novaLinha || 'Nenhuma linha'} / ${novoPosto || 'Nenhum posto'} no ${novoTurno}`
       )
     }
     loadOperators()
@@ -188,8 +265,9 @@ export function useOperators() {
     const matchNome = op.nome?.toLowerCase().includes(searchNome.toLowerCase())
     const matchLinha = filterLinha === "" || op.linha_atual === filterLinha
     const matchPosto = filterPosto === "" || op.posto_atual === filterPosto
+    const matchTurno = filterTurno === "" || op.turno === filterTurno
 
-    return matchMatricula && matchNome && matchLinha && matchPosto
+    return matchMatricula && matchNome && matchLinha && matchPosto && matchTurno
   })
 
   return {
@@ -197,22 +275,24 @@ export function useOperators() {
     form: {
       nome, setNome,
       matricula, setMatricula,
+      turno, setTurno,
       linha, setLinha,
       posto, setPosto,
-      lines, 
-      workstations: formWorkstations, // <-- Trocado da global para a filtrada (O componente visual não precisa ser alterado!)
+      lines: formLines,             
+      workstations: formWorkstations, 
       handleCreateOperator
     },
     filters: {
       searchMatricula, setSearchMatricula,
       searchNome, setSearchNome,
+      filterTurno, setFilterTurno,
       filterLinha, setFilterLinha,
       filterPosto, setFilterPosto,
-      lines, 
-      workstations: filterWorkstations // <-- Trocado da global para a filtrada
+      lines: filterLines,             
+      workstations: filterWorkstations  
     },
     table: {
-      filteredOperators, lines, workstations, // A tabela continua recebendo a global por segurança
+      filteredOperators, lines, workstations, 
       handleRemoveOperator, handleChangePosition
     },
     navigation: {

@@ -11,8 +11,8 @@ interface Props{
   workstations:any[]
 
   onRemove:(id:string)=>void
-  onChangeLine:(operatorId:string,linha:string,posto:string)=>void
-  onChangePosto:(operatorId:string,linha:string,posto:string)=>void
+  // 🆕 Atualizada a assinatura da função para incluir o turno
+  onChangeLine:(operatorId:string, linha:string, posto:string, turno:string)=>void
 }
 
 const PAGE_SIZE = 20
@@ -22,8 +22,7 @@ export default function OperatorTable({
   lines,
   workstations,
   onRemove,
-  onChangeLine,
-  onChangePosto
+  onChangeLine
 }:Props){
 
   const [sortColumn,setSortColumn] = useState<string>("nome")
@@ -91,6 +90,10 @@ export default function OperatorTable({
                 <div className="thContent">Nome {renderSortIndicator("nome")}</div>
               </th>
 
+              <th onClick={()=>toggleSort("turno")} className="sortableTh">
+                <div className="thContent">Turno {renderSortIndicator("turno")}</div>
+              </th>
+
               <th onClick={()=>toggleSort("linha_atual")} className="sortableTh">
                 <div className="thContent">Modelo {renderSortIndicator("linha_atual")}</div>
               </th>
@@ -112,13 +115,12 @@ export default function OperatorTable({
                 workstations={workstations}
                 onRemove={onRemove}
                 onChangeLine={onChangeLine}
-                onChangePosto={onChangePosto}
               />
             ))}
             
             {paginatedOperators.length === 0 && (
               <tr>
-                <td colSpan={5} className="emptyState">
+                <td colSpan={6} className="emptyState">
                   Nenhum operador encontrado com os filtros atuais.
                 </td>
               </tr>
