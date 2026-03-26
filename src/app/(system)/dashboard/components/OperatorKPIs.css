@@ -1,134 +1,289 @@
 /* src/app/(system)/dashboard/components/OperatorKPIs.css */
 
-.kpiSectionTitle {
-  font-size: 15px;
+.kpiChartCard {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border-top: 6px solid #d40000; /* Vermelho corporativo */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.kpiChartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.kpiChartTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111;
+}
+
+.kpiChartSubtitle {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.totalBadge {
+  background: #f1f5f9;
+  color: #334155;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
   font-weight: 700;
-  color: #111111;
-  margin-bottom: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+/* GRID DE CARDS */
+.kpiCardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 16px;
+  flex: 1;
+}
+
+.skillLevelCard {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  gap: 8px;
+}
+
+.skillLevelCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  background: #ffffff;
+}
+
+.cardIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2px;
+}
+
+.cardTitles {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.cardTitles h3 {
+  margin: 0;
+  font-size: 13px;
+  color: #475569;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.cardDesc {
+  font-size: 10px;
+  font-weight: 600;
+  color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.kpiGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.kpiGrid.five-cols {
-  grid-template-columns: repeat(5, 1fr);
-}
-
-/* BASE DO CARD DE KPI */
-.kpiCard {
-  background: #ffffff;
-  border-radius: 8px;
-  padding: 16px 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  border-top: 4px solid #e0e0e0;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.kpiCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-}
-
-.kpiHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.kpiLabel {
-  font-size: 13px;
-  font-weight: 600;
-  color: #666666;
+.skillCount {
+  font-size: 34px;
+  font-weight: 900;
+  color: #0f172a;
+  line-height: 1;
   margin-top: 4px;
-  line-height: 1.2;
 }
 
-.kpiIcon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+.skillClickTip {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.2s;
+  margin-top: 4px;
+}
+
+.skillLevelCard:hover .skillClickTip {
+  opacity: 1;
+}
+
+/* Cores de borda superior dinâmicas para os cards */
+.card-c-dc2626 { border-top: 4px solid #d40000; }
+.card-c-f59e0b { border-top: 4px solid #f59e0b; }
+.card-c-3b82f6 { border-top: 4px solid #3b82f6; }
+.card-c-8b5cf6 { border-top: 4px solid #8b5cf6; }
+.card-c-22c55e { border-top: 4px solid #22c55e; }
+
+/* ========================================================
+   ESTILOS DO MODAL (Trazidos do Emergency Allocation)
+   ======================================================== */
+.emergencyModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease-out;
 }
 
-.kpiValue {
-  font-size: 32px;
+.emergencyModalCard {
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  background: #ffffff;
+  border-top: 6px solid #d40000;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  overflow: hidden;
+}
+
+.emergencyHeader {
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  background: #fdfdfd;
+}
+
+.emergencyTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.emergencyTitle h3 {
+  margin: 0;
+  font-size: 18px;
   font-weight: 800;
-  color: #111111;
-  line-height: 1;
-  letter-spacing: -1px;
+  color: #111;
 }
 
-/* =====================================
-   VARIAÇÕES DE CORES DOS KPIS (SEÇÃO 1)
-   ===================================== */
-.kpi-total { border-top-color: #888888; }
-.kpi-total .kpiIcon { background: #f5f5f5; color: #555555; }
-
-.kpi-active { border-top-color: #3b82f6; }
-.kpi-active .kpiIcon { background: #eff6ff; color: #3b82f6; }
-
-.kpi-inactive { border-top-color: #f97316; }
-.kpi-inactive .kpiIcon { background: #fff7ed; color: #f97316; }
-
-.kpi-utilization { border-top-color: #14b8a6; }
-.kpi-utilization .kpiIcon { background: #f0fdfa; color: #14b8a6; }
-
-/* =====================================
-   CORES DOS 5 NÍVEIS (SEÇÃO 2)
-   ===================================== */
-/* Nvl 1 - Vermelho Escuro */
-.kpi-lvl1 { border-top-color: #dc2626; }
-.kpi-lvl1 .kpiIcon { background: #fef2f2; color: #dc2626; }
-
-/* Nvl 2 - Laranja */
-.kpi-lvl2 { border-top-color: #f59e0b; }
-.kpi-lvl2 .kpiIcon { background: #fffbeb; color: #f59e0b; }
-
-/* Nvl 3 - Azul Operacional */
-.kpi-lvl3 { border-top-color: #3b82f6; }
-.kpi-lvl3 .kpiIcon { background: #eff6ff; color: #3b82f6; }
-
-/* Nvl 4 - Roxo Avançado */
-.kpi-lvl4 { border-top-color: #8b5cf6; }
-.kpi-lvl4 .kpiIcon { background: #f5f3ff; color: #8b5cf6; }
-
-/* Nvl 5 - Verde Mestria */
-.kpi-lvl5 { border-top-color: #22c55e; }
-.kpi-lvl5 .kpiIcon { background: #f0fdf4; color: #22c55e; }
-
-
-/* RESPONSIVIDADE */
-@media (max-width: 1200px) {
-  .kpiGrid { grid-template-columns: repeat(2, 1fr); }
-  .kpiGrid.five-cols { grid-template-columns: repeat(3, 1fr); }
+.emergencyIcon {
+  display: flex;
 }
 
-@media (max-width: 768px) {
-  .kpiGrid.five-cols { grid-template-columns: repeat(2, 1fr); }
-  /* O último card dos 5 pega a largura toda para não quebrar a simetria */
-  .kpi-lvl5 { grid-column: span 2; }
+.closeEmergencyBtn {
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
 }
 
-@media (max-width: 480px) {
-  .kpiGrid, .kpiGrid.five-cols {
-    grid-template-columns: 1fr 1fr;
-  }
-  .kpi-lvl5 { grid-column: span 2; }
-  
-  .kpiCard { padding: 12px 16px; }
-  .kpiValue { font-size: 26px; }
-  .kpiIcon { width: 28px; height: 28px; }
-  .kpiIcon svg { width: 14px; height: 14px; }
+.closeEmergencyBtn:hover {
+  background: #f0f0f0;
+  color: #111;
+}
+
+.emergencyBody {
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.emergencyResults {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.suggestionCard {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.suggestionCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-color: inherit;
+}
+
+.suggestionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.suggestionName {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.suggestionCurrentLine {
+  font-size: 12px;
+  color: #666;
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.suggestionMetrics {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: #555;
+}
+
+.metricBadge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.suggestionAction {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

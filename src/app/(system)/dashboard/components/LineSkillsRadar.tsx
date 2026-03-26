@@ -307,36 +307,6 @@ export default function LineSkillsRadar() {
           </ResponsiveContainer>
         )}
       </div>
-
-      {/* ----------------------------- */}
-      <div className="skillsAverageTable">
-        <h4>{mode === "skills" ? "Média nos Postos" : "Histórico da Equipe (Média Lvl)"}</h4>
-
-        <div className="skillsList">
-          {data.length === 0 && !isLoading && (
-            <span style={{fontSize: 13, color: '#888'}}>Sem dados para exibir.</span>
-          )}
-          {data.map(skill => {
-
-            let color = "#2e7d32" // Verde (bom)
-            if (skill.value === 0) color = "#cccccc" // Cinza (Sem exp)
-            else if (skill.value < 2) color = "#d40000" // Vermelho (baixo)
-            else if (skill.value < 3) color = "#f59e0b" // Amarelo (médio)
-
-            return (
-              <div key={skill.label} className="skillRow">
-                <span className="skillName">{skill.label}</span>
-                <span className="skillValue" style={{ color }}>
-                  {skill.value > 0 ? skill.value : "-"}
-                </span>
-              </div>
-            )
-          })}
-        </div>
-
-      </div>
-
     </div>
   )
-
 }

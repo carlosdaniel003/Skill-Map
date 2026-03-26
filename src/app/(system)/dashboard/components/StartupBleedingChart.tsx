@@ -25,12 +25,10 @@ export default function StartupBleedingChart() {
     async function fetchBleedingData() {
       setLoading(true)
       try {
-        // Pega a data de 30 dias atrás
         const thirtyDaysAgo = new Date()
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
         const dateStr = thirtyDaysAgo.toISOString().split('T')[0]
 
-        // Busca apontamentos que NÃO sejam presença ou hora extra
         const { data: attendance, error } = await supabase
           .from('operator_attendance')
           .select(`
@@ -44,11 +42,10 @@ export default function StartupBleedingChart() {
             )
           `)
           .gte('data_registro', dateStr)
-          .not('status', 'in', '("P","H.E")') // Ignora o que está OK
+          .not('status', 'in', '("P","H.E")') 
 
         if (error) throw error
 
-        // 1. Aplica os Filtros Globais do Dashboard pós-busca
         const filteredRecords = (attendance || []).filter((row: any) => {
           const op = Array.isArray(row.operators) ? row.operators[0] : row.operators
           if (!op || !op.ativo) return false
@@ -58,8 +55,6 @@ export default function StartupBleedingChart() {
           return true
         })
 
-        // 2. Agrupa os dados
-        // Se não houver linha filtrada, agrupa por LINHA. Se houver linha filtrada, agrupa por OPERADOR.
         const groupByOperator = !!filters.linha
         const groupMap: Record<string, ChartData> = {}
 
@@ -76,15 +71,14 @@ export default function StartupBleedingChart() {
           if (status === 'A') groupMap[groupKey].Atraso += 1
           else if (status === 'S') groupMap[groupKey].Saida += 1
           else if (status === 'F') groupMap[groupKey].Falta += 1
-          else groupMap[groupKey].Justificado += 1 // Engloba atestados, faltas justificadas, férias, etc.
+          else groupMap[groupKey].Justificado += 1 
 
           groupMap[groupKey].TotalDesvios += 1
         })
 
-        // 3. Converte para array e ordena pelos maiores sangramentos
         const chartArray = Object.values(groupMap)
           .sort((a, b) => b.TotalDesvios - a.TotalDesvios)
-          .slice(0, 15) // Limita a 15 barras para não quebrar o layout
+          .slice(0, 15) 
 
         setData(chartArray)
 
@@ -98,7 +92,6 @@ export default function StartupBleedingChart() {
     fetchBleedingData()
   }, [filters])
 
-  // Customização do balãozinho ao passar o mouse
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
@@ -119,11 +112,17 @@ export default function StartupBleedingChart() {
     return null
   }
 
+  // Ícone corporativo de relógio/atraso
+  const IconBleeding = <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d40000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px', marginTop: '2px'}}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
+
   return (
-    <div className="bleedingCard">
+    <div className="bleedingCard animateFadeIn">
       <div className="bleedingHeader">
         <div>
-          <h2 className="bleedingTitle">Índice de Sangramento (Micro-absenteísmo)</h2>
+          <h2 className="bleedingTitle" style={{ display: 'flex', alignItems: 'center' }}>
+            {IconBleeding}
+            Índice de Sangramento (Micro-absenteísmo)
+          </h2>
           <p className="bleedingSubtitle">
             Volume de atrasos e saídas antecipadas nos últimos 30 dias. 
             Estes pequenos desvios inviabilizam o balanceamento inicial do turno e afetam drasticamente o OEE.
@@ -147,7 +146,6 @@ export default function StartupBleedingChart() {
                 tick={{ fontSize: 12, fill: '#64748b' }} 
                 tickLine={false}
                 axisLine={{ stroke: '#cbd5e1' }}
-                // Esconde nomes muito longos se for linha
                 tickFormatter={(val) => val.length > 15 ? `${val.substring(0, 15)}...` : val}
               />
               <YAxis 
@@ -159,11 +157,11 @@ export default function StartupBleedingChart() {
               <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f8fafc' }} />
               <Legend wrapperStyle={{ fontSize: '13px', paddingTop: '10px' }} />
               
-              {/* O EMPILHAMENTO É FEITO AQUI (stackId="a") */}
+              {/* CORES CORPORATIVAS APLICADAS */}
               <Bar dataKey="Atraso" name="Atrasos (A)" stackId="a" fill="#f59e0b" radius={[0, 0, 4, 4]} />
-              <Bar dataKey="Saida" name="Saídas (S)" stackId="a" fill="#fbbf24" />
-              <Bar dataKey="Falta" name="Faltas Críticas (F)" stackId="a" fill="#dc2626" />
-              <Bar dataKey="Justificado" name="Justificados / Atestados" stackId="a" fill="#94a3b8" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Saida" name="Saídas (S)" stackId="a" fill="#3b82f6" />
+              <Bar dataKey="Falta" name="Faltas Críticas (F)" stackId="a" fill="#d40000" />
+              <Bar dataKey="Justificado" name="Justificados / Atestados" stackId="a" fill="#64748b" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

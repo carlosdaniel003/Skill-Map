@@ -1,7 +1,7 @@
 /* src/components/ai/AIConsultant.css */
 
 /* =======================================
-   FAB E CHAT WINDOW
+   FAB E JANELA BASE
    ======================================= */
 .ai-fab {
   position: fixed;
@@ -30,18 +30,17 @@
   position: fixed;
   bottom: 24px;
   right: 24px;
-  width: 360px;
-  height: 540px; 
-  background: white;
+  width: 380px;
+  height: 600px; 
+  background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   z-index: 9999;
   overflow: hidden;
   border: 1px solid #e0e0e0;
   
-  /* Transição suave para redimensionamento de janela */
   transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   transform-origin: bottom right;
   animation: slideUpChat 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
@@ -52,7 +51,6 @@
   to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* 🆕 MODO TELA CHEIA (FULLSCREEN) */
 .ai-chat-window.fullscreen {
   bottom: 0;
   right: 0;
@@ -63,22 +61,18 @@
   border-radius: 0;
   border: none;
   box-shadow: none;
+  animation: none;
 }
 
-/* 🆕 MODO MINIMIZADO */
 .ai-chat-window.minimized {
-  height: 56px; /* Altura exata apenas do cabeçalho */
-  width: 300px;
+  height: 56px; 
+  width: 320px;
   bottom: 0;
   right: 24px;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-  cursor: pointer;
-}
-
-.ai-chat-window.minimized .ai-chat-body,
-.ai-chat-window.minimized .ai-chat-footer {
-  display: none; /* Esconde o conteúdo interno quando minimizado */
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+  border-bottom: none;
 }
 
 /* =======================================
@@ -87,18 +81,25 @@
 .ai-chat-header {
   background: #d40000;
   color: white;
-  padding: 16px;
+  padding: 0 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   min-height: 56px;
+  flex-shrink: 0; 
+}
+
+.ai-chat-window.minimized .ai-chat-header {
+  cursor: pointer;
 }
 
 .ai-header-info {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  font-size: 15px;
   font-weight: 700;
+  letter-spacing: 0.3px;
 }
 
 .ai-window-controls {
@@ -112,13 +113,13 @@
   border: none;
   color: white;
   cursor: pointer;
-  opacity: 0.7;
+  opacity: 0.8;
   transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 6px;
 }
 
@@ -137,13 +138,17 @@
    ======================================= */
 .ai-chat-body {
   flex: 1;
-  padding: 16px;
+  padding: 20px 16px;
   overflow-y: auto;
-  background: #f9f9f9;
+  background: #f8fafc;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
+
+.ai-chat-body::-webkit-scrollbar { width: 6px; }
+.ai-chat-body::-webkit-scrollbar-track { background: transparent; }
+.ai-chat-body::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
 
 .ai-message-row {
   display: flex;
@@ -155,22 +160,19 @@
 .ai-bubble-container {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   max-width: 85%;
 }
 .ai-message-row.user .ai-bubble-container { align-items: flex-end; }
 
-/* Na tela cheia, as bolhas podem ser mais largas para facilitar a leitura */
 .ai-chat-window.fullscreen .ai-bubble-container {
   max-width: 60%;
 }
 
 .ai-bubble {
-  padding: 10px 14px;
+  padding: 12px 16px;
   border-radius: 12px;
-  font-size: 13.5px;
-  line-height: 1.4;
-  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.5;
   word-wrap: break-word;
 }
 
@@ -182,222 +184,250 @@
 
 .ai-bubble.ai {
   background: #ffffff;
-  color: #333333;
-  border: 1px solid #e0e0e0;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
   border-bottom-left-radius: 2px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
 }
 
 .ai-expand-btn {
   background: transparent;
   border: none;
-  color: #888;
-  font-size: 11px;
-  font-weight: 600;
-  margin-top: 4px;
-  margin-left: 2px;
+  color: #d40000;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px;
+  gap: 6px;
+  padding: 6px 8px;
   border-radius: 4px;
   transition: all 0.2s;
+  align-self: flex-start;
 }
 .ai-expand-btn:hover {
-  background: #eaeaea;
+  background: #eff6ff;
   color: #d40000;
 }
 
 /* =======================================
-   RODAPÉ DO CHAT
+   RODAPÉ E INPUT DE TEXTO
    ======================================= */
 .ai-chat-footer {
-  padding: 12px;
+  padding: 16px;
   background: white;
-  border-top: 1px solid #e0e0e0;
-  display: flex;
-  gap: 8px;
+  border-top: 1px solid #e2e8f0;
+  flex-shrink: 0;
 }
 
-.ai-chat-footer input {
+.ai-input-wrapper {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.ai-input {
   flex: 1;
-  padding: 10px 14px;
-  border: 1px solid #cccccc;
-  border-radius: 20px;
+  padding: 12px 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 24px;
   outline: none;
   font-size: 14px;
+  background: #f8fafc;
+  transition: border-color 0.2s, background 0.2s;
 }
 
-.ai-chat-footer input:focus { border-color: #d40000; }
+.ai-input:focus { 
+  border-color: #d40000; 
+  background: #ffffff;
+}
 
-.ai-chat-footer button {
+.ai-send-btn {
   background: #d40000;
   color: white;
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s;
+  flex-shrink: 0;
+  transition: background 0.2s, transform 0.1s;
 }
 
-.ai-chat-footer button:disabled { background: #cccccc; cursor: not-allowed; }
-.ai-chat-footer button:hover:not(:disabled) { background: #b30000; }
+.ai-send-btn:disabled { 
+  background: #cbd5e1; 
+  cursor: not-allowed; 
+}
 
-/* LOADING DOTS */
+.ai-send-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.ai-send-btn:hover:not(:disabled) { 
+  background: #b30000; 
+}
+
+/* =======================================
+   ANIMAÇÃO DE CARREGAMENTO
+   ======================================= */
+.ai-bubble.loading {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 20px;
+}
+
 .dot {
-  display: inline-block;
+  display: block;
   width: 6px;
   height: 6px;
-  background: #888;
+  background: #94a3b8;
   border-radius: 50%;
-  margin: 0 2px;
   animation: bounce 1.4s infinite ease-in-out both;
 }
 .dot:nth-child(1) { animation-delay: -0.32s; }
 .dot:nth-child(2) { animation-delay: -0.16s; }
+
 @keyframes bounce {
   0%, 80%, 100% { transform: scale(0); }
   40% { transform: scale(1); }
 }
 
 /* =======================================
-   MARKDOWN NO CHAT
+   MARKDOWN PARSER
    ======================================= */
-.markdown-body { font-family: inherit; }
-.markdown-body p { margin-top: 0; margin-bottom: 8px; }
-.markdown-body p:last-child { margin-bottom: 0; }
-.markdown-body strong { font-weight: 700; }
+.ai-bubble.ai p, .expanded-markdown p { 
+  margin: 0 0 10px 0; 
+}
+.ai-bubble.ai p:last-child, .expanded-markdown p:last-child { 
+  margin: 0; 
+}
+.ai-bubble.ai strong, .expanded-markdown strong { 
+  font-weight: 800; 
+  color: #0f172a; 
+}
 
-.ai-bubble.ai .markdown-body table {
+/* Tabelas no Chat Pequeno */
+.ai-bubble.ai table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 8px;
-  margin-bottom: 8px;
-  font-size: 11px;
+  margin: 12px 0;
+  font-size: 12px;
   display: block;
   overflow-x: auto;
   white-space: nowrap;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
 }
 
-/* No modo tela cheia a tabela fica em 100% livre e maior */
-.ai-chat-window.fullscreen .ai-bubble.ai .markdown-body table {
-  font-size: 13px;
+.ai-chat-window.fullscreen .ai-bubble.ai table {
+  font-size: 14px;
   display: table;
   white-space: normal;
 }
 
-.ai-bubble.ai .markdown-body th {
-  background: #f0f0f0;
-  padding: 4px 6px;
-  border-bottom: 1px solid #ccc;
+.ai-bubble.ai th {
+  background: #f1f5f9;
+  padding: 8px 12px;
+  border-bottom: 2px solid #cbd5e1;
   text-align: left;
-}
-.ai-bubble.ai .markdown-body td {
-  padding: 4px 6px;
-  border-bottom: 1px solid #eee;
+  font-weight: 700;
+  color: #334155;
 }
 
-/* =======================================
-   MODO EXPANDIDO (O RELATÓRIO)
-   ======================================= */
-.ai-expanded-overlay {
+.ai-bubble.ai td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+
+/* ========================================================
+   ESTILOS DO MODAL (AI Expanded View)
+   ======================================================== */
+.emergencyModalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(4px);
-  z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: fadeInOverlay 0.2s ease-out forwards;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease-out;
 }
 
-@keyframes fadeInOverlay {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.ai-expanded-container {
-  width: 95%;
-  max-width: 900px;
-  height: 85%;
-  background: white;
-  border-radius: 12px;
+.emergencyModalCard {
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  background: #ffffff;
+  border-top: 6px solid #d40000;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   overflow: hidden;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.4);
-  animation: scaleUpModal 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
-@keyframes scaleUpModal {
-  from { transform: scale(0.95) translateY(20px); opacity: 0; }
-  to { transform: scale(1) translateY(0); opacity: 1; }
-}
-
-.ai-expanded-header {
-  background: #d40000;
-  color: white;
+.emergencyHeader {
   padding: 20px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.ai-expanded-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.ai-expanded-close {
-  background: rgba(255,255,255,0.2);
-  border: none;
-  color: white;
-  font-size: 16px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.ai-expanded-close:hover { background: rgba(255,255,255,0.4); }
-
-.ai-expanded-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 32px 40px;
+  border-bottom: 1px solid #eee;
   background: #fdfdfd;
 }
 
-/* Estilo de Relatório para o Markdown no modo Expandido */
-.expanded-markdown {
-  color: #333;
-  font-size: 15px;
-  line-height: 1.6;
+.emergencyTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.expanded-markdown h1, .expanded-markdown h2, .expanded-markdown h3 {
+.emergencyTitle h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
   color: #111;
-  margin-top: 24px;
-  margin-bottom: 12px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 6px;
 }
 
+.emergencyIcon {
+  display: flex;
+  color: #d40000;
+}
+
+.closeEmergencyBtn {
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.closeEmergencyBtn:hover {
+  background: #f0f0f0;
+  color: #111;
+}
+
+.emergencyBody {
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Tabelas e Markdown no Modal Expandido */
 .expanded-markdown table {
   width: 100%;
   border-collapse: collapse;
@@ -427,4 +457,16 @@
   color: #444;
 }
 
-.expanded-markdown tr:hover td { background-color: #fafafa; }
+.expanded-markdown tr:hover td { 
+  background-color: #fafafa; 
+}
+
+@keyframes slideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

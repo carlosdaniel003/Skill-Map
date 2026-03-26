@@ -9,7 +9,7 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
-  min-height: 480px; /* Alterado de height fixa para min-height */
+  min-height: 480px; 
   height: 100%;
   box-sizing: border-box;
 }
@@ -96,7 +96,16 @@
 .radarChartContainer {
   flex: 1;
   width: 100%;
-  min-height: 300px; /* Garante que o gráfico não esmague com os cards abaixo */
+  min-height: 300px; 
+}
+
+.radarLoading, .emptyRadarData {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #888;
+  font-size: 14px;
 }
 
 /* Customiza o Tooltip do Recharts para manter o padrão corporativo */
@@ -105,63 +114,6 @@
   border-radius: 8px !important;
   border: 1px solid #e0e0e0 !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
-}
-
-/* =====================================
-   TABELA DE MÉDIAS (NOVO VISUAL KPI)
-   ===================================== */
-.skillsAverageTable {
-  margin-top: 24px;
-  border-top: 1px solid #e0e0e0;
-  padding-top: 20px;
-}
-
-.skillsAverageTable h4 {
-  font-size: 13px;
-  font-weight: 700;
-  color: #555555;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin: 0 0 16px 0;
-}
-
-.skillsList {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 12px;
-}
-
-.skillRow {
-  background: #fafafa;
-  border: 1px solid #f0f0f0;
-  border-radius: 6px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-}
-
-.skillRow:hover {
-  background: #ffffff;
-  border-color: #cccccc;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transform: translateY(-2px);
-}
-
-.skillName {
-  font-size: 12px;
-  font-weight: 600;
-  color: #666666;
-  text-align: center;
-}
-
-.skillValue {
-  font-size: 20px;
-  font-weight: 800;
-  line-height: 1;
 }
 
 /* RESPONSIVIDADE */
@@ -175,9 +127,5 @@
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-  }
-  
-  .skillsList {
-    grid-template-columns: 1fr 1fr; /* 2 colunas no celular */
   }
 }

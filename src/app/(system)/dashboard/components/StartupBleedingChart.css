@@ -5,7 +5,7 @@
   border-radius: 8px;
   padding: 24px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  border-top: 6px solid #f97316; /* Laranja para representar o "Sangramento/Atraso" */
+  border-top: 6px solid #d40000; /* Vermelho na borda do Sangramento (mesma cor da Falta Crítica) */
   display: flex;
   flex-direction: column;
   gap: 16px;

@@ -1,7 +1,7 @@
 // src/app/(system)/dashboard/components/TalentMatrix.tsx
 "use client"
 
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { supabase } from "@/services/database/supabaseClient"
 import { useDashboardFilters } from "../context/DashboardFilterContext"
 import "./TalentMatrix.css"
@@ -27,10 +27,13 @@ export default function TalentMatrix() {
     riscos: [] as OperatorMatrixData[]
   })
 
+  // Estado do Modal
   const [selectedQuadrant, setSelectedQuadrant] = useState<{
     title: string,
     action: string,
     colorClass: string,
+    colorHex: string,
+    icon: React.ReactNode,
     operators: OperatorMatrixData[]
   } | null>(null)
 
@@ -43,6 +46,9 @@ export default function TalentMatrix() {
         if (filters.linha) {
           query = query.eq('linha_atual', filters.linha)
         }
+        if (filters.turno) {
+          query = query.eq('turno', filters.turno)
+        }
         if (filters.operatorId) {
           query = query.eq('operator_id', filters.operatorId)
         }
@@ -50,7 +56,6 @@ export default function TalentMatrix() {
         const { data, error } = await query
         if (error) throw error
 
-        // 1. Agrupar por operador pegando a MAIOR habilidade dele
         const opsMap = new Map<string, OperatorMatrixData>()
         
         ;(data || []).forEach(row => {
@@ -72,7 +77,6 @@ export default function TalentMatrix() {
           }
         })
 
-        // 2. Distribuir nos 4 Quadrantes
         const q = { pilares: [], estrelas: [], oportunidades: [], riscos: [] } as typeof quadrants
 
         opsMap.forEach(op => {
@@ -85,7 +89,6 @@ export default function TalentMatrix() {
           else q.riscos.push(op)
         })
 
-        // Ordena cada grupo do maior score para o menor
         const sortByScore = (a: OperatorMatrixData, b: OperatorMatrixData) => b.score_assiduidade - a.score_assiduidade
         q.pilares.sort(sortByScore)
         q.estrelas.sort(sortByScore)
@@ -110,8 +113,14 @@ export default function TalentMatrix() {
     return 'red'
   }
 
+  // Ícones SVG para cada quadrante
+  const IconOportunidades = <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m12 16 4-4-4-4"/><path d="M8 12h8"/></svg>;
+  const IconPilares = <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>;
+  const IconRisco = <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>;
+  const IconToxicos = <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>;
+
   return (
-    <div className="talentMatrixCard">
+    <div className="talentMatrixCard animateFadeIn">
       <div className="matrixHeader">
         <h2>Matriz Talento vs. Confiabilidade</h2>
         <p>Direcione o investimento em treinamento e ações disciplinares da fábrica.</p>
@@ -125,7 +134,7 @@ export default function TalentMatrix() {
           {/* SUPERIOR ESQUERDO: Oportunidades */}
           <div 
             className="quadrantBox q-oportunidades"
-            onClick={() => setSelectedQuadrant({ title: 'Oportunidades', action: 'Treinar e Promover', colorClass: 'q-oportunidades', operators: quadrants.oportunidades })}
+            onClick={() => setSelectedQuadrant({ title: 'Oportunidades', action: 'Treinar e Promover', colorClass: 'q-oportunidades', colorHex: '#f59e0b', icon: IconOportunidades, operators: quadrants.oportunidades })}
           >
             <div className="quadHeader">
               <div>
@@ -134,13 +143,16 @@ export default function TalentMatrix() {
               </div>
               <div className="quadCount">{quadrants.oportunidades.length}</div>
             </div>
-            <span className="quadAction">🎯 Ação: Treinar</span>
+            <span className="quadAction">
+              <span style={{ marginRight: '6px' }}>{IconOportunidades}</span>
+              Ação: Treinar
+            </span>
           </div>
 
           {/* SUPERIOR DIREITO: Pilares */}
           <div 
             className="quadrantBox q-pilares"
-            onClick={() => setSelectedQuadrant({ title: 'Pilares da Linha', action: 'Reconhecer e usar como instrutores', colorClass: 'q-pilares', operators: quadrants.pilares })}
+            onClick={() => setSelectedQuadrant({ title: 'Pilares da Linha', action: 'Reconhecer e usar como instrutores', colorClass: 'q-pilares', colorHex: '#22c55e', icon: IconPilares, operators: quadrants.pilares })}
           >
             <div className="quadHeader">
               <div>
@@ -149,13 +161,16 @@ export default function TalentMatrix() {
               </div>
               <div className="quadCount">{quadrants.pilares.length}</div>
             </div>
-            <span className="quadAction">⭐ Ação: Manter/Promover</span>
+            <span className="quadAction">
+              <span style={{ marginRight: '6px' }}>{IconPilares}</span>
+              Ação: Manter/Promover
+            </span>
           </div>
 
           {/* INFERIOR ESQUERDO: Risco */}
           <div 
             className="quadrantBox q-riscos"
-            onClick={() => setSelectedQuadrant({ title: 'Baixo Fit / Risco', action: 'Acompanhar ou Desligar', colorClass: 'q-riscos', operators: quadrants.riscos })}
+            onClick={() => setSelectedQuadrant({ title: 'Baixo Fit / Risco', action: 'Acompanhar ou Desligar', colorClass: 'q-riscos', colorHex: '#8b5cf6', icon: IconRisco, operators: quadrants.riscos })}
           >
             <div className="quadHeader">
               <div>
@@ -164,13 +179,16 @@ export default function TalentMatrix() {
               </div>
               <div className="quadCount">{quadrants.riscos.length}</div>
             </div>
-            <span className="quadAction">⚠️ Ação: Acompanhar</span>
+            <span className="quadAction">
+              <span style={{ marginRight: '6px' }}>{IconRisco}</span>
+              Ação: Acompanhar
+            </span>
           </div>
 
           {/* INFERIOR DIREITO: Estrelas Tóxicos */}
           <div 
             className="quadrantBox q-estrelas"
-            onClick={() => setSelectedQuadrant({ title: 'Estrelas Tóxicos', action: 'Reduzir dependência / Advertir', colorClass: 'q-estrelas', operators: quadrants.estrelas })}
+            onClick={() => setSelectedQuadrant({ title: 'Estrelas Tóxicos', action: 'Reduzir dependência / Advertir', colorClass: 'q-estrelas', colorHex: '#d40000', icon: IconToxicos, operators: quadrants.estrelas })}
           >
             <div className="quadHeader">
               <div>
@@ -179,46 +197,72 @@ export default function TalentMatrix() {
               </div>
               <div className="quadCount">{quadrants.estrelas.length}</div>
             </div>
-            <span className="quadAction">🚨 Ação: Advertir</span>
+            <span className="quadAction">
+              <span style={{ marginRight: '6px' }}>{IconToxicos}</span>
+              Ação: Advertir
+            </span>
           </div>
 
         </div>
       )}
 
-      {/* MODAL DE DETALHES */}
+      {/* MODAL DE DETALHES (USANDO O PADRÃO EMERGENCY) */}
       {selectedQuadrant && (
-        <div className="modalOverlay">
-          <div className={`corporateModal ${selectedQuadrant.colorClass}`} style={{ borderTopWidth: '6px', borderTopStyle: 'solid' }}>
-            <div className="modalHeader">
-              <h3>{selectedQuadrant.title}</h3>
+        <div className="emergencyModalOverlay" onClick={() => setSelectedQuadrant(null)}>
+          <div 
+            className="emergencyModalCard" 
+            style={{ borderTopColor: selectedQuadrant.colorHex }}
+            onClick={(e) => e.stopPropagation()} 
+          >
+            
+            <div className="emergencyHeader">
+              <div className="emergencyTitle">
+                <div className="emergencyIcon" style={{ color: selectedQuadrant.colorHex }}>
+                  {selectedQuadrant.icon}
+                </div>
+                <h3>Perfil: {selectedQuadrant.title}</h3>
+              </div>
+              <button className="closeEmergencyBtn" onClick={() => setSelectedQuadrant(null)}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
             </div>
-            <div className="modalBody" style={{ marginBottom: '16px' }}>
-              <p><strong>Recomendação:</strong> {selectedQuadrant.action}</p>
-              
-              <div className="matrixModalList" style={{ marginTop: '16px' }}>
+
+            <div className="emergencyBody">
+              <p style={{ margin: 0, color: '#555', fontSize: '14px' }}>
+                Total de <strong>{selectedQuadrant.operators.length}</strong> colaboradores com perfil de <strong>{selectedQuadrant.action}</strong>.
+              </p>
+
+              <div className="emergencyResults">
                 {selectedQuadrant.operators.length === 0 ? (
-                  <p style={{ textAlign: 'center', margin: '20px 0' }}>Nenhum operador neste perfil.</p>
+                  <div className="emptyState">Nenhum operador neste perfil.</div>
                 ) : (
-                  selectedQuadrant.operators.map(op => (
-                    <div key={op.id} className="matrixOpItem">
-                      <div className="matrixOpInfo">
-                        <strong>{op.nome}</strong>
-                        <span>{op.linha_atual || "Sem Linha"} • {op.posto_atual}</span>
+                  selectedQuadrant.operators.map((op) => (
+                    <div key={op.id} className="suggestionCard" style={{ cursor: 'default' }}>
+                      <div className="suggestionInfo">
+                        <div className="suggestionName">
+                          {op.nome}
+                          <span className="suggestionCurrentLine">{op.linha_atual || "Sem Linha"}</span>
+                        </div>
+                        <div className="suggestionMetrics">
+                          <span className="metricBadge">Posto: {op.posto_atual || "Não Alocado"}</span>
+                        </div>
                       </div>
-                      <div className="matrixOpMetrics">
-                        <span title="Maior Nível de Habilidade">Lvl {op.max_skill}</span>
-                        <span className={`matrixMetric ${getMetricColor(op.score_assiduidade)}`} title="Score de Assiduidade">
-                          {Math.round(op.score_assiduidade)}%
-                        </span>
+                      
+                      <div className="suggestionAction" style={{ alignItems: 'flex-end' }}>
+                        <div className="matrixOpMetrics" style={{ marginBottom: '4px' }}>
+                          <span title="Maior Nível de Habilidade" style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px' }}>Lvl {op.max_skill}</span>
+                          <span className={`matrixMetric ${getMetricColor(op.score_assiduidade)}`} title="Score de Assiduidade">
+                            {Math.round(op.score_assiduidade)}%
+                          </span>
+                        </div>
+                        <span style={{ fontSize: '11px', color: '#666' }}>Mat: {op.matricula}</span>
                       </div>
                     </div>
                   ))
                 )}
               </div>
             </div>
-            <div className="modalFooter">
-              <button className="primaryButton" onClick={() => setSelectedQuadrant(null)}>Fechar</button>
-            </div>
+
           </div>
         </div>
       )}

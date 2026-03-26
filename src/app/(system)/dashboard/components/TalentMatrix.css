@@ -5,7 +5,10 @@
   border-radius: 8px;
   padding: 24px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  border-top: 6px solid #333333;
+  border-top: 6px solid #d40000;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .matrixHeader {
@@ -83,64 +86,198 @@
   font-weight: 600;
   padding: 6px 10px;
   border-radius: 4px;
-  display: inline-block;
+  display: flex;
+  align-items: center;
   width: fit-content;
 }
 
-/* CORES DOS QUADRANTES */
-.q-pilares { background: #f0fdf4; border-left: 4px solid #16a34a; }
-.q-pilares .quadAction { background: #dcfce7; color: #166534; }
+/* CORES DOS QUADRANTES - Ajustadas conforme solicitado */
+/* Pilares: Verde */
+.q-pilares { background: #f0fdf4; border-left: 4px solid #22c55e; }
+.q-pilares .quadAction { background: #dcfce7; color: #15803d; }
 
-.q-estrelas { background: #fef2f2; border-left: 4px solid #dc2626; }
+/* Tóxicos: Vermelho */
+.q-estrelas { background: #fef2f2; border-left: 4px solid #d40000; }
 .q-estrelas .quadAction { background: #fee2e2; color: #991b1b; }
 
+/* Oportunidades: Laranja */
 .q-oportunidades { background: #fffbeb; border-left: 4px solid #f59e0b; }
 .q-oportunidades .quadAction { background: #fef3c7; color: #b45309; }
 
-.q-riscos { background: #f8fafc; border-left: 4px solid #64748b; }
-.q-riscos .quadAction { background: #f1f5f9; color: #334155; }
+/* Risco: Roxo (Usando a cor 8b5cf6 solicitada) */
+.q-riscos { background: #f5f3ff; border-left: 4px solid #8b5cf6; }
+.q-riscos .quadAction { background: #ede9fe; color: #5b21b6; }
 
-/* MODAL DE DETALHES DA MATRIZ */
-.matrixModalList {
+
+/* ========================================================
+   ESTILOS DO MODAL (Trazidos do Emergency Allocation)
+   ======================================================== */
+.emergencyModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 400px;
-  overflow-y: auto;
-  padding-right: 4px;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease-out;
 }
 
-.matrixOpItem {
+.emergencyModalCard {
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  background: #ffffff;
+  border-top: 6px solid #d40000;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  overflow: hidden;
+}
+
+.emergencyHeader {
+  padding: 20px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px;
-  background: #f9f9f9;
-  border: 1px solid #eee;
-  border-radius: 6px;
+  border-bottom: 1px solid #eee;
+  background: #fdfdfd;
 }
 
-.matrixOpInfo strong {
-  display: block;
-  font-size: 14px;
+.emergencyTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.emergencyTitle h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
   color: #111;
 }
 
-.matrixOpInfo span {
-  font-size: 12px;
-  color: #666;
+.emergencyIcon {
+  display: flex;
 }
 
+.closeEmergencyBtn {
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.closeEmergencyBtn:hover {
+  background: #f0f0f0;
+  color: #111;
+}
+
+.emergencyBody {
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.emergencyResults {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.suggestionCard {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.suggestionCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-color: inherit;
+}
+
+.suggestionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.suggestionName {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.suggestionCurrentLine {
+  font-size: 12px;
+  color: #666;
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.suggestionMetrics {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: #555;
+}
+
+.metricBadge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.suggestionAction {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* Cores para Badge Interna do Modal */
 .matrixOpMetrics {
   display: flex;
   gap: 12px;
   font-size: 13px;
   font-weight: 600;
 }
-
 .matrixMetric.green { color: #16a34a; }
-.matrixMetric.red { color: #dc2626; }
+.matrixMetric.red { color: #d40000; }
 .matrixMetric.yellow { color: #f59e0b; }
+
+@keyframes slideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
 @media (max-width: 768px) {
   .matrixGrid {
