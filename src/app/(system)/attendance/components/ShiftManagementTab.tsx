@@ -34,17 +34,25 @@ export default function ShiftManagementTab({ filters, shift }: ShiftManagementPr
     setIsEmergencyModalOpen(true)
   }
 
-  const handleReplaceOperator = (posto: string) => {
-    setEmergencyTargetPosto(posto)
-    setIsEmergencyModalOpen(true)
-  }
+  const handleReplaceOperator = (posto: string, turnoDoOperador: string) => {
+  setEmergencyTargetPosto(posto)
+  // Definimos o turno alvo como o turno do operador que está saindo
+  filters.setSelectedTurno(turnoDoOperador) 
+  setIsEmergencyModalOpen(true)
+}
 
-  // 🆕 SEGURANÇA CONTRA NaN: Garantindo valores válidos para exibição
   const safeTotalAlocados = shift.metrics.totalAlocados || 0;
   const safeTotalNecessario = shift.metrics.totalNecessario || 0;
   const safeGap = shift.metrics.gapTotal || 0;
   const safeProntidao = isNaN(shift.metrics.prontidao) ? 0 : shift.metrics.prontidao;
   const safeRisco = shift.metrics.operadoresEmRisco || 0;
+
+  // Função auxiliar para formatar o nome do turno na lista
+  const formatTurno = (turno: string) => {
+    if (turno === "1º Turno") return "Comercial";
+    if (turno === "2º Turno") return "Estendido";
+    return turno || "S/T";
+  };
 
   return (
     <div className="shiftManagementTab animateFadeIn">
@@ -97,7 +105,6 @@ export default function ShiftManagementTab({ filters, shift }: ShiftManagementPr
           <div className="readinessCockpit">
             <div className="readinessCard neutral">
               <h4>Postos Alocados</h4>
-              {/* 🆕 USANDO AS VARIÁVEIS SEGURAS AQUI */}
               <div className="readinessValue">{safeTotalAlocados} <span>/ {safeTotalNecessario}</span></div>
               <p className="readinessSub">GAP: {safeGap} postos vazios</p>
             </div>
@@ -142,16 +149,18 @@ export default function ShiftManagementTab({ filters, shift }: ShiftManagementPr
                       </div>
                       <div className="radarDetails">
                         <strong>{op.nome} <span>(Mat: {op.matricula})</span></strong>
-                        <span>Posto: {op.posto_atual || "Sem Posto Fixo"}</span>
+                        {/* 🆕 EXIBIÇÃO DO TURNO E POSTO NO CARD */}
+                        <span>{formatTurno(op.turno)} • Posto: {op.posto_atual || "Sem Posto Fixo"}</span>
                       </div>
                     </div>
                     
                     <button 
-                      className="secondaryButton replaceBtn"
-                      onClick={() => handleReplaceOperator(op.posto_atual)}
-                    >
-                      Buscar Substituto
-                    </button>
+  className="secondaryButton replaceBtn"
+  // Passamos o posto E o turno do operador da linha atual
+  onClick={() => handleReplaceOperator(op.posto_atual, op.turno)} 
+>
+  Buscar Substituto
+</button>
                   </div>
                 ))
               )}
@@ -160,11 +169,12 @@ export default function ShiftManagementTab({ filters, shift }: ShiftManagementPr
         </>
       )}
 
-      <EmergencyAllocation 
+      <EmergencyAllocation
         isOpen={isEmergencyModalOpen}
         onClose={() => setIsEmergencyModalOpen(false)}
         linhaAtual={filters.selectedLine}
         initialPosto={emergencyTargetPosto}
+        turnoAtual={filters.selectedTurno} 
       />
 
     </div>
