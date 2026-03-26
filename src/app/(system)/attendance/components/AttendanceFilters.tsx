@@ -93,8 +93,8 @@ export default function AttendanceFilters({
           <label>Turno</label>
           <select className="corporateInput" value={selectedTurno} onChange={(e) => setSelectedTurno(e.target.value)}>
             <option value="">Todos os Turnos</option>
-            <option value="1º Turno">1º Turno</option>
-            <option value="2º Turno">2º Turno</option>
+            <option value="1º Turno">Comercial</option>
+            <option value="2º Turno">2º Turno estendido</option>
           </select>
         </div>
 

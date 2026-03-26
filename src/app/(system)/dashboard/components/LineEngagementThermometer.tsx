@@ -21,39 +21,47 @@ export default function LineEngagementThermometer() {
     async function fetchEngagementData() {
       setLoading(true)
       try {
-        let query = supabase.from('vw_operator_analytics').select('linha_atual, score_assiduidade, turno')
+        // 1. Busca os dados essenciais
+        let query = supabase.from('vw_operator_analytics').select('operator_id, linha_atual, score_assiduidade, turno')
 
-        // Aplica o filtro de turno se houver
-        if (filters.turno) {
-          query = query.eq('turno', filters.turno)
-        }
+        // 2. Aplica TODOS os filtros da sidebar diretamente no Supabase (mais performance)
+        if (filters.turno) query = query.eq('turno', filters.turno)
+        if (filters.linha) query = query.eq('linha_atual', filters.linha)
+        if (filters.operatorId) query = query.eq('operator_id', filters.operatorId)
 
         const { data, error } = await query
         if (error) throw error
 
         const rawData = data || []
 
-        // Agrupa por linha e soma os scores
+        // 3. Agrupa os scores
         const statsMap: Record<string, { totalScore: number, count: number }> = {}
 
         rawData.forEach(row => {
-          // Ignora quem não tem linha e, se o filtro de linha estiver ativo, pega só a linha selecionada
           if (!row.linha_atual) return
-          if (filters.linha && row.linha_atual !== filters.linha) return
 
-          if (!statsMap[row.linha_atual]) {
-            statsMap[row.linha_atual] = { totalScore: 0, count: 0 }
+          // Traduz o turno do banco para o nome amigável
+          let turnoName = row.turno || "Sem Turno"
+          if (turnoName === "1º Turno") turnoName = "Comercial"
+          if (turnoName === "2º Turno") turnoName = "2º Turno Estendido"
+
+          // Se o RH já filtrou um turno específico, mostramos só a Linha. 
+          // Se não houver filtro de turno, nós desmembramos a linha nos dois turnos!
+          const groupKey = filters.turno ? row.linha_atual : `${row.linha_atual} (${turnoName})`
+
+          if (!statsMap[groupKey]) {
+            statsMap[groupKey] = { totalScore: 0, count: 0 }
           }
           
-          statsMap[row.linha_atual].totalScore += Number(row.score_assiduidade || 0)
-          statsMap[row.linha_atual].count += 1
+          statsMap[groupKey].totalScore += Number(row.score_assiduidade || 0)
+          statsMap[groupKey].count += 1
         })
 
-        // Converte para array, calcula a média e ordena
-        const sortedRanking = Object.keys(statsMap).map(linha => {
-          const info = statsMap[linha]
+        // 4. Converte para array, calcula a média e ordena
+        const sortedRanking = Object.keys(statsMap).map(groupKey => {
+          const info = statsMap[groupKey]
           return {
-            linha,
+            linha: groupKey,
             avgScore: info.totalScore / info.count,
             operatorCount: info.count
           }
@@ -94,7 +102,7 @@ export default function LineEngagementThermometer() {
         <div className="pageLoader" style={{ height: '40px', width: '40px', margin: '40px auto' }} />
       ) : ranking.length === 0 ? (
         <div className="emptyState" style={{ textAlign: 'center', padding: '40px 20px', color: '#888' }}>
-          <p>Dados insuficientes para gerar o termômetro.</p>
+          <p>Dados insuficientes para gerar o termômetro com estes filtros.</p>
         </div>
       ) : (
         <div className="engRankingList">

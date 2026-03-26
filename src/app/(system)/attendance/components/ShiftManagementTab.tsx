@@ -74,8 +74,8 @@ export default function ShiftManagementTab({ filters, shift }: ShiftManagementPr
               onChange={(e) => filters.setSelectedTurno(e.target.value)}
             >
               <option value="">Todos os turnos</option>
-              <option value="1º Turno">1º Turno</option>
-              <option value="2º Turno">2º Turno</option>
+              <option value="1º Turno">Comercial</option>
+              <option value="2º Turno">2º Turno estendido</option>
             </select>
           </div>
 

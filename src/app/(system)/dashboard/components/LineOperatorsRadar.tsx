@@ -12,7 +12,7 @@ import {
   Radar,
   ResponsiveContainer,
   Legend,
-  Tooltip // Adicionado para ver a nota ao passar o mouse
+  Tooltip
 } from "recharts"
 
 import { supabase } from "@/services/database/supabaseClient"
@@ -39,39 +39,68 @@ export default function LineOperatorsRadar(){
   const [skills,setSkills] = useState<Skill[]>([])
   const [allSkills,setAllSkills] = useState<Skill[]>([])
 
-  useEffect(()=>{
-    if(filters.linha){
-      loadOperators()
-      loadAllSkills()
-    }else{
-      setOperators([])
-      setSelectedOperator("")
-      setSkills([])
-      setAllSkills([])
-    }
-  },[filters.linha])
+  const [isLoading, setIsLoading] = useState(false)
 
+  // 1. Carrega os operadores e as skills base (Global ou Linha/Turno)
+  useEffect(()=>{
+    loadBaseData()
+  },[filters])
+
+  // 2. Carrega as skills individuais quando um operador é selecionado
   useEffect(()=>{
     if(selectedOperator){
-      loadSkills()
+      loadOperatorSkills()
     } else {
       setSkills([])
     }
   },[selectedOperator])
 
-  async function loadOperators(){
-    const { data } = await supabase
-      .from("operators")
-      .select("id,nome")
-      .eq("linha_atual",filters.linha)
-      .eq("ativo",true)
-      .order("nome")
+  async function loadBaseData(){
+    setIsLoading(true)
+    try {
+      // 1. Busca os operadores baseados nos filtros gerais
+      let opQuery = supabase.from("operators").select("id,nome").eq("ativo",true).order("nome")
+      
+      if(filters.linha) opQuery = opQuery.eq("linha_atual", filters.linha)
+      if(filters.turno) opQuery = opQuery.eq("turno", filters.turno)
+      if(filters.operatorId) opQuery = opQuery.eq("id", filters.operatorId)
 
-    setOperators(data || [])
-    setSelectedOperator("")
+      const { data: ops, error: opsError } = await opQuery
+
+      if (opsError || !ops || ops.length === 0) {
+        setOperators([])
+        setAllSkills([])
+        setSelectedOperator("")
+        return
+      }
+
+      setOperators(ops)
+      
+      if (filters.operatorId && ops.length === 1) {
+        setSelectedOperator(filters.operatorId)
+      } else if (!filters.operatorId) {
+        setSelectedOperator("") 
+      }
+
+      const ids = ops.map(o => o.id)
+
+      const { data: skillsData } = await supabase
+        .from("operator_skills")
+        .select("posto,skill_level,operator_id")
+        .in("operator_id",ids)
+
+      setAllSkills(skillsData || [])
+
+    } catch (err) {
+      console.error("Erro ao carregar dados do Radar de Operadores:", err)
+      setOperators([])
+      setAllSkills([])
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  async function loadSkills(){
+  async function loadOperatorSkills(){
     const { data } = await supabase
       .from("operator_skills")
       .select("posto,skill_level")
@@ -80,112 +109,64 @@ export default function LineOperatorsRadar(){
     setSkills(data || [])
   }
 
-  async function loadAllSkills(){
-    const { data:ops } = await supabase
-      .from("operators")
-      .select("id")
-      .eq("linha_atual",filters.linha)
-      .eq("ativo",true)
-
-    if(!ops) return
-
-    const ids = ops.map(o => o.id)
-
-    if(ids.length === 0){
-      setAllSkills([])
-      return
-    }
-
-    const { data } = await supabase
-      .from("operator_skills")
-      .select("posto,skill_level,operator_id")
-      .in("operator_id",ids)
-
-    setAllSkills(data || [])
-  }
-
-  /* ----------------------------- */
-  /* MÉDIA DA LINHA                */
-  /* ----------------------------- */
   function calculateAverageRadar(){
     const grouped:Record<string,number[]> = {}
 
     allSkills.forEach(skill => {
-      if(!grouped[skill.posto]){
-        grouped[skill.posto] = []
-      }
-      grouped[skill.posto].push(skill.skill_level)
+      const posto = skill.posto
+      if(!grouped[posto]) grouped[posto] = []
+      grouped[posto].push(skill.skill_level)
     })
 
-    return Object.keys(grouped).map(posto => {
+    let results = Object.keys(grouped).map(posto => {
       const values = grouped[posto]
       const avg = values.reduce((a,b)=>a+b,0) / values.length
-
       return {
         posto,
-        media:Number(avg.toFixed(2))
+        media: Number(avg.toFixed(2)),
+        occurrences: values.length 
       }
-    })
+    }).sort((a,b) => a.posto.localeCompare(b.posto)) 
+
+    return results
   }
 
   const averageData = calculateAverageRadar()
 
-  /* ----------------------------- */
-  /* DADOS DO RADAR                */
-  /* ----------------------------- */
   const radarData = averageData.map(avg => {
-    const operatorSkill = skills.find(
-      s => s.posto === avg.posto
-    )
-
+    const operatorSkill = skills.find(s => s.posto === avg.posto)
     return {
-      posto:avg.posto,
-      media:avg.media,
-      operador:operatorSkill ? operatorSkill.skill_level : 0
+      posto: avg.posto,
+      media: avg.media,
+      operador: operatorSkill ? operatorSkill.skill_level : 0 
     }
   })
 
-  /* ----------------------------- */
-  /* EMPTY STATE                   */
-  /* ----------------------------- */
-  if(!filters.linha){
-    return(
-      <div className="corporateCard lineRadarCard emptyRadarCard">
-        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="emptyIcon">
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-          <circle cx="9" cy="7" r="4"/>
-          <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-        </svg>
-        <p>Selecione uma linha de produção no filtro acima para cruzar a média da linha com o desempenho individual de cada operador.</p>
-      </div>
-    )
-  }
+  const averageLabel = filters.linha ? "Média da Linha" : "Média Global"
 
-  /* ----------------------------- */
-  /* RENDER                        */
-  /* ----------------------------- */
   return(
-
-    <div className="corporateCard lineRadarCard">
+    <div className="corporateCard lineRadarCard animateFadeIn">
 
       <div className="lineRadarHeader">
-        <h3>Comparativo da Linha — <span>{filters.linha}</span></h3>
+        <h3>{filters.linha ? "Comparativo da Linha — " : "Comparativo Global (Fábrica)"} {filters.linha && <span>{filters.linha}</span>}</h3>
       </div>
 
       <div className="lineRadarBody">
 
-        {/* SELECT DE OPERADORES (Substitui a lista lateral para poupar espaço) */}
         <div className="operatorSelectWrapper">
           <label className="listTitle">Comparar com o operador:</label>
           
-          {operators.length > 0 ? (
+          {isLoading ? (
+            <select className="corporateInput" disabled>
+               <option>Carregando...</option>
+            </select>
+          ) : operators.length > 0 ? (
             <select 
               className="corporateInput"
               value={selectedOperator}
               onChange={(e) => setSelectedOperator(e.target.value)}
             >
-              <option value="">Apenas Média da Linha</option>
+              <option value="">Apenas {averageLabel}</option>
               {operators.map(op => (
                 <option key={op.id} value={op.id}>
                   {op.nome}
@@ -194,69 +175,75 @@ export default function LineOperatorsRadar(){
             </select>
           ) : (
             <div className="noOperatorsMsg">
-              Nenhum operador ativo alocado nesta linha.
+              Nenhum operador ativo nos filtros atuais.
             </div>
           )}
         </div>
 
-        {/* GRÁFICO DE RADAR */}
         <div className="lineRadarChart">
-          <ResponsiveContainer width="100%" height="100%">
-            <RadarChart data={radarData} margin={{ top: 10, right: 30, bottom: 10, left: 30 }}>
-              <PolarGrid stroke="#e0e0e0"/>
-              
-              <PolarAngleAxis
-                dataKey="posto"
-                tick={{fill: "#555555", fontSize: 12, fontWeight: 600}}
-              />
-              
-              <PolarRadiusAxis
-                domain={[0,5]}
-                tickCount={6}
-                tick={{fill: "#888888", fontSize: 11}}
-              />
+          {isLoading ? (
+              <div style={{ display: 'flex', height: '100%', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                {/* 🛠️ MUDANÇA: Injetado o pageLoader vermelho padrão */}
+                <div className="pageLoader" style={{ height: '40px', width: '40px' }} />
+              </div>
+          ) : radarData.length === 0 ? (
+              <div style={{ display: 'flex', height: '100%', justifyContent: 'center', alignItems: 'center', color: '#888', fontSize: '13px' }}>
+                Nenhuma habilidade registrada para estes filtros.
+              </div>
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart data={radarData} margin={{ top: 10, right: 30, bottom: 10, left: 30 }}>
+                <PolarGrid stroke="#e0e0e0"/>
+                
+                <PolarAngleAxis
+                  dataKey="posto"
+                  tick={{fill: "#555555", fontSize: 12, fontWeight: 600}}
+                />
+                
+                <PolarRadiusAxis
+                  domain={[0,5]}
+                  tickCount={6}
+                  tick={{fill: "#888888", fontSize: 11}}
+                />
 
-              <Tooltip 
-                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                itemStyle={{ fontWeight: 'bold' }}
-              />
+                <Tooltip 
+                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                  itemStyle={{ fontWeight: 'bold' }}
+                />
 
-              {/* MÉDIA DA LINHA (Azul Corporativo) */}
-              <Radar
-                name="Média da Linha"
-                dataKey="media"
-                stroke="#3b82f6"
-                strokeWidth={2}
-                fill="#3b82f6"
-                fillOpacity={0.2}
-                animationDuration={600}
-              />
-
-              {/* OPERADOR ESPECÍFICO (Vermelho Executivo) */}
-              {selectedOperator && (
                 <Radar
-                  name="Desempenho do Operador"
-                  dataKey="operador"
-                  stroke="#d40000"
+                  name={averageLabel}
+                  dataKey="media"
+                  stroke="#3b82f6"
                   strokeWidth={2}
-                  fill="#d40000"
-                  fillOpacity={0.45}
+                  fill="#3b82f6"
+                  fillOpacity={0.2}
                   animationDuration={600}
                 />
-              )}
 
-              <Legend 
-                wrapperStyle={{ paddingTop: "10px", fontSize: "13px", fontWeight: "500", color: "#555" }} 
-              />
+                {selectedOperator && (
+                  <Radar
+                    name="Desempenho do Operador"
+                    dataKey="operador"
+                    stroke="#d40000"
+                    strokeWidth={2}
+                    fill="#d40000"
+                    fillOpacity={0.45}
+                    animationDuration={600}
+                  />
+                )}
 
-            </RadarChart>
-          </ResponsiveContainer>
+                <Legend 
+                  wrapperStyle={{ paddingTop: "10px", fontSize: "13px", fontWeight: "500", color: "#555" }} 
+                />
+
+              </RadarChart>
+            </ResponsiveContainer>
+          )}
         </div>
 
       </div>
 
     </div>
-
   )
-
 }

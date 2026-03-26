@@ -6,10 +6,11 @@ import { useEffect, useState, useCallback } from "react"
 import { supabase } from "@/services/database/supabaseClient"
 import { useDashboardFilters } from "../context/DashboardFilterContext"
 
-// 1. Tipagem forte para os modelos locais
 interface OperatorRow {
   id: string
   nome: string
+  linha_atual?: string
+  turno?: string
 }
 
 interface SkillRow {
@@ -25,176 +26,168 @@ export default function SkillMatrixHeatmap() {
   const [operators, setOperators] = useState<OperatorRow[]>([])
   const [postos, setPostos] = useState<string[]>([])
   const [matrix, setMatrix] = useState<Record<string, Record<string, number>>>({})
+  const [isLoading, setIsLoading] = useState(true)
 
-  // 2. Orquestração de carregamento isolada e segura com useCallback
+  // 2. Orquestração de carregamento reagindo a TODOS os filtros
   const loadData = useCallback(async () => {
+    setIsLoading(true)
     
-    // RESET EXPLÍCITO: Cenário sem linha
-    if (!filters.linha) {
-      setOperators([])
-      setPostos([])
-      setMatrix({})
-      return
-    }
-
-    // Busca operadores da linha
-    const { data: ops } = await supabase
-      .from("operators")
-      .select("id,nome")
-      .eq("linha_atual", filters.linha)
-      .eq("ativo", true)
-      .order("nome")
-
-    // RESET EXPLÍCITO: Cenário de linha sem operadores ativos
-    if (!ops || ops.length === 0) {
-      setOperators([])
-      setPostos([])
-      setMatrix({})
-      return
-    }
-
-    const typedOps = ops as OperatorRow[]
-    setOperators(typedOps)
-
-    // Extrai apenas os IDs da linha atual
-    const opIds = typedOps.map(o => o.id)
-
-    // 3. Chunking para evitar erro de limite de URL no Supabase ao usar .in()
-    const chunkSize = 150
-    let allSkills: SkillRow[] = []
-
-    for (let i = 0; i < opIds.length; i += chunkSize) {
-      const chunk = opIds.slice(i, i + chunkSize)
+    try {
+      // 1. Busca operadores com base nos filtros
+      let opQuery = supabase.from("operators").select("id, nome, linha_atual, turno").eq("ativo", true).order("nome")
       
-      const { data: skillsChunk } = await supabase
-        .from("operator_skills")
-        .select("operator_id,posto,skill_level")
-        .in("operator_id", chunk) // BUSCA ESTRITA: Apenas skills da equipe desta linha
+      if (filters.linha) opQuery = opQuery.eq("linha_atual", filters.linha)
+      if (filters.turno) opQuery = opQuery.eq("turno", filters.turno)
+      if (filters.operatorId) opQuery = opQuery.eq("id", filters.operatorId)
+
+      const { data: ops, error: opsError } = await opQuery
+
+      if (opsError || !ops || ops.length === 0) {
+        setOperators([])
+        setPostos([])
+        setMatrix({})
+        setIsLoading(false)
+        return
+      }
+
+      const typedOps = ops as OperatorRow[]
+      setOperators(typedOps)
+
+      // Extrai os IDs da busca atual
+      const opIds = typedOps.map(o => o.id)
+
+      // 3. Chunking para evitar erro de limite de URL no Supabase ao usar .in() com muitos operadores
+      const chunkSize = 150
+      let allSkills: SkillRow[] = []
+
+      for (let i = 0; i < opIds.length; i += chunkSize) {
+        const chunk = opIds.slice(i, i + chunkSize)
         
-      if (skillsChunk) {
-        allSkills = [...allSkills, ...(skillsChunk as SkillRow[])]
+        const { data: skillsChunk } = await supabase
+          .from("operator_skills")
+          .select("operator_id,posto,skill_level")
+          .in("operator_id", chunk) 
+          
+        if (skillsChunk) {
+          allSkills = [...allSkills, ...(skillsChunk as SkillRow[])]
+        }
       }
-    }
 
-    // RESET EXPLÍCITO: Operadores estão na linha, mas nenhum tem skill lançada ainda
-    if (allSkills.length === 0) {
-      setPostos([])
-      setMatrix({})
-      return
-    }
+      if (allSkills.length === 0) {
+        setPostos([])
+        setMatrix({})
+        setIsLoading(false)
+        return
+      }
 
-    // 4. Mapear Postos Únicos apenas baseados nas skills filtradas (Evita postos fantasmas)
-    // O .sort() deixa as colunas em ordem alfabética para melhor leitura
-    const uniquePostos = [...new Set(allSkills.map(s => s.posto))].sort()
-    setPostos(uniquePostos)
+      // 4. Mapear Postos Únicos em ordem alfabética
+      const uniquePostos = [...new Set(allSkills.map(s => s.posto))].sort()
+      setPostos(uniquePostos)
 
-    // 5. Montar matriz de mapeamento rápido
-    const map: Record<string, Record<string, number>> = {}
+      // 5. Montar matriz de mapeamento rápido
+      const map: Record<string, Record<string, number>> = {}
 
-    typedOps.forEach(op => {
-      map[op.id] = {}
-      uniquePostos.forEach(p => {
-        map[op.id][p] = 0
+      typedOps.forEach(op => {
+        map[op.id] = {}
+        uniquePostos.forEach(p => {
+          map[op.id][p] = 0
+        })
       })
-    })
 
-    allSkills.forEach(s => {
-      if (map[s.operator_id]) {
-        map[s.operator_id][s.posto] = s.skill_level
-      }
-    })
+      allSkills.forEach(s => {
+        if (map[s.operator_id]) {
+          map[s.operator_id][s.posto] = s.skill_level
+        }
+      })
 
-    setMatrix(map)
+      setMatrix(map)
+    } catch (err) {
+      console.error("Erro ao carregar Heatmap:", err)
+    } finally {
+      setIsLoading(false)
+    }
 
-  }, [filters.linha])
+  }, [filters])
 
-  // Dependência limpa usando a função memoizada
   useEffect(() => {
     loadData()
   }, [loadData])
 
-  // Retorna a classe CSS baseada no nível de habilidade
   function getLevelClass(level: number) {
     if (level >= 1 && level <= 5) return `level-${level}`
     return "level-0"
   }
 
-  /* ----------------------------- */
-  /* ESTADO SEM LINHA (EMPTY STATE)*/
-  /* ----------------------------- */
-  if (!filters.linha) {
-    return (
-      <div className="corporateCard heatmapCard emptyHeatmapCard">
-        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="emptyIcon">
-          <rect width="18" height="18" x="3" y="3" rx="2" />
-          <path d="M3 9h18" />
-          <path d="M3 15h18" />
-          <path d="M9 3v18" />
-          <path d="M15 3v18" />
-        </svg>
-        <p>Selecione um modelo de produção no filtro acima para visualizar o mapa de calor da Matriz de Habilidades.</p>
-      </div>
-    )
+  // Título dinâmico
+  let mapTitle = "Visão Global (Fábrica)"
+  if (filters.linha) mapTitle = filters.linha
+  if (filters.turno) {
+    const tName = filters.turno === "1º Turno" ? "Comercial" : "2º Turno"
+    mapTitle += filters.linha ? ` (${tName})` : `Visão Global (${tName})`
   }
 
-  /* ----------------------------- */
-  /* RENDER DA MATRIZ              */
-  /* ----------------------------- */
   return (
-    <div className="corporateCard heatmapCard">
+    <div className="corporateCard heatmapCard animateFadeIn">
 
       <div className="heatmapHeader">
-        <h3>Skill Matrix — <span>{filters.linha}</span></h3>
+        <h3>Skill Matrix — <span>{mapTitle}</span></h3>
       </div>
 
       <div className="heatmapTableContainer">
-        <table className="heatmapTable">
+        {isLoading ? (
+          <div className="pageLoader" style={{ height: '40px', width: '40px', margin: '60px auto' }} />
+        ) : operators.length === 0 ? (
+          <div className="emptyState" style={{ textAlign: 'center', padding: '60px 20px', color: '#888' }}>
+            Nenhum operador ou habilidade mapeada para este filtro.
+          </div>
+        ) : (
+          <table className="heatmapTable">
 
-          <thead>
-            <tr>
-              <th className="operatorCol">Operador</th>
-              {postos.map(p => (
-                <th key={p}>{p}</th>
-              ))}
-            </tr>
-          </thead>
-
-          <tbody>
-            {operators.map(op => (
-              <tr key={op.id}>
-                
-                <td className="operatorCol">
-                  {op.nome}
-                </td>
-
-                {postos.map(p => {
-                  const level = matrix[op.id]?.[p] ?? 0
-                  
-                  return (
-                    <td key={p}>
-                      <div className={`levelSquare ${getLevelClass(level)}`} title={`Nível ${level}`}>
-                        {level > 0 ? level : ""}
-                      </div>
-                    </td>
-                  )
-                })}
-
-              </tr>
-            ))}
-            
-            {operators.length === 0 && (
+            <thead>
               <tr>
-                <td colSpan={postos.length + 1} className="emptyState">
-                  Nenhum operador ativo alocado neste modelo.
-                </td>
+                <th className="operatorCol">Operador</th>
+                {/* Opcional: Mostrar a linha do operador se estiver na visão global */}
+                {!filters.linha && <th className="operatorCol">Linha</th>}
+                {postos.map(p => (
+                  <th key={p} title={p}>{p}</th>
+                ))}
               </tr>
-            )}
-          </tbody>
+            </thead>
 
-        </table>
+            <tbody>
+              {operators.map(op => (
+                <tr key={op.id}>
+                  
+                  <td className="operatorCol">
+                    {op.nome}
+                  </td>
+
+                  {!filters.linha && (
+                    <td className="operatorCol" style={{ color: '#666', fontSize: '11px' }}>
+                      {op.linha_atual || "Sem Linha"}
+                    </td>
+                  )}
+
+                  {postos.map(p => {
+                    const level = matrix[op.id]?.[p] ?? 0
+                    
+                    return (
+                      <td key={p}>
+                        <div className={`levelSquare ${getLevelClass(level)}`} title={`${op.nome} - Posto: ${p} (Nível ${level})`}>
+                          {level > 0 ? level : ""}
+                        </div>
+                      </td>
+                    )
+                  })}
+
+                </tr>
+              ))}
+            </tbody>
+
+          </table>
+        )}
       </div>
 
     </div>
   )
-
 }

@@ -10,167 +10,190 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   Radar,
-  Tooltip, // Importado para mostrar os dados ao passar o mouse
+  Tooltip,
   ResponsiveContainer
 } from "recharts"
 
 import { supabase } from "@/services/database/supabaseClient"
 import { useDashboardFilters } from "../context/DashboardFilterContext"
 
-interface Skill{
-  posto:string
-  skill_level:number
+interface Skill {
+  posto: string
+  skill_level: number
+  count?: number // Usado para a média global
 }
 
-export default function OperatorSkillsRadar(){
+export default function OperatorSkillsRadar() {
 
   const { filters } = useDashboardFilters()
 
-  const [skills,setSkills] = useState<Skill[]>([])
-  const [operatorName,setOperatorName] = useState("")
-  
-  // Novos estados para a cor dinâmica e a média
+  const [skills, setSkills] = useState<Skill[]>([])
+  const [operatorName, setOperatorName] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+
+  // Estados para a cor dinâmica e a média
   const [radarColor, setRadarColor] = useState("#d40000")
   const [average, setAverage] = useState("0.00")
 
-  useEffect(()=>{
+  useEffect(() => {
     loadSkills()
-  },[filters.operatorId])
+  }, [filters])
 
-  async function loadSkills(){
-    if(!filters.operatorId){
-      setSkills([])
-      setOperatorName("")
-      setRadarColor("#d40000")
-      setAverage("0.00")
-      return
-    }
+  async function loadSkills() {
+    setIsLoading(true)
+    try {
+      /* 1. Busca os operadores baseados nos filtros (Geral, Linha, Turno ou Operador Específico) */
+      let opQuery = supabase.from("operators").select("id, nome, linha_atual, turno").eq("ativo", true)
 
-    /* buscar operador */
-    const { data:operator } = await supabase
-      .from("operators")
-      .select("nome")
-      .eq("id",filters.operatorId)
-      .single()
+      if (filters.linha) opQuery = opQuery.eq("linha_atual", filters.linha)
+      if (filters.turno) opQuery = opQuery.eq("turno", filters.turno)
+      if (filters.operatorId) opQuery = opQuery.eq("id", filters.operatorId)
 
-    if(operator){
-      setOperatorName(operator.nome)
-    }
+      const { data: ops, error: opsError } = await opQuery
 
-    /* buscar skills */
-    const { data,error } = await supabase
-      .from("operator_skills")
-      .select("posto,skill_level")
-      .eq("operator_id",filters.operatorId)
-      .order("posto")
+      if (opsError || !ops || ops.length === 0) {
+        setSkills([])
+        setOperatorName("Sem Dados")
+        setRadarColor("#e0e0e0")
+        setAverage("0.00")
+        return
+      }
 
-    if(error){
-      console.error(error)
-      return
-    }
+      const opIds = ops.map(o => o.id)
 
-    const fetchedSkills = data || []
-    setSkills(fetchedSkills)
+      /* Define o Título (Nome do Operador ou Visão Média) */
+      if (filters.operatorId && ops.length === 1) {
+        setOperatorName(ops[0].nome)
+      } else {
+        let title = "Média Geral"
+        if (filters.linha) title += ` - ${filters.linha}`
+        if (filters.turno) {
+          const tName = filters.turno === "1º Turno" ? "Comercial" : "2º Turno"
+          title += ` (${tName})`
+        }
+        setOperatorName(title)
+      }
 
-    /* --- CÁLCULO DE CORES E MÉDIA --- */
-    if (fetchedSkills.length > 0) {
-      const total = fetchedSkills.reduce((acc, row) => acc + row.skill_level, 0)
-      const max = fetchedSkills.length * 5
-      const ratio = max > 0 ? (total / max) * 100 : 0
-      
-      // Média com duas casas decimais
-      const avg = total / fetchedSkills.length
+      /* 2. Busca skills */
+      const { data, error } = await supabase
+        .from("operator_skills")
+        .select("posto,skill_level")
+        .in("operator_id", opIds)
+
+      if (error || !data || data.length === 0) {
+        setSkills([])
+        setAverage("0.00")
+        setRadarColor("#e0e0e0")
+        return
+      }
+
+      /* 3. Agrupa e calcula a média */
+      const grouped: Record<string, { total: number, count: number }> = {}
+      data.forEach(s => {
+        if (!grouped[s.posto]) grouped[s.posto] = { total: 0, count: 0 }
+        grouped[s.posto].total += s.skill_level
+        grouped[s.posto].count += 1
+      })
+
+      // Exibe absolutamente TODOS os postos encontrados, ordenados em ordem alfabética.
+      let results: Skill[] = Object.keys(grouped).map(posto => ({
+        posto,
+        skill_level: Number((grouped[posto].total / grouped[posto].count).toFixed(2)),
+        count: grouped[posto].count
+      })).sort((a, b) => a.posto.localeCompare(b.posto))
+
+      setSkills(results)
+
+      /* --- CÁLCULO DE CORES E MÉDIA --- */
+      const totalAvg = results.reduce((acc, row) => acc + row.skill_level, 0)
+      const avg = totalAvg / results.length
       setAverage(avg.toFixed(2))
 
-      // Cores dos 5 Níveis Exatos
-      let barColor = "#ef4444" // 1. Nunca Fez (Vermelho)
-      if (ratio <= 20) barColor = "#ef4444"
-      else if (ratio <= 40) barColor = "#f59e0b" // 2. Em Treinamento (Laranja)
-      else if (ratio <= 60) barColor = "#3b82f6" // 3. Apto a Operar (Azul)
-      else if (ratio <= 80) barColor = "#8b5cf6" // 4. Especialista (Roxo)
-      else barColor = "#22c55e"                  // 5. Instrutor (Verde)
+      const ratio = (avg / 5) * 100
+
+      // Cores exatas solicitadas
+      let barColor = "#d40000" // Vermelho
+      if (ratio <= 20) barColor = "#d40000"
+      else if (ratio <= 40) barColor = "#f59e0b" // Laranja
+      else if (ratio <= 60) barColor = "#3b82f6" // Azul
+      else if (ratio <= 80) barColor = "#8b5cf6" // Roxo
+      else barColor = "#22c55e"                  // Verde
 
       setRadarColor(barColor)
-    } else {
-      setAverage("0.00")
-      setRadarColor("#e0e0e0") // Cinza caso o operador não tenha skills
+
+    } catch (err) {
+      console.error(err)
+      setSkills([])
+    } finally {
+      setIsLoading(false)
     }
   }
 
-  const data = skills.map(skill => ({
+  const chartData = skills.map(skill => ({
     posto: skill.posto,
     nivel: skill.skill_level
   }))
 
   /* ----------------------------- */
-  /* ESTADO SEM OPERADOR (EMPTY)   */
-  /* ----------------------------- */
-  if(!filters.operatorId){
-    return(
-      <div className="corporateCard radarCard emptyRadarCard">
-        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="emptyIcon">
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-          <circle cx="9" cy="7" r="4"/>
-          <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-        </svg>
-        <p>Selecione um operador no filtro acima para visualizar o seu radar de competências individuais.</p>
-      </div>
-    )
-  }
-
-  /* ----------------------------- */
   /* RENDER DO GRÁFICO             */
   /* ----------------------------- */
-  return(
-    // A borda superior do card voltou a ser estática no CSS, removido o style={{ borderTopColor: radarColor }}
-    <div className="corporateCard radarCard">
-      
+  return (
+    <div className="corporateCard radarCard animateFadeIn">
+
       <div className="radarHeader">
         <h3>Radar de Habilidades — <span style={{ color: radarColor }}>{operatorName}</span></h3>
         <p className="radarAverage">Média Geral: <strong style={{ color: radarColor }}>{average}</strong> <span className="maxAverage">/ 5.00</span></p>
       </div>
 
       <div className="radarChartContainer">
-        <ResponsiveContainer width="100%" height="100%">
-          <RadarChart data={data}>
-            
-            <PolarGrid stroke="#e0e0e0" />
-            
-            <PolarAngleAxis
-              dataKey="posto"
-              tick={{fill: "#555555", fontSize: 12, fontWeight: 600}}
-            />
+        {isLoading ? (
+          <div style={{ display: 'flex', height: '100%', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            {/* 🛠️ MUDANÇA: Injetado o pageLoader vermelho padrão */}
+            <div className="pageLoader" style={{ height: '40px', width: '40px' }} />
+          </div>
+        ) : skills.length === 0 ? (
+          <div style={{ display: 'flex', height: '100%', justifyContent: 'center', alignItems: 'center', color: '#888', fontSize: '13px' }}>
+            Nenhuma habilidade registrada para estes filtros.
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%">
+            <RadarChart data={chartData} margin={{ top: 10, right: 30, bottom: 10, left: 30 }}>
 
-            <PolarRadiusAxis
-              angle={30}
-              domain={[0,5]}
-              tick={{fill: "#888888"}}
-            />
+              <PolarGrid stroke="#e0e0e0" />
 
-            {/* Tooltip super elegante ao passar o mouse */}
-            <Tooltip 
-              contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-              itemStyle={{ fontWeight: 'bold', color: radarColor }}
-              formatter={(value) => [`Nível ${value}`, "Habilidade"]}
-            />
+              <PolarAngleAxis
+                dataKey="posto"
+                tick={{ fill: "#555555", fontSize: 12, fontWeight: 600 }}
+              />
 
-            <Radar
-              name="Skill"
-              dataKey="nivel"
-              stroke={radarColor}
-              strokeWidth={2}
-              fill={radarColor}
-              fillOpacity={0.4}
-              animationDuration={600}
-            />
+              <PolarRadiusAxis
+                angle={30}
+                domain={[0, 5]}
+                tick={{ fill: "#888888" }}
+                tickCount={6}
+              />
 
-          </RadarChart>
-        </ResponsiveContainer>
+              <Tooltip
+                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                itemStyle={{ fontWeight: 'bold', color: radarColor }}
+                formatter={(value) => [`Nível ${value}`, "Habilidade"]}
+              />
+
+              <Radar
+                name="Skill"
+                dataKey="nivel"
+                stroke={radarColor}
+                strokeWidth={2}
+                fill={radarColor}
+                fillOpacity={0.4}
+                animationDuration={600}
+              />
+
+            </RadarChart>
+          </ResponsiveContainer>
+        )}
       </div>
 
     </div>
-
   )
-
 }

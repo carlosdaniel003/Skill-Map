@@ -35,11 +35,15 @@ export default function PolyvalenceRanking() {
         // 1. Busca os operadores ativos
         let opQuery = supabase.from('operators').select('id, nome, matricula, linha_atual, posto_atual').eq('ativo', true)
         
+        // 🛠️ MUDANÇA: Reage a TODOS os filtros da sidebar
         if (filters.linha) {
           opQuery = opQuery.eq('linha_atual', filters.linha)
         }
         if (filters.turno) {
           opQuery = opQuery.eq('turno', filters.turno)
+        }
+        if (filters.operatorId) {
+          opQuery = opQuery.eq('id', filters.operatorId)
         }
         
         const { data: ops, error: opsError } = await opQuery
@@ -122,7 +126,6 @@ export default function PolyvalenceRanking() {
   // Ícone base para o modal e botões
   const IconPoly = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m2 12 5.25 5 2.625-3M8 12l5.25 5 2.625-3M14 12l5.25 5 2.625-3"/></svg>
   
-  // 🆕 Ícone de Troféu para substituir o Emoji
   const IconTrophy = <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '6px'}}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>;
 
   return (
@@ -192,7 +195,7 @@ export default function PolyvalenceRanking() {
         <div className="emergencyModalOverlay" onClick={() => setIsModalOpen(false)}>
           <div 
             className="emergencyModalCard" 
-            style={{ borderTopColor: '#3b82f6' }} /* Azul Corporativo para o Modal de Polivalência */
+            style={{ borderTopColor: '#3b82f6' }}
             onClick={(e) => e.stopPropagation()} 
           >
             

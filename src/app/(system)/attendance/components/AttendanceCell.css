@@ -118,7 +118,7 @@
   width: 8px;
   height: 8px;
   border: 2px solid rgba(0,0,0,0.1);
-  border-top-color: #2563eb;
+  border-top-color: #d40000;
   border-radius: 50%;
   animation: spinSync 0.8s linear infinite;
 }

@@ -38,10 +38,12 @@ export default function OperatorKPIs() {
   async function loadKPIs() {
     setLoading(true)
     try {
+      // 1. Reage a todos os filtros da Sidebar
       let opQuery = supabase.from("operators").select("id, nome, matricula, linha_atual, posto_atual").eq("ativo", true)
       
       if (filters.linha) opQuery = opQuery.eq("linha_atual", filters.linha)
       if (filters.turno) opQuery = opQuery.eq("turno", filters.turno) 
+      if (filters.operatorId) opQuery = opQuery.eq("id", filters.operatorId) 
       
       const { data: operators } = await opQuery
       const activeOps = operators || []
@@ -141,13 +143,18 @@ export default function OperatorKPIs() {
     }
   }
 
+  // Título Dinâmico
+  let subtitleText = "Visão Global (Fábrica Inteira)"
+  if (filters.linha) subtitleText = `Linha: ${filters.linha}`
+  if (filters.turno) subtitleText += ` | ${filters.turno}`
+
   return (
     <div className="kpiChartCard animateFadeIn">
       <div className="kpiChartHeader">
         <div>
           <h2 className="kpiChartTitle">Distribuição de Habilidades</h2>
           <p className="kpiChartSubtitle">
-            Média geral de domínio técnico da equipe {filters.turno ? `(${filters.turno})` : ""}
+            {subtitleText}
           </p>
         </div>
         <span className="totalBadge">Total: {totalOperators} op.</span>
@@ -186,7 +193,7 @@ export default function OperatorKPIs() {
         </div>
       )}
 
-      {/* MODAL DE DETALHES (USANDO AS CLASSES DO EMERGENCY ALLOCATION) */}
+      {/* MODAL DE DETALHES COM SCROLLBAR INTERNO */}
       {selectedLevel && (
         <div className="emergencyModalOverlay" onClick={() => setSelectedLevel(null)}>
           <div 
@@ -212,7 +219,8 @@ export default function OperatorKPIs() {
                 Total de <strong>{selectedLevel.quantidade}</strong> colaboradores agrupados nesta faixa média de domínio técnico ({selectedLevel.description}).
               </p>
 
-              <div className="emergencyResults">
+              {/* 🆕 AQUI ESTÁ A LISTA QUE TERÁ A SCROLLBAR */}
+              <div className="emergencyResults kpiScrollableList">
                 {selectedLevel.operadores.map((op) => (
                   <div key={op.id} className="suggestionCard" style={{ cursor: 'default' }}>
                     <div className="suggestionInfo">

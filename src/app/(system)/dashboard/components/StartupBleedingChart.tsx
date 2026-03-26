@@ -29,6 +29,7 @@ export default function StartupBleedingChart() {
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
         const dateStr = thirtyDaysAgo.toISOString().split('T')[0]
 
+        // 1. Busca os registros problemáticos (sem filtro inicial via JS para tratar tudo na memória)
         const { data: attendance, error } = await supabase
           .from('operator_attendance')
           .select(`
@@ -46,21 +47,37 @@ export default function StartupBleedingChart() {
 
         if (error) throw error
 
+        // 2. Aplica rigorosamente os filtros da Sidebar
         const filteredRecords = (attendance || []).filter((row: any) => {
           const op = Array.isArray(row.operators) ? row.operators[0] : row.operators
           if (!op || !op.ativo) return false
+          
           if (filters.linha && op.linha_atual !== filters.linha) return false
           if (filters.turno && op.turno !== filters.turno) return false
           if (filters.operatorId && op.id !== filters.operatorId) return false
+          
           return true
         })
 
-        const groupByOperator = !!filters.linha
+        // 3. Define a lógica de agrupamento.
+        // Se escolheu um operador, o eixo X será o nome dele.
+        // Se escolheu uma linha, o eixo X serão os nomes dos operadores dessa linha.
+        // Se NENHUM filtro de linha/operador foi escolhido, o eixo X serão as Linhas da Fábrica!
         const groupMap: Record<string, ChartData> = {}
 
         filteredRecords.forEach((row: any) => {
           const op = Array.isArray(row.operators) ? row.operators[0] : row.operators
-          const groupKey = groupByOperator ? op.nome : (op.linha_atual || "Sem Linha")
+          
+          let groupKey = "Sem Definição"
+          
+          if (filters.operatorId) {
+            groupKey = op.nome
+          } else if (filters.linha) {
+            groupKey = op.nome
+          } else {
+            // Visão global da fábrica agrupa por linha para não explodir o gráfico
+            groupKey = op.linha_atual || "Sem Linha"
+          }
           
           if (!groupMap[groupKey]) {
             groupMap[groupKey] = { name: groupKey, Atraso: 0, Saida: 0, Falta: 0, Justificado: 0, TotalDesvios: 0 }
@@ -78,7 +95,7 @@ export default function StartupBleedingChart() {
 
         const chartArray = Object.values(groupMap)
           .sort((a, b) => b.TotalDesvios - a.TotalDesvios)
-          .slice(0, 15) 
+          .slice(0, 15) // Mantém o Top 15 de sangramentos para não afinar demais as barras
 
         setData(chartArray)
 
@@ -112,7 +129,6 @@ export default function StartupBleedingChart() {
     return null
   }
 
-  // Ícone corporativo de relógio/atraso
   const IconBleeding = <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d40000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px', marginTop: '2px'}}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
 
   return (
@@ -157,7 +173,6 @@ export default function StartupBleedingChart() {
               <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f8fafc' }} />
               <Legend wrapperStyle={{ fontSize: '13px', paddingTop: '10px' }} />
               
-              {/* CORES CORPORATIVAS APLICADAS */}
               <Bar dataKey="Atraso" name="Atrasos (A)" stackId="a" fill="#f59e0b" radius={[0, 0, 4, 4]} />
               <Bar dataKey="Saida" name="Saídas (S)" stackId="a" fill="#3b82f6" />
               <Bar dataKey="Falta" name="Faltas Críticas (F)" stackId="a" fill="#d40000" />

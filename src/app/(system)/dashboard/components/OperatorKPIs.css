@@ -123,7 +123,7 @@
 }
 
 /* Cores de borda superior dinâmicas para os cards */
-.card-c-dc2626 { border-top: 4px solid #d40000; }
+.card-c-dc2626 { border-top: 4px solid #dc2626; }
 .card-c-f59e0b { border-top: 4px solid #f59e0b; }
 .card-c-3b82f6 { border-top: 4px solid #3b82f6; }
 .card-c-8b5cf6 { border-top: 4px solid #8b5cf6; }
@@ -215,6 +215,18 @@
   flex-direction: column;
   gap: 12px;
 }
+
+/* 🆕 LIMITADOR DA LISTA (SCROLLBAR) PARA ~10 ITENS */
+.kpiScrollableList {
+  max-height: 480px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* Custom Scrollbar da Lista Interna */
+.kpiScrollableList::-webkit-scrollbar { width: 6px; }
+.kpiScrollableList::-webkit-scrollbar-track { background: transparent; }
+.kpiScrollableList::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
 
 .suggestionCard {
   border: 1px solid #eee;

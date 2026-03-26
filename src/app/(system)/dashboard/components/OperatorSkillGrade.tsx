@@ -15,140 +15,177 @@ export default function OperatorSkillGrade(){
   const [ratio,setRatio] = useState(0)
   const [grade,setGrade] = useState("")
   const [color,setColor] = useState("#d40000") // vermelho padrão
+  
+  const [assiduidade, setAssiduidade] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
+
+  // Título Dinâmico
+  const [title, setTitle] = useState("Classificação Geral")
 
   useEffect(()=>{
     loadData()
-  },[filters.operatorId])
+  },[filters])
 
   async function loadData(){
-    if(!filters.operatorId){
-      setTotalPoints(0)
-      setMaxPoints(0)
-      setRatio(0)
-      setGrade("")
-      return
+    setIsLoading(true)
+
+    try {
+      let opQuery = supabase.from("operators").select("id, nome").eq("ativo", true)
+
+      if (filters.linha) opQuery = opQuery.eq("linha_atual", filters.linha)
+      if (filters.turno) opQuery = opQuery.eq("turno", filters.turno)
+      if (filters.operatorId) opQuery = opQuery.eq("id", filters.operatorId)
+
+      const { data: ops, error: opsError } = await opQuery
+
+      if (opsError || !ops || ops.length === 0) {
+        setTotalPoints(0)
+        setMaxPoints(0)
+        setRatio(0)
+        setGrade("Sem Dados")
+        setColor("#e0e0e0")
+        setAssiduidade(0)
+        setTitle("Sem Dados Disponíveis")
+        return
+      }
+
+      const opIds = ops.map(o => o.id)
+
+      if (filters.operatorId && ops.length === 1) {
+        setTitle(`Classificação: ${ops[0].nome}`)
+      } else {
+        let t = "Média da Fábrica"
+        if (filters.linha) t = `Média: ${filters.linha}`
+        if (filters.turno) {
+          const tName = filters.turno === "1º Turno" ? "Comercial" : "2º Turno"
+          t += filters.linha ? ` (${tName})` : ` (${tName})`
+        }
+        setTitle(t)
+      }
+
+      const { data: skillsData, error: skillsError } = await supabase
+        .from("operator_skills")
+        .select("skill_level")
+        .in("operator_id", opIds)
+
+      if (skillsError) throw skillsError
+
+      let sr = 0
+
+      if (skillsData && skillsData.length > 0) {
+        const total = skillsData.reduce((acc, row) => acc + row.skill_level, 0)
+        const max = skillsData.length * 5
+
+        sr = max > 0 ? Math.round((total / max) * 100) : 0
+
+        setTotalPoints(total)
+        setMaxPoints(max)
+        setRatio(sr)
+      } else {
+        setTotalPoints(0)
+        setMaxPoints(0)
+        setRatio(0)
+      }
+
+      let gradeText = ""
+      let barColor = "#d40000"
+
+      if(sr <= 20){
+        gradeText = "Iniciante / Nunca Fez"
+        barColor = "#d40000" // Vermelho Corporativo
+      }else if(sr <= 40){
+        gradeText = "Em Treinamento"
+        barColor = "#f59e0b" // Laranja Corporativo
+      }else if(sr <= 60){
+        gradeText = "Apto a Operar"
+        barColor = "#3b82f6" // Azul Corporativo
+      }else if(sr <= 80){
+        gradeText = "Especialista"
+        barColor = "#8b5cf6" // Roxo Corporativo
+      }else{
+        gradeText = "Instrutor / Mestre"
+        barColor = "#22c55e" // Verde Corporativo
+      }
+
+      setGrade(gradeText)
+      setColor(barColor)
+
+      let anQuery = supabase.from("vw_operator_analytics").select("score_assiduidade").in("operator_id", opIds)
+      const { data: analyticsData } = await anQuery
+
+      if (analyticsData && analyticsData.length > 0) {
+        const sumAssid = analyticsData.reduce((acc, curr) => acc + Number(curr.score_assiduidade || 0), 0)
+        setAssiduidade(Math.round(sumAssid / analyticsData.length))
+      } else {
+        setAssiduidade(100)
+      }
+
+    } catch (error) {
+      console.error("Erro ao carregar Grade:", error)
+    } finally {
+      setIsLoading(false)
     }
-
-    const { data,error } = await supabase
-      .from("operator_skills")
-      .select("skill_level")
-      .eq("operator_id",filters.operatorId)
-
-    if(error){
-      console.error(error)
-      return
-    }
-
-    if(!data) return
-
-    const total = data.reduce(
-      (acc,row)=> acc + row.skill_level,
-      0
-    )
-
-    const max = data.length * 5
-
-    const sr = max > 0
-      ? Math.round((total / max) * 100)
-      : 0
-
-    setTotalPoints(total)
-    setMaxPoints(max)
-    setRatio(sr)
-
-    /* Classificação dinâmica em 5 níveis exatos (Intervalos de 20%) */
-    let gradeText = ""
-    let barColor = "#d40000"
-
-    if(sr <= 20){
-      gradeText = "Nunca Fez"
-      barColor = "#ef4444" // Vermelho (Alerta)
-    }else if(sr <= 40){
-      gradeText = "Em Treinamento"
-      barColor = "#f59e0b" // Laranja (Desenvolvimento)
-    }else if(sr <= 60){
-      gradeText = "Apto a Operar"
-      barColor = "#3b82f6" // Azul (Padrão/Operacional)
-    }else if(sr <= 80){
-      gradeText = "Especialista"
-      barColor = "#8b5cf6" // Roxo (Avançado)
-    }else{
-      gradeText = "Instrutor"
-      barColor = "#22c55e" // Verde (Mestria)
-    }
-
-    setGrade(gradeText)
-    setColor(barColor)
   }
 
-  /* ----------------------------- */
-  /* ESTADO SEM OPERADOR (EMPTY)   */
-  /* ----------------------------- */
-  if(!filters.operatorId){
-    return(
-      <div className="corporateCard gradeCard emptyGradeCard">
-        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="emptyIcon">
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-          <circle cx="9" cy="7" r="4"/>
-          <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-        </svg>
-        <p>Selecione um operador no filtro acima para visualizar o seu Skill Grade e nível de progresso.</p>
-      </div>
-    )
-  }
-
-  /* ----------------------------- */
-  /* RENDERIZAÇÃO DO CARD ATIVO    */
-  /* ----------------------------- */
   return(
-
-    <div className="corporateCard gradeCard">
+    <div className="corporateCard gradeCard animateFadeIn">
 
       <div className="gradeHeader">
-        <h3>Classificação de Habilidade</h3>
+        <h3 title={title}>{title.length > 30 ? title.substring(0, 30) + "..." : title}</h3>
       </div>
 
-      <div className="gradeStatsGrid">
-        
-        <div className="statBox">
-          <span className="statLabel">Total de Pontos</span>
-          <span className="statValue">{totalPoints} <span style={{fontSize: 14, color: '#999'}}>de {maxPoints}</span></span>
+      {isLoading ? (
+        <div style={{ display: 'flex', height: '100%', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          {/* 🛠️ MUDANÇA: Substituído o corporateSpinner pelo pageLoader padrão */}
+          <div className="pageLoader" style={{ height: '40px', width: '40px' }} />
         </div>
+      ) : (
+        <>
+          <div className="gradeStatsGrid">
+            
+            <div className="statBox">
+              <span className="statLabel">Total Points</span>
+              <span className="statValue">{totalPoints} <span style={{fontSize: 13, color: '#94a3b8', fontWeight: 600}}>/ {maxPoints}</span></span>
+            </div>
 
-        <div className="statBox">
-          <span className="statLabel">Skill Ratio</span>
-          <span className="statValue" style={{color: color}}>{ratio}%</span>
-        </div>
+            <div className="statBox">
+              <span className="statLabel">Skill Ratio</span>
+              <span className="statValue" style={{color: color}}>{ratio}%</span>
+            </div>
 
-      </div>
+            <div className="statBox">
+              <span className="statLabel">Assiduidade</span>
+              <span className="statValue" style={{ color: assiduidade >= 90 ? '#22c55e' : assiduidade >= 80 ? '#f59e0b' : '#d40000' }}>
+                {assiduidade}%
+              </span>
+            </div>
 
-      <div className="classificationBox" style={{borderLeftColor: color}}>
-        <span className="classLabel">Nível Atual:</span>
-        <strong className="classValue" style={{color: color}}>{grade}</strong>
-      </div>
+          </div>
 
-      <div className="progressSection">
-        <div className="progressLabels">
-          <span>Progresso de Habilidades</span>
-          <span>Meta: Especialista (80%)</span>
-        </div>
-        
-        <div className="progressBarContainer">
-          <div
-            className="progressBarFill"
-            style={{
-              width: `${ratio}%`,
-              backgroundColor: color
-            }}
-          />
-          {/* Marcador visual da meta de 80% */}
-          <div className="goalMarker" style={{left: "80%"}} title="Meta de Especialista (80%)" />
-        </div>
-      </div>
+          <div className="classificationBox" style={{borderLeftColor: color}}>
+            <span className="classLabel">Classificação:</span>
+            <strong className="classValue" style={{color: color}}>{grade}</strong>
+          </div>
 
+          <div className="progressSection">
+            <div className="progressLabels">
+              <span>Progresso de Habilidades</span>
+              <span>Meta: Especialista (80%)</span>
+            </div>
+            
+            <div className="progressBarContainer">
+              <div
+                className="progressBarFill"
+                style={{
+                  width: `${ratio}%`,
+                  backgroundColor: color
+                }}
+              />
+              <div className="goalMarker" style={{left: "80%"}} title="Meta de Especialista (80%)" />
+            </div>
+          </div>
+        </>
+      )}
     </div>
-
   )
-
 }

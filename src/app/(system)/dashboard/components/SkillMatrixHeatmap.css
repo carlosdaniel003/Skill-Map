@@ -1,84 +1,49 @@
 /* src/app/(system)/dashboard/components/SkillMatrixHeatmap.css */
 
-/* CARD CORPORATIVO */
 .heatmapCard {
   background: #ffffff;
-  border-top: 6px solid #d40000;
   border-radius: 8px;
   padding: 24px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border-top: 6px solid #d40000; /* Vermelho Corporativo */
   display: flex;
   flex-direction: column;
-  
-  /* FIX: Impede que o card force o crescimento da tela (CSS Grid overflow fix) */
-  min-width: 0;
   width: 100%;
 }
 
-/* EMPTY STATE */
-.emptyHeatmapCard {
-  border-top: 6px solid #e0e0e0;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  gap: 16px;
-  background: #f9f9f9;
-  min-height: 300px;
-}
-
-.emptyIcon {
-  color: #cccccc;
-}
-
-.emptyHeatmapCard p {
-  color: #888888;
-  font-size: 14px;
-  max-width: 300px;
-  margin: 0;
-  line-height: 1.5;
-}
-
-/* HEADER */
 .heatmapHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
 }
 
 .heatmapHeader h3 {
   margin: 0;
   font-size: 18px;
-  font-weight: 700;
-  color: #111111;
+  font-weight: 800;
+  color: #111;
 }
 
 .heatmapHeader h3 span {
   color: #d40000;
 }
 
-/* TABELA DE MATRIZ */
+/* 🆕 CONTAINER DA TABELA (Scroll e Altura Fixa) */
 .heatmapTableContainer {
-  /* FIX: Força a rolagem a acontecer apenas aqui dentro */
-  max-width: 100%;
-  overflow-x: auto;
-  border: 1px solid #e0e0e0;
+  width: 100%;
+  max-height: 480px; /* Altura para ~10 Operadores */
+  overflow-y: auto; /* Rolagem vertical */
+  overflow-x: auto; /* Rolagem horizontal (caso tenha muitos postos) */
+  border: 1px solid #e2e8f0;
   border-radius: 6px;
-  background: #ffffff; 
+  background: #fff;
 }
 
-/* Customização da barra de rolagem (Fica mais elegante) */
-.heatmapTableContainer::-webkit-scrollbar {
-  height: 8px;
-}
-.heatmapTableContainer::-webkit-scrollbar-track {
-  background: #f0f0f0;
-  border-radius: 0 0 6px 6px;
-}
-.heatmapTableContainer::-webkit-scrollbar-thumb {
-  background-color: #cccccc;
-  border-radius: 10px;
-}
-.heatmapTableContainer::-webkit-scrollbar-thumb:hover {
-  background-color: #a0a0a0;
-}
+/* Custom Scrollbar */
+.heatmapTableContainer::-webkit-scrollbar { width: 8px; height: 8px; }
+.heatmapTableContainer::-webkit-scrollbar-track { background: transparent; }
+.heatmapTableContainer::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
 
 .heatmapTable {
   width: 100%;
@@ -86,117 +51,69 @@
   text-align: center;
 }
 
-/* CABEÇALHOS DA TABELA */
-.heatmapTable th {
-  background: #f9f9f9;
-  color: #555555;
-  font-weight: 600;
-  font-size: 12px;
-  padding: 12px 8px;
-  border-bottom: 2px solid #e0e0e0;
-  border-right: 1px solid #f0f0f0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-
-/* CÉLULAS DA TABELA */
-.heatmapTable td {
-  padding: 6px;
-  border-bottom: 1px solid #f0f0f0;
-  border-right: 1px solid #f0f0f0;
-  vertical-align: middle;
-}
-
-.heatmapTable tr:last-child td {
-  border-bottom: none;
-}
-
-.heatmapTable th:last-child,
-.heatmapTable td:last-child {
-  border-right: none;
-}
-
-.heatmapTable tr:hover td {
-  background: #fafafa;
-}
-
-/* COLUNA DO OPERADOR FIXA (Sticky Column) */
-.operatorCol {
-  text-align: left !important;
-  font-weight: 600;
-  color: #333333;
+/* 🆕 CABEÇALHO TRAVADO (Sticky) */
+.heatmapTable thead th {
   position: sticky;
-  left: 0;
-  background: #ffffff; 
-  z-index: 2;
-  min-width: 150px;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.03);
+  top: 0; /* Trava no topo ao rolar */
+  z-index: 2; /* Fica acima das células */
+  background: #f8fafc; /* Fundo sólido para cobrir as células rolando */
+  color: #334155;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 12px 6px;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+  text-transform: uppercase;
 }
 
-.heatmapTable th.operatorCol {
-  background: #f9f9f9;
-  z-index: 3;
+.heatmapTable tbody td {
+  padding: 6px;
+  border-bottom: 1px solid #f1f5f9;
+  border-right: 1px solid #f1f5f9;
 }
 
-.heatmapTable tr:hover td.operatorCol {
-  background: #fafafa;
+.operatorCol {
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  color: #0f172a;
+  white-space: nowrap;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  background: #ffffff; /* Fundo para garantir legibilidade */
 }
 
-.emptyState {
-  text-align: center !important;
-  padding: 40px !important;
-  color: #888888 !important;
-  font-style: italic;
-}
-
-/* QUADRADOS DO HEATMAP */
+/* Quadrados Níveis de Habilidade */
 .levelSquare {
-  width: 26px;
-  height: 26px;
-  border-radius: 4px;
+  width: 24px;
+  height: 24px;
   margin: 0 auto;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
-  font-weight: 700;
-  transition: transform 0.2s ease;
-  user-select: none;
+  font-size: 11px;
+  font-weight: 800;
+  transition: transform 0.1s, filter 0.1s;
+  cursor: crosshair;
 }
 
 .levelSquare:hover {
-  transform: scale(1.15);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transform: scale(1.2);
+  filter: brightness(1.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-/* CORES EXECUTIVAS DOS NÍVEIS */
-.level-0 {
-  background: transparent;
-  color: transparent;
-}
+/* Cores Baseadas no Padrão do Dashboard */
+.level-0 { background: #f1f5f9; color: transparent; }
+.level-1 { background: #fee2e2; color: #b91c1c; } /* Vermelho/Iniciante */
+.level-2 { background: #fef3c7; color: #b45309; } /* Laranja/Treinamento */
+.level-3 { background: #eff6ff; color: #1d4ed8; } /* Azul/Apto */
+.level-4 { background: #f3e8ff; color: #6d28d9; } /* Roxo/Especialista */
+.level-5 { background: #dcfce7; color: #15803d; } /* Verde/Instrutor */
 
-.level-1 {
-  background: #ffebee; 
-  color: #c62828;      
-}
-
-.level-2 {
-  background: #fff3e0; 
-  color: #ef6c00;      
-}
-
-.level-3 {
-  background: #fff9c4; 
-  color: #f57f17;      
-}
-
-.level-4 {
-  background: #e8f5e9; 
-  color: #2e7d32;      
-}
-
-.level-5 {
-  background: #2e7d32; 
-  color: #ffffff;      
+.emptyState {
+  color: #64748b;
+  font-size: 14px;
+  padding: 20px;
 }
