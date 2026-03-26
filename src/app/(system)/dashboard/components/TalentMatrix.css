@@ -91,7 +91,7 @@
   width: fit-content;
 }
 
-/* CORES DOS QUADRANTES - Ajustadas conforme solicitado */
+/* CORES DOS QUADRANTES */
 /* Pilares: Verde */
 .q-pilares { background: #f0fdf4; border-left: 4px solid #22c55e; }
 .q-pilares .quadAction { background: #dcfce7; color: #15803d; }
@@ -104,13 +104,13 @@
 .q-oportunidades { background: #fffbeb; border-left: 4px solid #f59e0b; }
 .q-oportunidades .quadAction { background: #fef3c7; color: #b45309; }
 
-/* Risco: Roxo (Usando a cor 8b5cf6 solicitada) */
+/* Risco: Roxo */
 .q-riscos { background: #f5f3ff; border-left: 4px solid #8b5cf6; }
 .q-riscos .quadAction { background: #ede9fe; color: #5b21b6; }
 
 
 /* ========================================================
-   ESTILOS DO MODAL (Trazidos do Emergency Allocation)
+   ESTILOS DO MODAL E DOS CARDS DE OPERADORES
    ======================================================== */
 .emergencyModalOverlay {
   position: fixed;
@@ -129,7 +129,7 @@
 
 .emergencyModalCard {
   width: 90%;
-  max-width: 600px;
+  max-width: 500px;
   max-height: 85vh;
   background: #ffffff;
   border-top: 6px solid #d40000;
@@ -187,7 +187,6 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;
 }
 
 .emergencyResults {
@@ -196,13 +195,14 @@
   gap: 12px;
 }
 
+/* 🆕 NOVO LAYOUT DO CARD DO OPERADOR */
 .suggestionCard {
   border: 1px solid #eee;
   border-radius: 8px;
   padding: 16px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 16px;
   background: #fff;
   transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -213,61 +213,85 @@
   border-color: inherit;
 }
 
-.suggestionInfo {
+.suggestionRanking {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rankNumber {
+  font-size: 18px;
+  font-weight: 900;
+  color: #94a3b8;
+}
+
+.suggestionMainInfo {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .suggestionName {
   font-size: 16px;
   font-weight: 700;
   color: #111;
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
-.suggestionCurrentLine {
+.suggestionSubtitle {
   font-size: 12px;
-  color: #666;
-  background: #f0f0f0;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-weight: 600;
+  color: #64748b;
+  font-weight: 500;
 }
 
-.suggestionMetrics {
-  display: flex;
-  gap: 16px;
-  font-size: 13px;
-  color: #555;
-}
-
-.metricBadge {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-weight: 600;
-}
-
-.suggestionAction {
+/* 🆕 BADGES E DETALHES */
+.suggestionBadges {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 8px;
+  gap: 6px;
 }
 
-/* Cores para Badge Interna do Modal */
-.matrixOpMetrics {
-  display: flex;
-  gap: 12px;
-  font-size: 13px;
-  font-weight: 600;
+.badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
 }
-.matrixMetric.green { color: #16a34a; }
-.matrixMetric.red { color: #d40000; }
-.matrixMetric.yellow { color: #f59e0b; }
+
+.suggestionDetails {
+  width: 100%;
+  margin-top: 8px;
+  border-top: 1px dashed #e2e8f0;
+  padding-top: 8px;
+  display: none; /* Só mostra se quiser habilitar a linha de baixo com mais dados */
+}
+
+/* Estilos Reutilizáveis */
+.emptyState {
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+  padding: 20px;
+}
+
+.pageLoader {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(212, 0, 0, 0.1);
+  border-top: 3px solid #d40000;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
 @keyframes slideUp {
   from { transform: translateY(40px); opacity: 0; }
