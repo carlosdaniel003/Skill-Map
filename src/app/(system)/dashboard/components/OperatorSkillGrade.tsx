@@ -14,12 +14,11 @@ export default function OperatorSkillGrade(){
   const [maxPoints,setMaxPoints] = useState(0)
   const [ratio,setRatio] = useState(0)
   const [grade,setGrade] = useState("")
-  const [color,setColor] = useState("#d40000") // vermelho padrão
+  const [color,setColor] = useState("#d40000")
   
   const [assiduidade, setAssiduidade] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
 
-  // Título Dinâmico
   const [title, setTitle] = useState("Classificação Geral")
 
   useEffect(()=>{
@@ -57,8 +56,8 @@ export default function OperatorSkillGrade(){
         let t = "Média da Fábrica"
         if (filters.linha) t = `Média: ${filters.linha}`
         if (filters.turno) {
-  t += ` (${filters.turno})`    // ← Deveria ter ~8 espaços de indentação
-}
+          t += ` (${filters.turno})`
+        }
         setTitle(t)
       }
 
@@ -91,19 +90,19 @@ export default function OperatorSkillGrade(){
 
       if(sr <= 20){
         gradeText = "Iniciante / Nunca Fez"
-        barColor = "#d40000" // Vermelho Corporativo
+        barColor = "#d40000"
       }else if(sr <= 40){
         gradeText = "Em Treinamento"
-        barColor = "#f59e0b" // Laranja Corporativo
+        barColor = "#f59e0b"
       }else if(sr <= 60){
         gradeText = "Apto a Operar"
-        barColor = "#3b82f6" // Azul Corporativo
+        barColor = "#3b82f6"
       }else if(sr <= 80){
         gradeText = "Especialista"
-        barColor = "#8b5cf6" // Roxo Corporativo
+        barColor = "#8b5cf6"
       }else{
         gradeText = "Instrutor / Mestre"
-        barColor = "#22c55e" // Verde Corporativo
+        barColor = "#22c55e"
       }
 
       setGrade(gradeText)
@@ -135,7 +134,6 @@ export default function OperatorSkillGrade(){
 
       {isLoading ? (
         <div style={{ display: 'flex', height: '100%', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          {/* 🛠️ MUDANÇA: Substituído o corporateSpinner pelo pageLoader padrão */}
           <div className="pageLoader" style={{ height: '40px', width: '40px' }} />
         </div>
       ) : (

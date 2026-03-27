@@ -2,7 +2,7 @@
 "use client"
 
 import "./DashboardFilters.css"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useDashboardFilters } from "../context/DashboardFilterContext"
 
 import {
@@ -16,7 +16,7 @@ export default function DashboardFilters(){
     pendingFilters,
     setPendingOperator,
     setPendingLinha,
-    setPendingTurno, // 🆕 Importado do Hook
+    setPendingTurno,
     applyFilters
   } = useDashboardFilters()
 
@@ -26,6 +26,8 @@ export default function DashboardFilters(){
   const [search,setSearch] = useState("")
   const [filteredOperators,setFilteredOperators] = useState<any[]>([])
 
+  const searchRef = useRef<HTMLDivElement>(null)
+
   useEffect(()=>{
     loadData()
   },[])
@@ -33,6 +35,17 @@ export default function DashboardFilters(){
   useEffect(()=>{
     filterOperators()
   },[search,operators])
+
+  // Fecha o dropdown ao clicar fora
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setFilteredOperators([])
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   async function loadData(){
     const ops = await getOperators()
@@ -85,7 +98,7 @@ export default function DashboardFilters(){
     
     setPendingOperator(null)
     setPendingLinha(null)
-    setPendingTurno(null) // 🆕 Limpa o turno também
+    setPendingTurno(null)
 
     setTimeout(() => {
       applyFilters()
@@ -100,6 +113,41 @@ export default function DashboardFilters(){
       </div>
 
       <div className="filtersGrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', alignItems: 'end' }}>
+
+        {/* BUSCA OPERADOR */}
+        <div className="filterGroup searchGroup" ref={searchRef}>
+          <label>Buscar Operador</label>
+          <div className="searchInputWrapper">
+            <input
+              className="corporateInput"
+              placeholder="Nome ou matrícula..."
+              value={search}
+              onChange={e => {
+                setSearch(e.target.value)
+                // Se o usuário apagar o texto, limpa o filtro de operador pendente
+                if (!e.target.value) {
+                  setPendingOperator(null)
+                }
+              }}
+            />
+            {filteredOperators.length > 0 && (
+              <div className="dropdownResults">
+                {filteredOperators.slice(0, 10).map(op => (
+                  <div
+                    key={op.id}
+                    className="dropdownItem"
+                    onClick={() => handleSelectOperator(op)}
+                  >
+                    <strong>{op.matricula}</strong> — {op.nome}
+                    <span style={{ marginLeft: '8px', fontSize: '12px', color: '#888' }}>
+                      {op.linha_atual || "Sem Linha"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* SELECT DE TURNO */}
         <div className="filterGroup">

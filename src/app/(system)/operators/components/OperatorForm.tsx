@@ -48,7 +48,7 @@ export default function OperatorForm({ data }: { data: any }) {
           <option value="2º Turno estendido">2º Turno estendido</option>
         </select>
 
-        {/* 🆕 CAMPO DE LINHA (AGORA OBRIGATÓRIO) */}
+        {/* CAMPO DE LINHA (OBRIGATÓRIO) */}
         <select
           className="corporateInput"
           value={linha}
@@ -60,7 +60,7 @@ export default function OperatorForm({ data }: { data: any }) {
           ))}
         </select>
 
-        {/* 🆕 CAMPO DE POSTO (AGORA OBRIGATÓRIO) */}
+        {/* CAMPO DE POSTO (OBRIGATÓRIO) */}
         <select
           className="corporateInput"
           value={posto}
@@ -76,7 +76,6 @@ export default function OperatorForm({ data }: { data: any }) {
       <button
         className="primaryButton fullWidth mt-3"
         onClick={handleCreateOperator}
-        /* 🆕 BLOQUEIA O BOTÃO SE LINHA OU POSTO ESTIVEREM VAZIOS */
         disabled={!nome || matricula.length !== 6 || !turno || !linha || !posto} 
       >
         Cadastrar Operador
