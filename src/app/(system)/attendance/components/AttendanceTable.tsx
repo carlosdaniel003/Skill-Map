@@ -18,14 +18,14 @@ interface Props {
 
 export default function AttendanceTable({ operators, daysInMonth, attendanceData, onSaveCell }: Props) {
   return (
-    <div className="tableContainer">
+    <div className="attendanceTableContainer">
       <table className="excelTable">
         <thead>
           <tr>
             <th className="stickyCol col-id">ID</th>
             <th className="stickyCol col-matricula">MATRÍCULA</th>
             <th className="stickyCol col-nome">NOME COLABORADOR</th>
-            {/* 🆕 COLUNA DO TURNO */}
+            {/* COLUNA DO TURNO */}
             <th className="stickyCol col-turno">TURNO</th> 
             <th className="stickyCol col-posto">POSTO</th>
             <th className="stickyCol col-linha">LINHA</th>
@@ -51,17 +51,17 @@ export default function AttendanceTable({ operators, daysInMonth, attendanceData
             <tr key={op.id}>
               <td className="stickyCol col-id text-center">{index + 1}</td>
               <td className="stickyCol col-matricula text-center">{op.matricula}</td>
-              <td className="stickyCol col-nome fw-bold">{op.nome}</td>
+              <td className="stickyCol col-nome fw-bold" title={op.nome}>{op.nome}</td>
               
-              {/* 🆕 COLUNA DO TURNO COM PEQUENO DESTAQUE VISUAL */}
+              {/* COLUNA DO TURNO COM PEQUENO DESTAQUE VISUAL */}
               <td className="stickyCol col-turno text-center">
-                <span style={{ fontSize: '12px', fontWeight: 600, color: '#666', background: '#f0f0f0', padding: '2px 6px', borderRadius: '4px' }}>
+                <span className="turnoBadge">
                   {op.turno || "-"}
                 </span>
               </td>
               
-              <td className="stickyCol col-posto">{op.posto_atual}</td>
-              <td className="stickyCol col-linha">{op.linha_atual}</td>
+              <td className="stickyCol col-posto" title={op.posto_atual}>{op.posto_atual}</td>
+              <td className="stickyCol col-linha" title={op.linha_atual}>{op.linha_atual}</td>
               
               {daysInMonth.map(d => {
                 const key = `${op.id}_${d.dateStr}`
@@ -84,7 +84,6 @@ export default function AttendanceTable({ operators, daysInMonth, attendanceData
           
           {operators.length === 0 && (
             <tr>
-              {/* 🆕 Aumentado o colSpan de 5 para 6 devido à nova coluna Turno */}
               <td colSpan={6 + daysInMonth.length} className="noDataCell">
                 Nenhum operador encontrado.
               </td>

@@ -34,17 +34,17 @@ export default function DashboardPage(){
 
     <DashboardFilterProvider>
 
-      <div className="dashboardPage">
+      <div className="dashboardPageContainer">
 
-        <div className="pageHeader">
-          <h1 className="pageTitle">Dashboard</h1>
-          <p className="pageSubtitle">Visão geral analítica de habilidades, linhas de produção e performance.</p>
+        <div className="dashboardPageHeader">
+          <h1 className="dashboardPageTitle">Dashboard</h1>
+          <p className="dashboardPageSubtitle">Visão geral analítica de habilidades, linhas de produção e performance.</p>
         </div>
 
         {/* ==========================================
             0. CONTROLE GLOBAL: FILTROS
             ========================================== */}
-        <div className="dashboardSection">
+        <div className="dashboardPageSection">
           <DashboardFilters />
         </div>
 
@@ -54,19 +54,19 @@ export default function DashboardPage(){
             ========================================== */}
             
         {/* Centro de Controle de Radares (33/33/33) */}
-        <div className="dashboardGrid tripleGrid">
+        <div className="dashboardPageGrid dashboardGridTriple">
           <LineSkillsRadar />
           <LineOperatorsRadar />
           <OperatorSkillsRadar />
         </div>
 
         {/* Visão Cirúrgica: Heatmap (100% Largura) */}
-        <div className="dashboardSection heatmapSection">
+        <div className="dashboardPageSection dashboardHeatmapArea">
           <SkillMatrixHeatmap />
         </div>
 
-        {/* Distribuição Geral e Nota do Operador (50/50) - Movidos para debaixo do Heatmap */}
-        <div className="dashboardGrid topGrid">
+        {/* Distribuição Geral e Nota do Operador (50/50) */}
+        <div className="dashboardPageGrid dashboardGridHalf">
           <OperatorKPIs />
           <OperatorSkillGrade />
         </div>
@@ -77,13 +77,13 @@ export default function DashboardPage(){
             ========================================== */}
             
         {/* Estratégia de Equipe: Talentos vs Polivalência (50/50) */}
-        <div className="dashboardGrid topGrid">
+        <div className="dashboardPageGrid dashboardGridHalf">
           <TalentMatrix />
           <PolyvalenceRanking />
         </div>
 
         {/* Clima e Impacto: Termômetro vs Sangramento (50/50) */}
-        <div className="dashboardGrid topGrid">
+        <div className="dashboardPageGrid dashboardGridHalf">
           <LineEngagementThermometer />
           <StartupBleedingChart />
         </div>

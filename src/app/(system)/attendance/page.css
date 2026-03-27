@@ -1,12 +1,12 @@
 /* src/app/(system)/attendance/page.css */
 
-.attendancePage {
+.attendancePageWrapper {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-.pageHeader {
+.attendancePageHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -16,13 +16,13 @@
   flex-wrap: wrap;
 }
 
-.headerTitles {
+.attendanceHeaderTitles {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.pageTitle {
+.attendancePageTitle {
   font-size: 28px;
   font-weight: 800;
   color: #111111;
@@ -30,7 +30,7 @@
   letter-spacing: -0.5px;
 }
 
-.pageSubtitle {
+.attendancePageSubtitle {
   color: #666666;
   font-size: 15px;
   margin: 0;
@@ -39,7 +39,7 @@
 /* =======================================
    NAVEGAÇÃO POR ABAS (TABS)
    ======================================= */
-.tabNavigation {
+.attendanceTabNavigation {
   display: flex;
   background: #f0f0f0;
   padding: 4px;
@@ -47,7 +47,7 @@
   gap: 4px;
 }
 
-.tabBtn {
+.attendanceTabBtn {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -62,28 +62,28 @@
   transition: all 0.2s ease;
 }
 
-.tabBtn:hover:not(.active) {
+.attendanceTabBtn:hover:not(.active) {
   background: #e4e4e4;
   color: #333;
 }
 
-.tabBtn.active {
+.attendanceTabBtn.active {
   background: #ffffff;
   color: #d40000;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.animateFadeIn {
-  animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+.attendanceAnimateFadeIn {
+  animation: attendanceFadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-@keyframes fadeIn {
+@keyframes attendanceFadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 /* Base style for corporate cards */
-.corporateCard {
+.attendanceCorporateCard {
   background: #ffffff;
   border-radius: 8px;
   padding: 24px;
@@ -92,7 +92,7 @@
 }
 
 /* ESTADOS VAZIOS COMPARTILHADOS */
-.emptyAttendance {
+.attendanceEmptyState {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -105,11 +105,11 @@
   gap: 16px;
 }
 
-.emptyIcon {
+.attendanceEmptyIcon {
   color: #cccccc;
 }
 
-.emptyAttendance p {
+.attendanceEmptyState p {
   margin: 0;
   color: #666666;
   font-size: 15px;
@@ -120,12 +120,12 @@
 /* =======================================
    ABA 2: APONTAMENTO MENSAL
    ======================================= */
-.attendanceCard {
+.attendanceMonthlyCard {
     border-top: 6px solid #d40000;
 }
 
 /* BUTTONS GERAIS */
-.primaryButton {
+.attendancePrimaryButton {
   border: none;
   border-radius: 6px;
   background: #d40000;
@@ -135,20 +135,20 @@
   transition: all 0.2s ease;
 }
 
-.primaryButton:hover:not(:disabled) {
+.attendancePrimaryButton:hover:not(:disabled) {
   background: #b30000;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
 }
 
-.primaryButton:disabled {
+.attendancePrimaryButton:disabled {
   background: #e0e0e0;
   color: #999999;
   cursor: not-allowed;
 }
 
 /* MODAL GERAL DO SISTEMA */
-.modalOverlay {
+.attendanceModalOverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -160,10 +160,10 @@
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  animation: modalFadeIn 0.2s ease-out;
+  animation: attendanceModalFadeIn 0.2s ease-out;
 }
 
-.corporateModal {
+.attendanceCorporateModal {
   width: 100%;
   max-width: 400px;
   background: #ffffff;
@@ -173,17 +173,17 @@
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
-  animation: corporateModalEnter 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: attendanceCorporateModalEnter 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.modalHeader {
+.attendanceModalHeader {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 16px;
 }
 
-.modalIcon {
+.attendanceModalIcon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -193,12 +193,12 @@
   flex-shrink: 0;
 }
 
-.modalIcon.warningIcon {
+.attendanceWarningIcon {
   background: #fffbeb;
   color: #f59e0b;
 }
 
-.modalHeader h3 {
+.attendanceModalHeader h3 {
   margin: 0;
   font-size: 20px;
   font-weight: 700;
@@ -206,33 +206,33 @@
   letter-spacing: -0.3px;
 }
 
-.modalBody {
+.attendanceModalBody {
   margin-bottom: 24px;
 }
 
-.modalBody p {
+.attendanceModalBody p {
   margin: 0 0 8px 0;
   font-size: 14px;
   color: #555555;
   line-height: 1.5;
 }
 
-.modalFooter {
+.attendanceModalFooter {
   display: flex;
   justify-content: flex-end;
 }
 
-.modalFooter .primaryButton {
+.attendanceModalFooter .attendancePrimaryButton {
     padding: 12px 20px;
     font-size: 14px;
 }
 
-@keyframes modalFadeIn {
+@keyframes attendanceModalFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-@keyframes corporateModalEnter {
+@keyframes attendanceCorporateModalEnter {
   from {
     transform: translateY(30px) scale(0.95);
     opacity: 0;
@@ -245,14 +245,14 @@
 
 /* RESPONSIVIDADE GERAL DA PÁGINA */
 @media (max-width: 768px) {
-  .pageHeader {
+  .attendancePageHeader {
     flex-direction: column;
     align-items: stretch;
   }
-  .tabNavigation {
+  .attendanceTabNavigation {
     width: 100%;
   }
-  .tabBtn {
+  .attendanceTabBtn {
     flex: 1;
     justify-content: center;
   }

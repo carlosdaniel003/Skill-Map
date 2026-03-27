@@ -1,20 +1,20 @@
 /* src/app/(system)/dashboard/page.css */
 
-.dashboardPage {
+.dashboardPageContainer {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  animation: pageFadeIn 0.4s ease-out;
+  animation: dashboardPageFadeIn 0.4s ease-out;
 }
 
-.pageHeader {
+.dashboardPageHeader {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   margin-bottom: 8px;
 }
 
-.pageTitle {
+.dashboardPageTitle {
   margin: 0 0 4px 0;
   font-size: 28px;
   font-weight: 800;
@@ -22,41 +22,41 @@
   letter-spacing: -0.5px;
 }
 
-.pageSubtitle {
+.dashboardPageSubtitle {
   margin: 0;
   color: #666666;
   font-size: 14px;
 }
 
 /* CONTAINER 100% LARGURA */
-.dashboardSection {
+.dashboardPageSection {
   width: 100%;
 }
 
 /* CONTAINER BASE DO GRID */
-.dashboardGrid {
+.dashboardPageGrid {
   display: grid;
   gap: 24px;
   width: 100%;
 }
 
 /* GRID 50% / 50% */
-.topGrid {
+.dashboardGridHalf {
   grid-template-columns: 1fr 1fr;
   align-items: stretch; 
 }
 
-/* 🆕 GRID 33% / 33% / 33% (Usado para Radares e KPIs de Cultura/Habilidade) */
-.tripleGrid {
+/* GRID 33% / 33% / 33% (Usado para Radares e KPIs de Cultura/Habilidade) */
+.dashboardGridTriple {
   grid-template-columns: repeat(3, 1fr);
   align-items: stretch;
 }
 
-.heatmapSection {
+.dashboardHeatmapArea {
   margin-bottom: 24px;
 }
 
-@keyframes pageFadeIn {
+@keyframes dashboardPageFadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
@@ -66,14 +66,14 @@
    ======================================================== */
 
 @media (max-width: 1200px) {
-  .tripleGrid {
+  .dashboardGridTriple {
     /* Em telas médias, quebra para 1 coluna para os gráficos/cards não ficarem espremidos */
     grid-template-columns: 1fr; 
   }
 }
 
 @media (max-width: 1024px) {
-  .topGrid {
+  .dashboardGridHalf {
     /* As duplas de gráficos também quebram para 1 coluna em telas menores */
     grid-template-columns: 1fr;
   }

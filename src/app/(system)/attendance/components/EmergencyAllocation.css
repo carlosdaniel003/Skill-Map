@@ -1,5 +1,6 @@
 /* src/app/(system)/attendance/components/EmergencyAllocation.css */
 
+/* ROOT SCOPE: Isolamento total do Modal */
 .emergencyModalOverlay {
   position: fixed;
   top: 0;
@@ -12,66 +13,73 @@
   align-items: center;
   justify-content: center;
   z-index: 10000;
-  animation: fadeIn 0.2s ease-out;
+  animation: emergencyFadeIn 0.2s ease-out;
 }
 
-.emergencyModalCard {
+.emergencyModalOverlay .emergencyModalCard {
   width: 90%;
   max-width: 600px;
   max-height: 85vh;
   background: #ffffff;
-  border-top: 6px solid #d40000;
+  border-top: 6px solid #d40000; /* Padrão corporativo vermelho */
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
-  animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: emergencySlideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   overflow: hidden;
 }
 
-.emergencyHeader {
+/* HEADER */
+.emergencyModalOverlay .emergencyHeader {
   padding: 20px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #f0f0f0;
   background: #fdfdfd;
 }
 
-.emergencyTitle {
+.emergencyModalOverlay .emergencyTitle {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.emergencyTitle h3 {
+.emergencyModalOverlay .emergencyTitle h3 {
   margin: 0;
   font-size: 18px;
   font-weight: 800;
-  color: #111;
+  color: #111111;
+  letter-spacing: -0.3px;
 }
 
-.emergencyIcon {
+.emergencyModalOverlay .emergencyIcon {
   color: #d40000;
   display: flex;
+  align-items: center;
 }
 
-.closeEmergencyBtn {
+.emergencyModalOverlay .closeEmergencyBtn {
   background: transparent;
   border: none;
-  color: #888;
+  color: #a0a0a0;
   cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  transition: all 0.2s;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
-.closeEmergencyBtn:hover {
-  background: #f0f0f0;
-  color: #111;
+.emergencyModalOverlay .closeEmergencyBtn:hover {
+  background: #fff0f0;
+  color: #d40000;
 }
 
-.emergencyBody {
+/* BODY E FORMULÁRIO */
+.emergencyModalOverlay .emergencyBody {
   padding: 24px;
   overflow-y: auto;
   display: flex;
@@ -79,123 +87,167 @@
   gap: 20px;
 }
 
-.searchPostoContainer {
+.emergencyModalOverlay .searchPostoContainer {
   display: flex;
-  gap: 12px;
+  gap: 10px;
 }
 
-.searchPostoInput {
+.emergencyModalOverlay .searchPostoInput {
   flex: 1;
-  padding: 12px 16px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 15px;
-  outline: none;
-  transition: border-color 0.2s;
+  padding: 12px 14px;
+  border: 1px solid #e0e0e0;
   background: #f9f9f9;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333333;
+  outline: none;
+  transition: all 0.2s ease;
 }
 
-.searchPostoInput:focus {
+.emergencyModalOverlay .searchPostoInput:focus {
   border-color: #d40000;
-  background: #fff;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.05);
 }
 
-.emergencyResults {
+.emergencyModalOverlay .primaryButton {
+  padding: 0 20px;
+  background: #d40000;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.emergencyModalOverlay .primaryButton:hover:not(:disabled) {
+  background: #b30000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.2);
+}
+
+.emergencyModalOverlay .primaryButton:disabled {
+  background: #e0e0e0;
+  color: #999999;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* LISTA DE SUGESTÕES */
+.emergencyModalOverlay .emergencyResults {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
-.suggestionCard {
-  border: 1px solid #eee;
+.emergencyModalOverlay .suggestionCard {
+  border: 1px solid #f0f0f0;
   border-radius: 8px;
-  padding: 16px;
+  padding: 14px 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #fff;
-  transition: transform 0.2s, box-shadow 0.2s;
+  background: #ffffff;
+  transition: all 0.2s ease;
 }
 
-.suggestionCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+.emergencyModalOverlay .suggestionCard:hover {
   border-color: #d40000;
+  background: #fffcfc;
+  transform: translateX(4px); /* Deslizamento moderno para a direita no hover */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
 }
 
-.suggestionInfo {
+.emergencyModalOverlay .suggestionInfo {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
-.suggestionName {
-  font-size: 16px;
+.emergencyModalOverlay .suggestionName {
+  font-size: 15px;
   font-weight: 700;
-  color: #111;
+  color: #111111;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.suggestionCurrentLine {
-  font-size: 12px;
-  color: #666;
-  background: #f0f0f0;
+.emergencyModalOverlay .suggestionCurrentLine {
+  font-size: 11px;
+  color: #d40000;
+  background: #fff0f0;
   padding: 2px 8px;
   border-radius: 12px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
-.suggestionMetrics {
+.emergencyModalOverlay .suggestionMetrics {
   display: flex;
-  gap: 16px;
-  font-size: 13px;
-  color: #555;
+  gap: 12px;
+  font-size: 12px;
+  color: #555555;
+  align-items: center;
 }
 
-.metricBadge {
+.emergencyModalOverlay .metricBadge {
   display: flex;
   align-items: center;
   gap: 4px;
   font-weight: 600;
 }
 
-.metricBadge.green { color: #00b050; }
-.metricBadge.yellow { color: #f59e0b; }
-.metricBadge.red { color: #d40000; }
+/* Cores das Badges de Ferrugem/Recência */
+.emergencyModalOverlay .metricBadge.green { color: #22c55e; }
+.emergencyModalOverlay .metricBadge.yellow { color: #f59e0b; }
+.emergencyModalOverlay .metricBadge.red { color: #d40000; }
 
-.suggestionAction {
+.emergencyModalOverlay .suggestionAction {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 8px;
 }
 
-.scoreCircle {
-  width: 44px;
-  height: 44px;
+/* Círculo do Score de Assiduidade */
+.emergencyModalOverlay .scoreCircle {
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 14px;
-  color: white;
+  font-size: 13px;
+  color: #ffffff;
+  box-shadow: inset 0 -2px 4px rgba(0,0,0,0.15); /* Efeito de botão/led */
 }
 
-.scoreCircle.green { background: #00b050; }
-.scoreCircle.yellow { background: #f39c12; }
-.scoreCircle.red { background: #d40000; }
+.emergencyModalOverlay .scoreCircle.green { background: #22c55e; }
+.emergencyModalOverlay .scoreCircle.yellow { background: #f59e0b; }
+.emergencyModalOverlay .scoreCircle.red { background: #d40000; }
 
-@keyframes slideUp {
-  from { transform: translateY(40px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-.emptyState {
+/* ESTADOS VAZIOS */
+.emergencyModalOverlay .emptyState {
   text-align: center;
   padding: 40px 20px;
-  color: #888;
+  color: #888888;
   font-size: 14px;
+  background: #fcfcfc;
+  border: 1px dashed #e0e0e0;
+  border-radius: 8px;
+}
+
+/* ANIMAÇÕES ESCOPADAS */
+@keyframes emergencyFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes emergencySlideUp {
+  from { transform: translateY(40px) scale(0.98); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
 }

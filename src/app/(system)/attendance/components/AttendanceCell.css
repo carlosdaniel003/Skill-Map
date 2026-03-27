@@ -1,16 +1,23 @@
 /* src/app/(system)/attendance/components/AttendanceCell.css */
 
-.inputCell {
-  width: 44px;
-  height: 38px;
+/* ========================================================
+   ESCOPO DA CÉLULA DA TABELA (TD)
+   ======================================================== */
+td.inputCell {
+  width: 46px;
+  height: 40px;
   position: relative;
+  padding: 0; /* Remove padding padrão da tabela */
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  transition: background-color 0.2s ease;
 }
 
-.inputCell.weekend {
-  background: #f5f5f5 !important;
+td.inputCell.weekend {
+  background: #f8fafc !important; /* Cinza sutil para fim de semana */
 }
 
-.excelInput {
+td.inputCell .excelInput {
   width: 100%;
   height: 100%;
   border: none;
@@ -18,92 +25,29 @@
   text-align: center;
   font-size: 14px;
   font-weight: 800;
-  color: #111111;
+  color: #0f172a;
   text-transform: uppercase;
   outline: none;
   transition: all 0.2s ease;
   cursor: text;
+  box-sizing: border-box;
+  border-radius: 2px;
 }
 
-.excelInput:focus {
+td.inputCell .excelInput:focus {
   background: #ffffff;
-  box-shadow: inset 0 0 0 2px #d40000;
+  box-shadow: inset 0 0 0 2px #d40000; /* Borda interna vermelha */
 }
 
-/* POPOVER DA CÉLULA (BALÃO FLUTUANTE) */
-.statusPopover {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 50%;
-  transform: translateX(-50%);
-  background: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 8px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  z-index: 9999;
-  width: 140px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+td.inputCell .excelInput:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.statusGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
-}
-
-.statusBtn {
-  border: none;
-  border-radius: 4px;
-  padding: 8px 4px;
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-  color: #111111;
-  transition: transform 0.1s, filter 0.1s;
-  background-color: #f0f0f0;
-}
-
-.statusBtn:hover {
-  transform: scale(1.05);
-  filter: brightness(0.95);
-}
-
-.clearBtn {
-  background: transparent;
-  border: 1px dashed #cccccc;
-  border-radius: 4px;
-  padding: 6px;
-  font-size: 11px;
-  color: #666666;
-  cursor: pointer;
-}
-
-.clearBtn:hover {
-  background: #f5f5f5;
-  color: #d40000;
-}
-
-/* CORES DINÂMICAS EXCLUSIVAS DAS CÉLULAS (BACKGROUND E TEXTO) */
-.status-p { background-color: rgba(22, 163, 74, 0.2) !important; color: #16a34a !important; }
-.status-he { background-color: rgba(13, 148, 136, 0.2) !important; color: #0d9488 !important; }
-.status-f { background-color: rgba(220, 38, 38, 0.2) !important; color: #dc2626 !important; }
-.status-a { background-color: rgba(190, 18, 60, 0.2) !important; color: #be123c !important; }
-.status-s { background-color: rgba(244, 63, 94, 0.2) !important; color: #f43f5e !important; }
-.status-fj { background-color: rgba(234, 88, 12, 0.2) !important; color: #ea580c !important; }
-.status-aj { background-color: rgba(217, 119, 6, 0.2) !important; color: #d97706 !important; }
-.status-sj { background-color: rgba(202, 138, 4, 0.2) !important; color: #ca8a04 !important; }
-.status-at { background-color: rgba(147, 51, 234, 0.2) !important; color: #9333ea !important; }
-.status-fe { background-color: rgba(37, 99, 235, 0.2) !important; color: #2563eb !important; }
-.status-lp { background-color: rgba(8, 145, 178, 0.2) !important; color: #0891b2 !important; }
-.status-lm { background-color: rgba(219, 39, 119, 0.2) !important; color: #db2777 !important; }
-
-/* src/app/(system)/attendance/components/AttendanceCell.css */
-
-/* INDICADOR VISUAL DE SINCRONIZAÇÃO (NOVO) */
-.sync-indicator {
+/* ========================================================
+   INDICADORES DE STATUS NA CÉLULA
+   ======================================================== */
+td.inputCell .sync-indicator {
   position: absolute;
   top: 4px;
   right: 4px;
@@ -114,53 +58,32 @@
   pointer-events: none;
 }
 
-.sync-spinner {
-  width: 8px;
-  height: 8px;
-  border: 2px solid rgba(0,0,0,0.1);
+td.inputCell .sync-spinner {
+  width: 10px;
+  height: 10px;
+  border: 2px solid rgba(212, 0, 0, 0.2);
   border-top-color: #d40000;
   border-radius: 50%;
-  animation: spinSync 0.8s linear infinite;
+  animation: attendanceCellSpin 0.8s linear infinite;
 }
 
-.sync-error {
+td.inputCell .sync-error {
   width: 8px;
   height: 8px;
-  background-color: #dc2626;
+  background-color: #ef4444;
   border-radius: 50%;
-  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
 }
 
-.sync-success {
+td.inputCell .sync-success {
   width: 8px;
   height: 8px;
-  background-color: #16a34a;
+  background-color: #22c55e;
   border-radius: 50%;
-  animation: fadeOutSync 2s forwards;
+  animation: attendanceCellFadeOut 2s forwards;
 }
 
-.excelInput:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-@keyframes spinSync {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes fadeOutSync {
-  0% { opacity: 1; transform: scale(1); }
-  80% { opacity: 1; transform: scale(1); }
-  100% { opacity: 0; transform: scale(0); }
-}
-
-/* src/app/(system)/attendance/components/AttendanceCell.css */
-
-/* ... (Mantenha o resto que já tinha antes, como status-p, bolinhas de loading, etc) ... */
-
-/* TRIÂNGULO INDICADOR DE OBSERVAÇÃO NA CÉLULA (Estilo Excel) */
-.obs-triangle {
+td.inputCell .obs-triangle {
   position: absolute;
   top: 0;
   right: 0;
@@ -172,169 +95,269 @@
   pointer-events: none;
 }
 
-.popoverDivider {
-  height: 1px;
-  background-color: #e0e0e0;
-  margin: 4px 0;
+/* ========================================================
+   POPOVER (BALÃO FLUTUANTE) - Escopado por ID
+   ======================================================== */
+#attendance-popover.statusPopover {
+  position: absolute;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  z-index: 99998;
+  width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: popoverFadeIn 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* BOTÃO DE ADICIONAR OBSERVAÇÃO NO BALÃO */
-.addObsBtn {
-  background: transparent;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
+#attendance-popover .statusGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+#attendance-popover .statusBtn {
+  border: none;
+  border-radius: 6px;
   padding: 8px 4px;
   font-size: 11px;
   font-weight: 700;
-  color: #333;
   cursor: pointer;
-  transition: all 0.2s;
+  color: #1e293b;
+  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+  background-color: #f1f5f9;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
 }
 
-.addObsBtn:hover {
-  background: #f9f9f9;
-  border-color: #cccccc;
+#attendance-popover .statusBtn:hover {
+  transform: translateY(-1px) scale(1.05);
+  filter: brightness(0.95);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+#attendance-popover .popoverDivider {
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 2px 0;
+}
+
+#attendance-popover .addObsBtn {
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#attendance-popover .addObsBtn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
   color: #d40000;
 }
 
-/* =========================================
-   MODAL DE OBSERVAÇÃO (CENTRO DA TELA)
-   ========================================= */
+#attendance-popover .clearBtn {
+  background: #fff1f2;
+  border: 1px dashed #fecdd3;
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #e11d48;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
 
+#attendance-popover .clearBtn:hover {
+  background: #ffe4e6;
+  border-color: #fda4af;
+  color: #be123c;
+}
+
+/* ========================================================
+   CORES DINÂMICAS EXCLUSIVAS
+   ======================================================== */
+/* Atuam garantindo a cor correta tanto na célula quanto nos botões do popover */
+td.inputCell .status-p, #attendance-popover .status-p { background-color: rgba(34, 197, 94, 0.15) !important; color: #16a34a !important; }
+td.inputCell .status-he, #attendance-popover .status-he { background-color: rgba(20, 184, 166, 0.15) !important; color: #0d9488 !important; }
+td.inputCell .status-f, #attendance-popover .status-f { background-color: rgba(239, 68, 68, 0.15) !important; color: #dc2626 !important; }
+td.inputCell .status-a, #attendance-popover .status-a { background-color: rgba(225, 29, 72, 0.15) !important; color: #be123c !important; }
+td.inputCell .status-s, #attendance-popover .status-s { background-color: rgba(244, 63, 94, 0.15) !important; color: #e11d48 !important; }
+td.inputCell .status-fj, #attendance-popover .status-fj { background-color: rgba(249, 115, 22, 0.15) !important; color: #ea580c !important; }
+td.inputCell .status-aj, #attendance-popover .status-aj { background-color: rgba(245, 158, 11, 0.15) !important; color: #d97706 !important; }
+td.inputCell .status-sj, #attendance-popover .status-sj { background-color: rgba(234, 179, 8, 0.15) !important; color: #ca8a04 !important; }
+td.inputCell .status-at, #attendance-popover .status-at { background-color: rgba(168, 85, 247, 0.15) !important; color: #9333ea !important; }
+td.inputCell .status-fe, #attendance-popover .status-fe { background-color: rgba(59, 130, 246, 0.15) !important; color: #2563eb !important; }
+td.inputCell .status-lp, #attendance-popover .status-lp { background-color: rgba(6, 182, 212, 0.15) !important; color: #0891b2 !important; }
+td.inputCell .status-lm, #attendance-popover .status-lm { background-color: rgba(236, 72, 153, 0.15) !important; color: #db2777 !important; }
+
+/* ========================================================
+   MODAL DE OBSERVAÇÃO (CENTRO DA TELA)
+   ======================================================== */
 .obsModalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 99999;
-  animation: fadeOverlay 0.2s ease-out;
+  animation: obsFadeOverlay 0.2s ease-out;
 }
 
-.obsModalCard {
+.obsModalOverlay .obsModalCard {
   width: 100%;
-  max-width: 450px;
+  max-width: 480px;
   background: #ffffff;
   border-top: 6px solid #d40000;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
-  animation: slideUpModal 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: obsSlideUpModal 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.obsModalHeader {
+.obsModalOverlay .obsModalHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
-  border-bottom: 1px solid #f0f0f0;
-  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 16px;
 }
 
-.obsModalHeader h3 {
+.obsModalOverlay .obsModalHeader h3 {
   margin: 0;
   font-size: 18px;
-  font-weight: 700;
-  color: #111111;
+  font-weight: 800;
+  color: #0f172a;
 }
 
-.obsModalDate {
-  font-size: 13px;
+.obsModalOverlay .obsModalDate {
+  font-size: 12px;
   font-weight: 700;
   color: #d40000;
-  background: rgba(212, 0, 0, 0.1);
-  padding: 4px 10px;
+  background: #fef2f2;
+  padding: 6px 12px;
   border-radius: 20px;
+  border: 1px solid #fee2e2;
 }
 
-.obsModalBody {
+.obsModalOverlay .obsModalBody {
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-bottom: 24px;
 }
 
-.obsModalBody label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #555555;
+.obsModalOverlay .obsModalBody label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #334155;
 }
 
-.obsModalTextarea {
+.obsModalOverlay .obsModalTextarea {
   width: 100%;
   min-height: 120px;
   resize: vertical;
-  padding: 12px;
+  padding: 14px;
   font-size: 14px;
-  color: #333333;
-  background: #f9f9f9;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
+  color: #1e293b;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
   outline: none;
   font-family: inherit;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  line-height: 1.5;
 }
 
-.obsModalTextarea:focus {
+.obsModalOverlay .obsModalTextarea:focus {
   background: #ffffff;
   border-color: #d40000;
   box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
 }
 
-.obsModalFooter {
+.obsModalOverlay .obsModalFooter {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 
-.obsModalBtn {
-  padding: 10px 16px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
+.obsModalOverlay .obsModalBtn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
-.obsModalBtn.secondary {
+.obsModalOverlay .obsModalBtn.secondary {
   background: #ffffff;
-  border: 1px solid #e0e0e0;
-  color: #333333;
+  border: 1px solid #cbd5e1;
+  color: #475569;
 }
 
-.obsModalBtn.secondary:hover {
-  background: #f9f9f9;
-  border-color: #cccccc;
+.obsModalOverlay .obsModalBtn.secondary:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
 }
 
-.obsModalBtn.primary {
+.obsModalOverlay .obsModalBtn.primary {
   background: #d40000;
   border: none;
   color: #ffffff;
 }
 
-.obsModalBtn.primary:hover {
+.obsModalOverlay .obsModalBtn.primary:hover {
   background: #b30000;
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.2);
 }
 
-@keyframes fadeOverlay {
+/* ========================================================
+   ANIMAÇÕES ESCOPADAS
+   ======================================================== */
+@keyframes attendanceCellSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes attendanceCellFadeOut {
+  0% { opacity: 1; transform: scale(1); }
+  80% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0); }
+}
+
+@keyframes popoverFadeIn {
+  from { opacity: 0; transform: translate(-50%, -10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@keyframes obsFadeOverlay {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-@keyframes slideUpModal {
+@keyframes obsSlideUpModal {
   from { transform: translateY(20px) scale(0.95); opacity: 0; }
   to { transform: translateY(0) scale(1); opacity: 1; }
 }

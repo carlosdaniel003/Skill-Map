@@ -1,28 +1,97 @@
 /* src/app/(system)/attendance/components/ShiftManagementTab.css */
 
+/* ROOT SCOPE */
 .shiftManagementTab {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-.shiftFilterCard {
+/* ========================================================
+   ESTRUTURAS BASE (Garante que não dependa do CSS global)
+   ======================================================== */
+
+.shiftManagementTab .corporateCard {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+}
+
+.shiftManagementTab .primaryButton {
+  border: none;
+  border-radius: 6px;
+  background: #d40000;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shiftManagementTab .primaryButton:hover:not(:disabled) {
+  background: #b30000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
+}
+
+.shiftManagementTab .primaryButton:disabled {
+  background: #e0e0e0;
+  color: #999999;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.shiftManagementTab .emptyAttendance {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background: #fcfcfc;
+  border: 2px dashed #e0e0e0;
+  border-radius: 8px;
+  text-align: center;
+  gap: 16px;
+}
+
+.shiftManagementTab .emptyIcon {
+  color: #cccccc;
+}
+
+.shiftManagementTab .emptyAttendance p {
+  margin: 0;
+  color: #666666;
+  font-size: 15px;
+  max-width: 400px;
+  line-height: 1.5;
+}
+
+/* ========================================================
+   FILTROS
+   ======================================================== */
+
+.shiftManagementTab .shiftFilterCard {
   border-top: 6px solid #d40000;
 }
 
-.shiftFilterGroup {
+.shiftManagementTab .shiftFilterGroup {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.shiftFilterGroup label {
+.shiftManagementTab .shiftFilterGroup label {
   font-size: 15px;
   font-weight: 700;
   color: #111111;
 }
 
-.shiftSelectInput {
+.shiftManagementTab .shiftSelectInput {
   width: 100%;
   max-width: 400px;
   padding: 14px 16px;
@@ -36,20 +105,23 @@
   cursor: pointer;
 }
 
-.shiftSelectInput:focus {
+.shiftManagementTab .shiftSelectInput:focus {
   border-color: #d40000;
   background: #fff;
   box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
 }
 
-/* COCKPIT DE PRONTIDÃO (KPI CARDS) */
-.readinessCockpit {
+/* ========================================================
+   COCKPIT DE PRONTIDÃO (KPI CARDS)
+   ======================================================== */
+
+.shiftManagementTab .readinessCockpit {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 24px;
 }
 
-.readinessCard {
+.shiftManagementTab .readinessCard {
   background: #fff;
   border-radius: 8px;
   padding: 24px;
@@ -61,16 +133,16 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.readinessCard:hover {
+.shiftManagementTab .readinessCard:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.06);
 }
 
-.readinessCard.success { border-left-color: #00b050; }
-.readinessCard.danger { border-left-color: #d40000; }
-.readinessCard.neutral { border-left-color: #0078d4; }
+.shiftManagementTab .readinessCard.success { border-left-color: #00b050; }
+.shiftManagementTab .readinessCard.danger { border-left-color: #d40000; }
+.shiftManagementTab .readinessCard.neutral { border-left-color: #0078d4; }
 
-.readinessCard h4 {
+.shiftManagementTab .readinessCard h4 {
   margin: 0;
   font-size: 14px;
   color: #555;
@@ -78,37 +150,40 @@
   letter-spacing: 0.5px;
 }
 
-.readinessValue {
+.shiftManagementTab .readinessValue {
   font-size: 32px;
   font-weight: 800;
   color: #111;
 }
 
-.readinessValue span {
+.shiftManagementTab .readinessValue span {
   font-size: 20px;
   color: #888;
   font-weight: 600;
 }
 
-.readinessSub {
+.shiftManagementTab .readinessSub {
   margin: 0;
   font-size: 13px;
   color: #666;
 }
 
-/* RADAR DE RISCO */
-.radarCard {
+/* ========================================================
+   RADAR DE RISCO
+   ======================================================== */
+
+.shiftManagementTab .radarCard {
   border-top: 6px solid #d40000;
 }
 
-.radarHeader {
+.shiftManagementTab .radarHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
 
-.radarHeader h3 {
+.shiftManagementTab .radarHeader h3 {
   margin: 0;
   font-size: 18px;
   font-weight: 800;
@@ -116,20 +191,19 @@
   letter-spacing: -0.5px;
 }
 
-.smartAllocBtn {
-  display: flex;
-  align-items: center;
+/* Botão Específico "Motor de Emergência" */
+.shiftManagementTab .smartAllocBtn {
   gap: 8px;
   padding: 10px 16px;
 }
 
-.radarList {
+.shiftManagementTab .radarList {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.radarItem {
+.shiftManagementTab .radarItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -140,22 +214,22 @@
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.radarItem:hover {
+.shiftManagementTab .radarItem:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   background: #ffffff;
 }
 
-.radarItem.risk-high { border-left: 4px solid #d40000; }
-.radarItem.risk-medium { border-left: 4px solid #f39c12; }
+.shiftManagementTab .radarItem.risk-high { border-left: 4px solid #d40000; }
+.shiftManagementTab .radarItem.risk-medium { border-left: 4px solid #f39c12; }
 
-.radarInfo {
+.shiftManagementTab .radarInfo {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.radarBadge {
+.shiftManagementTab .radarBadge {
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 13px;
@@ -163,34 +237,34 @@
   color: white;
 }
 
-.radarBadge.danger { background: #d40000; }
-.radarBadge.warning { background: #f39c12; }
+.shiftManagementTab .radarBadge.danger { background: #d40000; }
+.shiftManagementTab .radarBadge.warning { background: #f39c12; }
 
-.radarDetails {
+.shiftManagementTab .radarDetails {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.radarDetails strong {
+.shiftManagementTab .radarDetails strong {
   font-size: 15px;
   font-weight: 700;
   color: #111;
 }
 
-.radarDetails strong span {
+.shiftManagementTab .radarDetails strong span {
   font-size: 13px;
   color: #888;
   font-weight: normal;
   margin-left: 4px;
 }
 
-.radarDetails span {
+.shiftManagementTab .radarDetails span {
   font-size: 13px;
   color: #555;
 }
 
-.replaceBtn {
+.shiftManagementTab .replaceBtn {
   font-size: 13px;
   padding: 8px 16px;
   border: 1px solid #e0e0e0;
@@ -202,22 +276,26 @@
   transition: all 0.2s ease;
 }
 
-.replaceBtn:hover {
+.shiftManagementTab .replaceBtn:hover {
   background: #f5f5f5;
   color: #111111;
   border-color: #cccccc;
 }
 
+/* ========================================================
+   RESPONSIVIDADE
+   ======================================================== */
+
 @media (max-width: 768px) {
-  .radarItem {
+  .shiftManagementTab .radarItem {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
   }
-  .replaceBtn {
+  .shiftManagementTab .replaceBtn {
     width: 100%;
   }
-  .readinessCockpit {
+  .shiftManagementTab .readinessCockpit {
     grid-template-columns: 1fr;
   }
 }
