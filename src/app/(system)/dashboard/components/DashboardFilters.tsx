@@ -132,20 +132,6 @@ export default function DashboardFilters(){
           </select>
         </div>
 
-        {/* 🆕 TURNO */}
-        <div className="filterGroup">
-          <label>Turno (Equipe)</label>
-          <select
-            className="corporateInput"
-            value={pendingFilters.turno ?? ""}
-            onChange={e => setPendingTurno(e.target.value || null)}
-          >
-            <option value="">TODOS OS TURNOS</option>
-            <option value="1º Turno">Comercial</option>
-            <option value="2º Turno">2º Turno Estendido</option>
-          </select>
-        </div>
-
         {/* BOTÕES DE AÇÃO */}
         <div className="filterAction" style={{ display: 'flex', gap: '8px' }}>
           <button
