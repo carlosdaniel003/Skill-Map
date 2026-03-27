@@ -101,7 +101,7 @@ export default function DashboardFilters(){
 
       <div className="filtersGrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', alignItems: 'end' }}>
 
-        {/* BUSCA OPERADOR */}
+        {/* SELECT DE TURNO */}
         <div className="filterGroup">
           <label>Turno (Equipe)</label>
           <select

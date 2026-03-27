@@ -57,7 +57,7 @@ export default function OperatorSkillGrade(){
         let t = "Média da Fábrica"
         if (filters.linha) t = `Média: ${filters.linha}`
         if (filters.turno) {
-  t += ` (${filters.turno})`
+  t += ` (${filters.turno})`    // ← Deveria ter ~8 espaços de indentação
 }
         setTitle(t)
       }
