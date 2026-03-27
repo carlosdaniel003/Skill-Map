@@ -126,11 +126,7 @@ export default function TalentMatrix() {
     loadMatrixData()
   }, [filters])
 
-  const formatTurno = (turno: string) => {
-    if (turno === "1º Turno") return "Comercial"
-    if (turno === "2º Turno") return "Estendido"
-    return turno
-  }
+  const formatTurno = (turno: string) => turno || "Sem Turno"
 
   // Ícones SVG para os Quadrantes e Badges
   const IconOportunidades = <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m12 16 4-4-4-4"/><path d="M8 12h8"/></svg>

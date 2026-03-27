@@ -68,9 +68,8 @@ export default function OperatorSkillsRadar() {
         let title = "Média Geral"
         if (filters.linha) title += ` - ${filters.linha}`
         if (filters.turno) {
-          const tName = filters.turno === "1º Turno" ? "Comercial" : "2º Turno"
-          title += ` (${tName})`
-        }
+  title += ` (${filters.turno})`
+}
         setOperatorName(title)
       }
 

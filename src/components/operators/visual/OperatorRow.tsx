@@ -92,8 +92,8 @@ export default function OperatorRow({
             value={turno}
             onChange={e=>setTurno(e.target.value)}
           >
-            <option value="1º Turno">1º Turno</option>
-            <option value="2º Turno">2º Turno</option>
+            <option value="Comercial">Comercial</option>
+            <option value="2º Turno estendido">2º Turno estendido</option>
           </select>
         ) : (
           <span style={{

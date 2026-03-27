@@ -122,9 +122,8 @@ export default function SkillMatrixHeatmap() {
   let mapTitle = "Visão Global (Fábrica)"
   if (filters.linha) mapTitle = filters.linha
   if (filters.turno) {
-    const tName = filters.turno === "1º Turno" ? "Comercial" : "2º Turno"
-    mapTitle += filters.linha ? ` (${tName})` : `Visão Global (${tName})`
-  }
+  mapTitle += filters.linha ? ` (${filters.turno})` : `Visão Global (${filters.turno})`
+}
 
   return (
     <div className="corporateCard heatmapCard animateFadeIn">

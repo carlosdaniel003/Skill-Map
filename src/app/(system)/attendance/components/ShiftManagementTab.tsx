@@ -48,11 +48,7 @@ export default function ShiftManagementTab({ filters, shift }: ShiftManagementPr
   const safeRisco = shift.metrics.operadoresEmRisco || 0;
 
   // Função auxiliar para formatar o nome do turno na lista
-  const formatTurno = (turno: string) => {
-    if (turno === "1º Turno") return "Comercial";
-    if (turno === "2º Turno") return "Estendido";
-    return turno || "S/T";
-  };
+  const formatTurno = (turno: string) => turno || "S/T"
 
   return (
     <div className="shiftManagementTab animateFadeIn">
@@ -82,8 +78,8 @@ export default function ShiftManagementTab({ filters, shift }: ShiftManagementPr
               onChange={(e) => filters.setSelectedTurno(e.target.value)}
             >
               <option value="">Todos os turnos</option>
-              <option value="1º Turno">Comercial</option>
-              <option value="2º Turno">2º Turno estendido</option>
+              <option value="Comercial">Comercial</option>
+              <option value="2º Turno estendido">2º Turno estendido</option>
             </select>
           </div>
 
