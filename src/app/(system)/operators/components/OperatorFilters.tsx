@@ -41,8 +41,8 @@ export default function OperatorFilters({ data }: { data: any }) {
           onChange={e=>setFilterTurno(e.target.value)}
         >
           <option value="">Todos os turnos</option>
-          <option value="1º Turno">Comercial</option>
-          <option value="2º Turno">2º Turno estendido</option>
+          <option value="Comercial">Comercial</option>
+          <option value="2º Turno estendido">2º Turno estendido</option>
         </select>
 
         <select

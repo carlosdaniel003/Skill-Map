@@ -33,6 +33,11 @@ const CATEGORIES = [
   "ARCON"
 ]
 
+// Função utilitária para normalizar o nome do turno
+function normalizeTurno(turno: string | null | undefined): string {
+  return turno || "Sem Turno"
+}
+
 export default function LineSkillsRadar() {
 
   const { filters } = useDashboardFilters()
@@ -73,12 +78,14 @@ export default function LineSkillsRadar() {
       const teamIds = operators.map(op => op.id)
       const opMap = new Map(operators.map(op => [op.id, op]))
 
-      const turnosNaAmostra = new Set(operators.map(o => o.turno || "Sem Turno"))
-      const turnosProcessados = Array.from(turnosNaAmostra).map(t => {
-        if (t === "1º Turno") return "Comercial"
-        if (t === "2º Turno") return "2º Turno Estendido"
-        return t
-      })
+      // ✅ CORREÇÃO: Normaliza ANTES de deduplicar com Set
+      // Isso evita keys duplicadas quando existem operadores com
+      // turno="1º Turno" e turno="Comercial" ao mesmo tempo no banco.
+      const turnosProcessados = Array.from(
+        new Set(
+          operators.map(o => normalizeTurno(o.turno))
+        )
+      )
       setActiveTurns(turnosProcessados)
 
       if (mode === "skills" && filters.linha) {
@@ -95,9 +102,7 @@ export default function LineSkillsRadar() {
           const op = opMap.get(row.operator_id)
           if (!op) return
 
-          let tName = op.turno || "Sem Turno"
-          if (tName === "1º Turno") tName = "Comercial"
-          if (tName === "2º Turno") tName = "2º Turno Estendido"
+          const tName = normalizeTurno(op.turno)
 
           if (!map[row.posto]) map[row.posto] = {}
           if (!map[row.posto][tName]) map[row.posto][tName] = { total: 0, count: 0 }
@@ -147,9 +152,7 @@ export default function LineSkillsRadar() {
 
           const cat = lineCategoryMap[row.linha]
           if (cat && map[cat] !== undefined) {
-            let tName = op.turno || "Sem Turno"
-            if (tName === "1º Turno") tName = "Comercial"
-            if (tName === "2º Turno") tName = "2º Turno Estendido"
+            const tName = normalizeTurno(op.turno)
 
             if (!map[cat][tName]) map[cat][tName] = { total: 0, count: 0 }
 
@@ -189,9 +192,7 @@ export default function LineSkillsRadar() {
           const op = opMap.get(row.operator_id)
           if (!op || !row.linha) return
 
-          let tName = op.turno || "Sem Turno"
-          if (tName === "1º Turno") tName = "Comercial"
-          if (tName === "2º Turno") tName = "2º Turno Estendido"
+          const tName = normalizeTurno(op.turno)
 
           if (!map[row.linha]) map[row.linha] = {}
           if (!map[row.linha][tName]) map[row.linha][tName] = { total: 0, count: 0 }
@@ -273,7 +274,6 @@ export default function LineSkillsRadar() {
       <div className="radarChartContainer">
         {isLoading ? (
           <div className="radarLoading" style={{ display: 'flex', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
-            {/* 🛠️ MUDANÇA AQUI: Loading vermelho padrão injetado no centro do container */}
             <div className="pageLoader" style={{ height: '40px', width: '40px' }} />
           </div>
         ) : data.length === 0 ? (

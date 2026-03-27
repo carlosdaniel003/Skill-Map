@@ -102,42 +102,17 @@ export default function DashboardFilters(){
       <div className="filtersGrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', alignItems: 'end' }}>
 
         {/* BUSCA OPERADOR */}
-        <div className="filterGroup searchGroup">
-          <label>Operador</label>
-          <div className="searchInputWrapper">
-            <input
-              type="text"
-              className="corporateInput"
-              placeholder="Buscar operador ou matrícula..."
-              value={search}
-              onChange={e=>{
-                setSearch(e.target.value)
-                setPendingOperator(null)
-              }}
-              onKeyDown={(e)=>{
-                if(e.key === "Enter"){
-                  e.preventDefault()
-                  if(filteredOperators.length > 0){
-                    handleSelectOperator(filteredOperators[0])
-                  }
-                }
-              }}
-            />
-
-            {filteredOperators.length > 0 && (
-              <div className="dropdownResults">
-                {filteredOperators.map(op =>(
-                  <div
-                    key={op.id}
-                    className="dropdownItem"
-                    onClick={()=>handleSelectOperator(op)}
-                  >
-                    <strong>{op.matricula}</strong> — {op.nome}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+        <div className="filterGroup">
+          <label>Turno (Equipe)</label>
+          <select
+            className="corporateInput"
+            value={pendingFilters.turno ?? ""}
+            onChange={e => setPendingTurno(e.target.value || null)}
+          >
+            <option value="">TODOS OS TURNOS</option>
+            <option value="Comercial">Comercial</option>
+            <option value="2º Turno estendido">2º Turno Estendido</option>
+          </select>
         </div>
 
         {/* LINHA / MODELO */}
