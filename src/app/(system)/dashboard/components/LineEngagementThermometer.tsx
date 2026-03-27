@@ -41,9 +41,8 @@ export default function LineEngagementThermometer() {
           if (!row.linha_atual) return
 
           // Traduz o turno do banco para o nome amigável
-          let turnoName = row.turno || "Sem Turno"
-          if (turnoName === "1º Turno") turnoName = "Comercial"
-          if (turnoName === "2º Turno") turnoName = "2º Turno Estendido"
+          const turnoName = row.turno || "Sem Turno"
+          // Removido: não precisa mais traduzir se o banco estiver normalizado
 
           // Se o RH já filtrou um turno específico, mostramos só a Linha. 
           // Se não houver filtro de turno, nós desmembramos a linha nos dois turnos!

@@ -231,7 +231,7 @@ export default function LineSkillsRadar() {
 
   const getColorForTurn = (turnName: string) => {
     if (turnName === "Comercial") return "#3b82f6" 
-    if (turnName === "2º Turno Estendido") return "#8b5cf6" 
+    if (turnName === "2º Turno estendido") return "#8b5cf6" 
     return "#f59e0b" 
   }
 

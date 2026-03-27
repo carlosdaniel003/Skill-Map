@@ -44,8 +44,8 @@ export default function OperatorForm({ data }: { data: any }) {
           onChange={e=>setTurno(e.target.value)}
         >
           <option value="">Selecionar turno *</option>
-          <option value="1º Turno">Comercial</option>
-          <option value="2º Turno">2º Turno estendido</option>
+          <option value="Comercial">Comercial</option>
+          <option value="2º Turno estendido">2º Turno estendido</option>
         </select>
 
         {/* 🆕 CAMPO DE LINHA (AGORA OBRIGATÓRIO) */}

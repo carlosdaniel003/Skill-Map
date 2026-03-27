@@ -57,9 +57,8 @@ export default function OperatorSkillGrade(){
         let t = "Média da Fábrica"
         if (filters.linha) t = `Média: ${filters.linha}`
         if (filters.turno) {
-          const tName = filters.turno === "1º Turno" ? "Comercial" : "2º Turno"
-          t += filters.linha ? ` (${tName})` : ` (${tName})`
-        }
+  t += ` (${filters.turno})`
+}
         setTitle(t)
       }
 
