@@ -2,6 +2,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
+import { createPortal } from "react-dom" // 🆕 IMPORT DO PORTAL
 import { supabase } from "@/services/database/supabaseClient"
 import { useDashboardFilters } from "../context/DashboardFilterContext"
 import "./TalentMatrix.css"
@@ -12,7 +13,7 @@ interface OperatorMatrixData {
   matricula: string
   posto_atual: string
   linha_atual: string
-  turno: string // Adicionado para exibir no modal
+  turno: string
   high_skill_count: number 
   score_assiduidade: number
 }
@@ -37,7 +38,11 @@ export default function TalentMatrix() {
     operators: OperatorMatrixData[]
   } | null>(null)
 
+  // 🆕 ESTADO PARA GARANTIR HIDRATAÇÃO CORRETA NO NEXT.JS
+  const [mounted, setMounted] = useState(false)
+
   useEffect(() => {
+    setMounted(true)
     async function loadMatrixData() {
       setLoading(true)
       try {
@@ -73,7 +78,7 @@ export default function TalentMatrix() {
               matricula: row.matricula,
               posto_atual: row.posto_atual,
               linha_atual: row.linha_atual,
-              turno: row.turno || "Sem Turno", // Tratamento do Turno
+              turno: row.turno || "Sem Turno",
               high_skill_count: 0,
               score_assiduidade: Number(row.score_assiduidade || 0)
             })
@@ -128,13 +133,11 @@ export default function TalentMatrix() {
 
   const formatTurno = (turno: string) => turno || "Sem Turno"
 
-  // Ícones SVG para os Quadrantes e Badges
   const IconOportunidades = <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m12 16 4-4-4-4"/><path d="M8 12h8"/></svg>
   const IconPilares = <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
   const IconRisco = <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
   const IconToxicos = <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
 
-  // Mini SVGs para as Tags
   const IconSkillBadge = <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '4px'}}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
   const IconClockBadge = <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '4px'}}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
 
@@ -263,8 +266,8 @@ export default function TalentMatrix() {
         </div>
       )}
 
-      {/* MODAL DE DETALHES (PADRÃO BLUR/ROUNDED) */}
-      {selectedQuadrant && (
+      {/* 🆕 MODAL RENDERIZADO NO PORTAL PARA SOBREPOR TODA A TELA */}
+      {selectedQuadrant && mounted && createPortal(
         <div className="modTalent-modalOverlay" onClick={() => setSelectedQuadrant(null)}>
           <div 
             className="modTalent-modalCard" 
@@ -349,7 +352,8 @@ export default function TalentMatrix() {
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

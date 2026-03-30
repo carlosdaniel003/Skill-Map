@@ -267,21 +267,21 @@
 }
 
 /* ========================================================
-   MODAL CORPORATIVO (BLUR & ROUNDED)
+   MODAL CORPORATIVO (BLUR & ROUNDED) VIA PORTAL
    ======================================================== */
 .modPoly-modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  inset: 0; /* Tela Cheia Absolute */
+  width: 100vw;
+  height: 100vh;
+  background: rgba(17, 17, 17, 0.45);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10000;
-  animation: modPolyFadeIn 0.3s ease-out;
+  z-index: 99999; /* Garante sobreposição total */
+  animation: modPolyFadeIn 0.3s ease-out forwards;
   padding: 20px;
   box-sizing: border-box;
 }
@@ -289,14 +289,14 @@
 .modPoly-modalCard {
   width: 100%;
   max-width: 540px;
-  max-height: 85vh;
+  max-height: 90vh; /* Limita a altura e cria rolagem interna se necessário */
   background: #ffffff;
   border-radius: 28px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
-  animation: modPolySlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+  animation: modPolySlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  overflow: hidden; /* Mantém as bordas perfeitamente redondas */
 }
 
 .modPoly-modalHeader {
@@ -329,8 +329,8 @@
   width: 44px;
   height: 44px;
   border-radius: 14px;
-  background: #eff6ff; /* Fundo azul claro */
-  color: #3b82f6;      /* Ícone azul escuro */
+  background: #eff6ff; 
+  color: #3b82f6;      
 }
 
 .modPoly-closeBtn {
@@ -357,29 +357,29 @@
   flex-direction: column;
   gap: 20px;
   background: #fcfcfc;
-  overflow: hidden; /* Scroll movido para lista */
+  overflow-y: auto; /* O corpo principal cuida do scroll agora */
   flex: 1;
 }
+
+/* Custom Scrollbar geral do modal */
+.modPoly-modalBody::-webkit-scrollbar { width: 8px; }
+.modPoly-modalBody::-webkit-scrollbar-track { background: transparent; margin: 8px 0; }
+.modPoly-modalBody::-webkit-scrollbar-thumb { background-color: #dcdcdc; border-radius: 10px; }
 
 .modPoly-modalDesc {
   color: #666666;
   font-size: 14px;
   line-height: 1.5;
+  margin: 0;
 }
 
-/* LISTA COM SCROLL NO MODAL */
+/* LISTA DENTRO DO MODAL */
 .modPoly-scrollableList {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: 400px;
-  overflow-y: auto;
-  padding-right: 8px;
+  /* Retiramos max-height e overflow pois o modalBody lida com o scroll */
 }
-
-.modPoly-scrollableList::-webkit-scrollbar { width: 6px; }
-.modPoly-scrollableList::-webkit-scrollbar-track { background: transparent; margin: 4px 0; }
-.modPoly-scrollableList::-webkit-scrollbar-thumb { background-color: #dcdcdc; border-radius: 10px; }
 
 /* CARD DE CADA OPERADOR NO MODAL */
 .modPoly-suggestionCard {
@@ -455,8 +455,21 @@
   to { opacity: 1; }
 }
 
-/* Responsividade */
+/* Responsividade Mobile do Modal */
 @media (max-width: 640px) {
+  .modPoly-modalOverlay {
+    padding: 16px;
+  }
+  .modPoly-modalCard {
+    border-radius: 20px;
+    max-height: 95vh;
+  }
+  .modPoly-modalHeader {
+    padding: 20px 24px;
+  }
+  .modPoly-modalBody {
+    padding: 20px 24px;
+  }
   .modPoly-suggestionCard {
     flex-direction: column;
     align-items: flex-start;

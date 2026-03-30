@@ -2,6 +2,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
+import { createPortal } from "react-dom" // 🆕 IMPORT DO PORTAL
 import { supabase } from "@/services/database/supabaseClient"
 import { useDashboardFilters } from "../context/DashboardFilterContext"
 import "./OperatorKPIs.css"
@@ -30,8 +31,12 @@ export default function OperatorKPIs() {
   const [loading, setLoading] = useState(true)
 
   const [selectedLevel, setSelectedLevel] = useState<ChartData | null>(null)
+  
+  // 🆕 ESTADO PARA GARANTIR HIDRATAÇÃO CORRETA NO NEXT.JS
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     loadKPIs()
   }, [filters])
 
@@ -204,8 +209,8 @@ export default function OperatorKPIs() {
         </div>
       )}
 
-      {/* MODAL DE DETALHES COM SCROLLBAR INTERNO */}
-      {selectedLevel && (
+      {/* 🆕 MODAL RENDERIZADO NO PORTAL PARA SOBREPOR TODA A TELA */}
+      {selectedLevel && mounted && createPortal(
         <div className="modOpKPI-modalOverlay" onClick={() => setSelectedLevel(null)}>
           <div 
             className="modOpKPI-modalCard" 
@@ -229,7 +234,6 @@ export default function OperatorKPIs() {
                 Total de <strong>{selectedLevel.quantidade}</strong> colaboradores agrupados nesta faixa média de domínio técnico ({selectedLevel.description}).
               </p>
 
-              {/* LISTA QUE TERÁ A SCROLLBAR */}
               <div className="modOpKPI-scrollableList">
                 {selectedLevel.operadores.map((op) => (
                   <div key={op.id} className="modOpKPI-suggestionCard">
@@ -253,7 +257,8 @@ export default function OperatorKPIs() {
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

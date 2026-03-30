@@ -2,6 +2,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
+import { createPortal } from "react-dom" // 🆕 Importação do Portal
 import { supabase } from "@/services/database/supabaseClient"
 import { useDashboardFilters } from "../context/DashboardFilterContext"
 import "./PolyvalenceRanking.css"
@@ -12,7 +13,7 @@ interface JokerOperator {
   matricula: string
   linha_atual: string
   posto_atual: string 
-  highSkillsCount: number // Quantidade de skills Nível 3 ou 4
+  highSkillsCount: number 
 }
 
 export default function PolyvalenceRanking() {
@@ -27,6 +28,13 @@ export default function PolyvalenceRanking() {
 
   // Estado para controlar o Modal
   const [isModalOpen, setIsModalOpen] = useState(false)
+  
+  // 🆕 Estado para garantir que o Portal só renderize no lado do cliente
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     async function loadPolyvalenceData() {
@@ -123,6 +131,10 @@ export default function PolyvalenceRanking() {
     kpiStatusText = "Em Desenvolvimento"
   }
 
+  // Ícone base para o modal e botões
+  const IconPoly = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m2 12 5.25 5 2.625-3M8 12l5.25 5 2.625-3M14 12l5.25 5 2.625-3"/></svg>
+  const IconTrophy = <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '6px'}}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>;
+
   return (
     <div className="modPoly-card animateFadeIn">
       <div className="modPoly-header">
@@ -159,7 +171,7 @@ export default function PolyvalenceRanking() {
           <div className="modPoly-ranking">
             <div className="modPoly-rankingHeader">
               <h4>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '6px'}}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg> 
+                {IconTrophy} 
                 Top 5 Operadores Coringas
               </h4>
               {metrics.topJokers.length > 0 && (
@@ -196,18 +208,19 @@ export default function PolyvalenceRanking() {
         </>
       )}
 
-      {/* MODAL DE DETALHES (PADRÃO CORPORATIVO BLUR/ROUNDED) */}
-      {isModalOpen && (
+      {/* 🆕 MODAL RENDERIZADO NO PORTAL PARA SOBREPOR TODA A TELA */}
+      {isModalOpen && mounted && createPortal(
         <div className="modPoly-modalOverlay" onClick={() => setIsModalOpen(false)}>
           <div 
             className="modPoly-modalCard" 
+            style={{ borderTopColor: '#3b82f6' }}
             onClick={(e) => e.stopPropagation()} 
           >
             
             <div className="modPoly-modalHeader">
               <div className="modPoly-modalTitle">
                 <div className="modPoly-modalIcon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m2 12 5.25 5 2.625-3M8 12l5.25 5 2.625-3M14 12l5.25 5 2.625-3"/></svg>
+                  {IconPoly}
                 </div>
                 <h3>Ranking Completo: Coringas</h3>
               </div>
@@ -248,7 +261,8 @@ export default function PolyvalenceRanking() {
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>
