@@ -8,10 +8,12 @@ import {
   getOperatorRisk, 
   getCriticalTrainingNeeds,
   getOperatorContext360,
-  searchOperatorByName,
+  searchOperator,
   getOperatorsByLine,
   queryDatabase,
-  getFactorySummary
+  getFactorySummary,
+  findSubstitutes,
+  explainAttendanceScore
 } from "@/services/database/aiRepository"
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
@@ -29,19 +31,19 @@ export async function POST(req: NextRequest) {
     // ==========================================
     const tools: Tool[] = [{
       functionDeclarations: [
-        // 🆕 NOVA: Busca operador por NOME
+        // Busca operador por NOME ou MATRÍCULA
         {
-          name: "search_operator_by_name",
-          description: "Busca um operador pelo nome. Retorna dados completos: informações pessoais, skills, frequência dos últimos 30 dias, experiência e contexto 360. Use SEMPRE que o usuário mencionar o NOME de um operador.",
+          name: "search_operator",
+          description: "Busca um operador por NOME ou MATRÍCULA (número). Retorna o dossiê completo: dados pessoais, ALL skills (ordenadas por nível), frequência de 90 dias, experiência profissional, contexto 360 e analytics de risco. Use SEMPRE que o usuário mencionar um NOME de pessoa ou um NÚMERO DE MATRÍCULA (ex: 503070).",
           parameters: {
             type: SchemaType.OBJECT,
             properties: { 
-              nome: { type: SchemaType.STRING, description: "Nome ou parte do nome do operador (ex: Carlos, Maria Silva)" }
+              identificador: { type: SchemaType.STRING, description: "Nome do operador OU número da matrícula (ex: 'Carlos Daniel' ou '503070')" }
             },
-            required: ["nome"]
+            required: ["identificador"]
           } as any 
         },
-        // 🆕 NOVA: Lista operadores de uma linha
+        // Lista operadores de uma linha
         {
           name: "get_operators_by_line",
           description: "Lista todos os operadores ativos de uma linha específica. Pode filtrar por turno. Use quando o usuário quer saber QUEM está em uma linha.",
@@ -54,7 +56,7 @@ export async function POST(req: NextRequest) {
             required: ["linha"]
           } as any 
         },
-        // 🆕 NOVA: Consulta genérica ao banco
+        // Consulta genérica ao banco
         {
           name: "query_database",
           description: "Consulta genérica a qualquer tabela do banco de dados. Tabelas disponíveis: operators, operator_skills, operator_attendance, operator_experience, operator_history, production_lines, workstations, vw_operator_analytics, vw_operator_360_context, vw_line_coverage. Use quando nenhuma outra ferramenta atende à pergunta.",
@@ -68,13 +70,37 @@ export async function POST(req: NextRequest) {
             required: ["tabela"]
           } as any 
         },
-        // 🆕 NOVA: Resumo geral da fábrica
+        // Resumo geral da fábrica
         {
           name: "get_factory_summary",
           description: "Retorna um resumo geral da fábrica: total de operadores ativos, linhas, postos, quantidade de skills registradas. Use quando o usuário pedir uma visão geral ou resumo.",
           parameters: {
             type: SchemaType.OBJECT,
             properties: {}
+          } as any 
+        },
+        // Encontra substitutos para um operador
+        {
+          name: "find_substitutes",
+          description: "Encontra operadores que podem SUBSTITUIR um operador específico no posto e linha em que ele está agora. Retorna candidatos ranqueados por skill, assiduidade, mesmo turno e mesma linha. Cada candidato tem uma JUSTIFICATIVA de por que foi recomendado. Use quando o usuário perguntar 'quem pode substituir X?' ou 'quem cobre o posto do operador Y?'. Precisa do operator_id (UUID) - busque primeiro com search_operator se não tiver o ID.",
+          parameters: {
+            type: SchemaType.OBJECT,
+            properties: { 
+              operator_id: { type: SchemaType.STRING, description: "UUID do operador que será substituído. Se não tiver, use search_operator primeiro para descobrir o ID." }
+            },
+            required: ["operator_id"]
+          } as any 
+        },
+        // Explica o score de assiduidade de um operador
+        {
+          name: "explain_attendance_score",
+          description: "Explica DETALHADAMENTE por que a assiduidade de um operador é X%. Mostra breakdown: quantas presenças, faltas, atrasos, atestados, férias nos últimos 90 dias. Mostra a fórmula de cálculo e os registros mais recentes. Use quando o usuário perguntar 'POR QUÊ a assiduidade é X?' ou 'explica o score' ou 'como calculou?'. Precisa do operator_id (UUID).",
+          parameters: {
+            type: SchemaType.OBJECT,
+            properties: { 
+              operator_id: { type: SchemaType.STRING, description: "UUID do operador. Se não tiver, use search_operator primeiro para descobrir o ID." }
+            },
+            required: ["operator_id"]
           } as any 
         },
         // EXISTENTE: Sugestão de alocação
@@ -136,29 +162,47 @@ export async function POST(req: NextRequest) {
     const systemInstruction = `Você é o Assistente de Inteligência Industrial do Skill Map — um sistema de gestão de competências de uma fábrica.
 
 PERSONALIDADE:
-- Você é proativo, direto e analítico
+- Você é proativo, direto, analítico e TRANSPARENTE (explica suas decisões)
 - Responda SEMPRE em PORTUGUÊS BRASILEIRO
 - Quando tiver dados, NUNCA peça mais informações desnecessárias ao usuário
 - Se o usuário dá informação parcial, use as ferramentas para completar
+- Quando recomendar alguém, SEMPRE explique O PORQUÊ da recomendação
 
 REGRAS DE DECISÃO DE FERRAMENTAS:
-1. Se o usuário MENCIONA O NOME de um operador → use search_operator_by_name PRIMEIRO. NÃO peça linha ou posto.
-2. Se o usuário quer saber QUEM ESTÁ em uma linha → use get_operators_by_line
-3. Se o usuário quer saber QUEM PODE operar um posto + linha → use get_alocacao_sugestao
-4. Se o usuário quer ver COBERTURA/SAÚDE/GAP de uma linha → use get_line_coverage
-5. Se o usuário quer saber sobre RISCO/FALTAS/ASSIDUIDADE → use get_operator_risk
-6. Se o usuário quer saber sobre FERRUGEM/dias sem operar → use get_operator_context_360
-7. Se o usuário quer um RESUMO GERAL da fábrica → use get_factory_summary
-8. Se o usuário pede TREINAMENTOS URGENTES → use get_critical_training_needs
-9. Para qualquer outra consulta específica → use query_database
+1. Se o usuário menciona um NÚMERO (ex: 503070) → é matrícula → use search_operator com o número
+2. Se o usuário menciona o NOME de uma pessoa → use search_operator com o nome
+3. Se o usuário pergunta "por quê a assiduidade é X?" ou "como calculou?" → use explain_attendance_score
+4. Se o usuário pergunta "quem substitui?" ou "quem cobre?" → use find_substitutes (precisa do operator_id, busque antes com search_operator se necessário)
+5. Se o usuário pergunta "quais as melhores skills?" ou "top skills?" → use search_operator (as skills já vêm ordenadas por nível)
+6. Se o usuário quer saber QUEM ESTÁ em uma linha → use get_operators_by_line
+7. Se o usuário quer saber QUEM PODE operar um posto + linha → use get_alocacao_sugestao
+8. Se o usuário quer ver COBERTURA/SAÚDE/GAP de uma linha → use get_line_coverage
+9. Se o usuário quer saber sobre RISCO/FALTAS/ASSIDUIDADE geral → use get_operator_risk
+10. Se o usuário quer saber sobre FERRUGEM/dias sem operar → use get_operator_context_360
+11. Se o usuário quer um RESUMO GERAL da fábrica → use get_factory_summary
+12. Se o usuário pede TREINAMENTOS URGENTES → use get_critical_training_needs
+13. Para qualquer outra consulta específica → use query_database
+
+ENCADEAMENTO INTELIGENTE (IMPORTANTE):
+- Se o usuário perguntar "quem substitui o Carlos Daniel?" → PRIMEIRO chame search_operator("Carlos Daniel") para pegar o ID, DEPOIS chame find_substitutes(id)
+- Se o usuário perguntar "por que a assiduidade do 503070 é baixa?" → PRIMEIRO chame search_operator("503070"), DEPOIS chame explain_attendance_score(id)
+- Você pode (e deve) encadear múltiplas ferramentas numa mesma conversa
 
 REGRA DE OURO: Se você tem uma ferramenta que pode responder a pergunta, USE-A IMEDIATAMENTE. NUNCA peça informações extras ao usuário se você pode buscar os dados primeiro.
 
 FORMATO DE RESPOSTA:
 - Para LISTAS de operadores: use TABELA Markdown
 - Para ANÁLISES: use bullets com emojis de alerta
-- Para PERFIL de operador: organize em seções (📋 Dados, 🎯 Skills, 📅 Frequência, 💡 Recomendação)
+- Para PERFIL de operador: organize em seções (📋 Dados, 🎯 Skills, 📅 Frequência, 🔄 Substitutos, 💡 Recomendação)
+- Para EXPLICAÇÕES de score: mostre a fórmula, os números e a conclusão
+- Para RECOMENDAÇÕES de substitutos: explique POR QUÊ cada um foi escolhido
 - Sempre conclua com 1 RECOMENDAÇÃO em negrito
+
+QUANDO EXPLICAR DECISÕES:
+- "Por que recomendei X?" → Explique: Skill no posto (nível), Assiduidade (%), mesmo turno/linha, dias sem operar
+- "Por que a assiduidade é Y%?" → Mostre: Presenças vs Faltas vs Atrasos no período, fórmula do cálculo
+- "Quais as top 5 skills?" → Liste as 5 skills com maior nível, com o nome do posto e o nível
+- "Quem substitui?" → Para cada substituto, explique: skill nível X no posto Y, assiduidade Z%, mesmo turno (sim/não)
 
 EMOJIS DE ALERTA:
 - Assiduidade < 75%: 🔴 RISCO CRÍTICO
@@ -177,6 +221,7 @@ NUNCA:
 - Retorne texto vazio
 - Peça informações que você pode buscar sozinho
 - Diga "não tenho dados" sem antes chamar pelo menos 1 ferramenta
+- Recomende alguém sem explicar o porquê
 `
 
     // ==========================================
@@ -204,7 +249,7 @@ NUNCA:
     let functionCalls = result.response.functionCalls()
 
     let callCount = 0
-    const MAX_TOOL_CALLS = 5 // 🆕 Aumentado de 3 para 5 (mais liberdade para a IA)
+    const MAX_TOOL_CALLS = 8 // Permite encadeamento de ferramentas (ex: buscar operador → buscar substitutos → explicar score)
 
     while (functionCalls && functionCalls.length > 0 && callCount < MAX_TOOL_CALLS) {
       callCount++
@@ -215,10 +260,21 @@ NUNCA:
 
           try {
             switch (call.name) {
-              // 🆕 NOVAS FERRAMENTAS
-              case "search_operator_by_name": {
-                const args = call.args as { nome: string }
-                data = await searchOperatorByName(args.nome).catch(e => ({ error: e.message }))
+              case "search_operator": {
+                const args = call.args as { identificador: string }
+                data = await searchOperator(args.identificador).catch(e => ({ error: e.message }))
+                break
+              }
+
+              case "find_substitutes": {
+                const args = call.args as { operator_id: string }
+                data = await findSubstitutes(args.operator_id).catch(e => ({ error: e.message }))
+                break
+              }
+
+              case "explain_attendance_score": {
+                const args = call.args as { operator_id: string }
+                data = await explainAttendanceScore(args.operator_id).catch(e => ({ error: e.message }))
                 break
               }
 
@@ -317,12 +373,14 @@ NUNCA:
       finalReply = `Consegui acessar os dados da fábrica, mas tive dificuldade em formular a análise.
 
 **Tente perguntar de outra forma. Exemplos:**
-- "Me mostra tudo sobre o operador **Carlos Daniel**"
+- "Me mostra tudo sobre o operador **Carlos Daniel**" ou "**503070**"
+- "Quais as **melhores skills** do operador 503070?"
+- "**Por que** a assiduidade dele é 90%?"
+- "**Quem pode substituir** o Carlos Daniel no posto dele?"
 - "Quem pode fazer **Soldagem** na linha **TV**?"
 - "Qual a **cobertura** da linha **CM** hoje?"
 - "Quem está **em risco** de falta?"
 - "Me dá um **resumo geral** da fábrica"
-- "Quais operadores estão na linha **BBS**?"
 
 Ou me diga direto o que precisa!`
     }

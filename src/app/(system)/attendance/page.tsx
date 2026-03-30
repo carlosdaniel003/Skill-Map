@@ -12,7 +12,8 @@ import ShiftManagementTab from "./components/ShiftManagementTab"
 export default function AttendancePage() {
   
   const { filters, table, modals, shift } = useAttendance()
-  const [activeTab, setActiveTab] = useState<'shift' | 'monthly'>('shift')
+  // Mudança aqui: o estado inicial da aba agora é 'monthly'
+  const [activeTab, setActiveTab] = useState<'shift' | 'monthly'>('monthly')
 
   return (
     <div className="attendancePageWrapper">
@@ -35,15 +36,7 @@ export default function AttendancePage() {
         </div>
 
         <div className="attendanceTabNavigation">
-          <button 
-            className={`attendanceTabBtn ${activeTab === 'shift' ? 'active' : ''}`}
-            onClick={() => setActiveTab('shift')}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-            </svg>
-            Gestão do Turno (Hoje)
-          </button>
+          {/* Mudança aqui: A aba 'monthly' foi movida para ser a primeira da esquerda */}
           <button 
             className={`attendanceTabBtn ${activeTab === 'monthly' ? 'active' : ''}`}
             onClick={() => setActiveTab('monthly')}
@@ -56,17 +49,21 @@ export default function AttendancePage() {
             </svg>
             Apontamento Mensal
           </button>
+
+          {/* Mudança aqui: A aba 'shift' agora é a segunda opção */}
+          <button 
+            className={`attendanceTabBtn ${activeTab === 'shift' ? 'active' : ''}`}
+            onClick={() => setActiveTab('shift')}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+            Gestão do Turno (Hoje)
+          </button>
         </div>
       </div>
 
-      {/* ABA 1: GESTÃO DO TURNO */}
-      {activeTab === 'shift' && (
-        <div className="attendanceAnimateFadeIn">
-          <ShiftManagementTab filters={filters} shift={shift} />
-        </div>
-      )}
-
-      {/* ABA 2: APONTAMENTO MENSAL */}
+      {/* ABA 1 (Antes era 2): APONTAMENTO MENSAL */}
       {activeTab === 'monthly' && (
         <div className="attendanceCorporateCard attendanceMonthlyCard attendanceAnimateFadeIn">
           <AttendanceFilters 
@@ -105,6 +102,13 @@ export default function AttendancePage() {
               onSaveCell={table.handleSaveCell} 
             />
           )}
+        </div>
+      )}
+
+      {/* ABA 2 (Antes era 1): GESTÃO DO TURNO */}
+      {activeTab === 'shift' && (
+        <div className="attendanceAnimateFadeIn">
+          <ShiftManagementTab filters={filters} shift={shift} />
         </div>
       )}
 
