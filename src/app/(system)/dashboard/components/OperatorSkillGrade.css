@@ -1,134 +1,224 @@
 /* src/app/(system)/dashboard/components/OperatorSkillGrade.css */
 
-/* CARD CORPORATIVO */
-.gradeCard {
+.modOpGrade-card {
   background: #ffffff;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  /* 🛠️ MUDANÇA: Cor Vermelha Fixa */
-  border-top: 6px solid #d40000; 
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 380px; 
   box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* HEADER */
-.gradeHeader {
-  margin-bottom: 24px;
+.modOpGrade-card:hover {
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.06);
 }
 
-.gradeHeader h3 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 800;
-  color: #111111;
-  text-transform: uppercase;
-}
-
-/* GRID DE ESTATÍSTICAS (Mini-cards internos) - Agora são 3 */
-.gradeStatsGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+/* =========================================
+   CABEÇALHO
+   ========================================= */
+.modOpGrade-header {
+  display: flex;
+  align-items: center;
   gap: 12px;
   margin-bottom: 24px;
 }
 
-.statBox {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  padding: 16px 8px;
-  border-radius: 8px;
+.modOpGrade-iconWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #f0f4f8;
+  color: #555555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.modOpGrade-card:hover .modOpGrade-iconWrapper {
+  background: #fff0f0;
+  color: #d40000;
+}
+
+.modOpGrade-titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modOpGrade-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111111;
+  letter-spacing: -0.3px;
+}
+
+.modOpGrade-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: #888888;
+}
+
+/* =========================================
+   GRID DE ESTATÍSTICAS (Mini-cards internos)
+   ========================================= */
+.modOpGrade-statsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.modOpGrade-statBox {
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
+  padding: 16px 12px;
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 8px;
   text-align: center;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.statLabel {
+.modOpGrade-statBox:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  border-color: transparent;
+}
+
+.modOpGrade-statLabel {
   font-size: 11px;
   font-weight: 700;
-  color: #64748b;
+  color: #888888;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.statValue {
-  font-size: 26px;
+.modOpGrade-statValueWrap {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.modOpGrade-statValue {
+  font-size: 28px;
   font-weight: 900;
-  color: #0f172a;
+  color: #111111;
   line-height: 1;
 }
 
-/* CAIXA DE CLASSIFICAÇÃO */
-.classificationBox {
-  background: #f8fafc;
+.modOpGrade-statDivider {
+  font-size: 13px;
+  color: #a0a0a0;
+  font-weight: 700;
+}
+
+/* =========================================
+   CAIXA DE CLASSIFICAÇÃO
+   ========================================= */
+.modOpGrade-classificationBox {
+  background: #fafafa;
   padding: 16px 20px;
-  border-radius: 6px;
-  border-left: 4px solid transparent; /* Cor injetada via JS */
+  border-radius: 16px;
+  border-left: 6px solid transparent; /* Cor injetada via JS */
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   margin-bottom: auto; /* Empurra a barra de progresso pro final do card */
+  border-top: 1px solid #f0f0f0;
+  border-right: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.classLabel {
-  font-size: 13px;
-  font-weight: 600;
-  color: #64748b;
+.modOpGrade-classLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: #888888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.classValue {
+.modOpGrade-classValue {
   font-size: 18px;
   font-weight: 800;
 }
 
-/* BARRA DE PROGRESSO (PROGRESS BAR) */
-.progressSection {
+/* =========================================
+   BARRA DE PROGRESSO
+   ========================================= */
+.modOpGrade-progressSection {
   margin-top: 32px;
 }
 
-.progressLabels {
+.modOpGrade-progressLabels {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
-  color: #64748b;
-  margin-bottom: 8px;
+  color: #666666;
+  margin-bottom: 10px;
 }
 
-.progressBarContainer {
-  height: 14px;
-  background: #e2e8f0;
-  border-radius: 8px;
+.modOpGrade-progressBarContainer {
+  height: 16px;
+  background: #f0f0f0;
+  border-radius: 10px;
   position: relative;
   overflow: hidden;
 }
 
-.progressBarFill {
+.modOpGrade-progressBarFill {
   height: 100%;
-  border-radius: 8px;
-  transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.8s ease;
+  border-radius: 10px;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.5s ease;
 }
 
 /* Marcador da meta (Min SR: 80%) */
-.goalMarker {
+.modOpGrade-goalMarker {
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 2px;
-  background: #0f172a;
-  opacity: 0.4;
+  width: 3px;
+  background: #111111;
+  opacity: 0.2;
   z-index: 10;
+  border-radius: 2px;
 }
 
-/* RESPONSIVIDADE */
-@media (max-width: 600px) {
-  .gradeStatsGrid {
+/* =========================================
+   LOADING STATE
+   ========================================= */
+.modOpGrade-loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.modOpGrade-spinIcon {
+  color: #d40000;
+  animation: modOpGradeSpin 1s linear infinite;
+}
+
+@keyframes modOpGradeSpin {
+  100% { transform: rotate(360deg); }
+}
+
+/* =========================================
+   RESPONSIVIDADE
+   ========================================= */
+@media (max-width: 640px) {
+  .modOpGrade-statsGrid {
     grid-template-columns: 1fr;
   }
 }

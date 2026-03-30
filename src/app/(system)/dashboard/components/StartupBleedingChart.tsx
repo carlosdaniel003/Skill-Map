@@ -112,15 +112,15 @@ export default function StartupBleedingChart() {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="custom-tooltip">
-          <p className="label">{label}</p>
+        <div className="modBleed-tooltip">
+          <p className="modBleed-tooltipLabel">{label}</p>
           {payload.map((entry: any, index: number) => (
-            <div key={index} className="tooltip-item">
-              <span style={{ display: 'inline-block', width: '12px', height: '12px', backgroundColor: entry.color, borderRadius: '2px' }}></span>
+            <div key={index} className="modBleed-tooltipItem">
+              <span style={{ backgroundColor: entry.color }}></span>
               <strong>{entry.name}:</strong> {entry.value} eventos
             </div>
           ))}
-          <div style={{ marginTop: '8px', borderTop: '1px solid #eee', paddingTop: '8px', fontSize: '13px', color: '#666' }}>
+          <div className="modBleed-tooltipTotal">
             Total de desvios: {payload.reduce((acc: number, curr: any) => acc + curr.value, 0)}
           </div>
         </div>
@@ -129,54 +129,61 @@ export default function StartupBleedingChart() {
     return null
   }
 
-  const IconBleeding = <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d40000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px', marginTop: '2px'}}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
-
   return (
-    <div className="bleedingCard animateFadeIn">
-      <div className="bleedingHeader">
-        <div>
-          <h2 className="bleedingTitle" style={{ display: 'flex', alignItems: 'center' }}>
-            {IconBleeding}
+    <div className="modBleed-card animateFadeIn">
+      
+      <div className="modBleed-header">
+        <div className="modBleed-iconWrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <div className="modBleed-titleBlock">
+          <h2 className="modBleed-title">
             Detalhamento de Absenteísmo e Atrasos
           </h2>
-          <p className="bleedingSubtitle">
+          <p className="modBleed-subtitle">
             Volume de atrasos e saídas antecipadas nos últimos 30 dias. 
-            Estes pequenos desvios inviabilizam o balanceamento inicial do turno e afetam drasticamente o OEE.
+            Estes pequenos desvios afetam drasticamente o OEE inicial do turno.
           </p>
         </div>
       </div>
 
       {loading ? (
-        <div className="pageLoader" style={{ height: '40px', width: '40px', margin: '60px auto' }} />
+        <div className="modBleed-loadingState">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="modBleed-spinIcon"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+        </div>
       ) : data.length === 0 ? (
-        <div className="emptyState" style={{ textAlign: 'center', padding: '60px 20px', color: '#888' }}>
+        <div className="modBleed-emptyState">
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
           <p>Nenhum atraso, falta ou saída registrada nos últimos 30 dias para este filtro! 🎉</p>
         </div>
       ) : (
-        <div className="chartContainer">
+        <div className="modBleed-chartContainer">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} margin={{ top: 20, right: 30, left: -20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
               <XAxis 
                 dataKey="name" 
-                tick={{ fontSize: 12, fill: '#64748b' }} 
+                tick={{ fontSize: 12, fill: '#888888', fontWeight: 600 }} 
                 tickLine={false}
-                axisLine={{ stroke: '#cbd5e1' }}
+                axisLine={{ stroke: '#e5e5e5' }}
                 tickFormatter={(val) => val.length > 15 ? `${val.substring(0, 15)}...` : val}
               />
               <YAxis 
-                tick={{ fontSize: 12, fill: '#64748b' }} 
+                tick={{ fontSize: 12, fill: '#888888', fontWeight: 600 }} 
                 tickLine={false} 
                 axisLine={false}
                 allowDecimals={false}
               />
-              <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f8fafc' }} />
-              <Legend wrapperStyle={{ fontSize: '13px', paddingTop: '10px' }} />
+              <Tooltip content={<CustomTooltip />} cursor={{ fill: '#fafafa' }} />
+              <Legend wrapperStyle={{ fontSize: '13px', paddingTop: '10px', fontWeight: 600, color: '#555555' }} />
               
               <Bar dataKey="Atraso" name="Atrasos (A)" stackId="a" fill="#f59e0b" radius={[0, 0, 4, 4]} />
               <Bar dataKey="Saida" name="Saídas (S)" stackId="a" fill="#3b82f6" />
               <Bar dataKey="Falta" name="Faltas Críticas (F)" stackId="a" fill="#d40000" />
-              <Bar dataKey="Justificado" name="Justificados / Atestados" stackId="a" fill="#64748b" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Justificado" name="Justificados / Atestados" stackId="a" fill="#94a3b8" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

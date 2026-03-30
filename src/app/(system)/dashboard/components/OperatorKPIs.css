@@ -1,301 +1,421 @@
 /* src/app/(system)/dashboard/components/OperatorKPIs.css */
 
-.kpiChartCard {
+.modOpKPI-card {
   background: #ffffff;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  border-top: 6px solid #d40000; /* Vermelho corporativo */
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
   height: 100%;
+  box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.kpiChartHeader {
+.modOpKPI-card:hover {
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.06);
+}
+
+/* =========================================
+   CABEÇALHO
+   ========================================= */
+.modOpKPI-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-.kpiChartTitle {
+.modOpKPI-titleBlock {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modOpKPI-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #f0f4f8;
+  color: #555555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.modOpKPI-card:hover .modOpKPI-icon {
+  background: #fff0f0;
+  color: #d40000;
+}
+
+.modOpKPI-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modOpKPI-titles h2 {
   margin: 0;
   font-size: 18px;
   font-weight: 800;
-  color: #111;
+  color: #111111;
+  letter-spacing: -0.3px;
 }
 
-.kpiChartSubtitle {
-  margin: 4px 0 0 0;
+.modOpKPI-titles p {
+  margin: 0;
   font-size: 13px;
-  color: #666;
+  color: #888888;
 }
 
-.totalBadge {
-  background: #f1f5f9;
-  color: #334155;
-  padding: 6px 12px;
-  border-radius: 20px;
+.modOpKPI-totalBadge {
+  background: #fcfcfc;
+  color: #111111;
+  padding: 8px 16px;
+  border-radius: 12px;
   font-size: 13px;
-  font-weight: 700;
-  border: 1px solid #e2e8f0;
+  font-weight: 800;
+  border: 1px solid #e5e5e5;
+  white-space: nowrap;
 }
 
-/* GRID DE CARDS */
-.kpiCardsGrid {
+/* =========================================
+   GRID DE CARDS (SKILL LEVELS)
+   ========================================= */
+.modOpKPI-cardsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 16px;
   flex: 1;
 }
 
-.skillLevelCard {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 16px 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.modOpKPI-levelCard {
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
+  border-radius: 20px;
+  padding: 20px 12px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   text-align: center;
   gap: 8px;
 }
 
-.skillLevelCard:hover {
+.modOpKPI-levelCard:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+  border-color: transparent;
 }
 
-.cardIcon {
+.modOpKPI-levelIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
-.cardTitles {
+.modOpKPI-levelTitles {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2px;
 }
 
-.cardTitles h3 {
+.modOpKPI-levelTitles h3 {
   margin: 0;
   font-size: 13px;
-  color: #475569;
-  font-weight: 700;
-  text-transform: uppercase;
-  line-height: 1.2;
-}
-
-.cardDesc {
-  font-size: 10px;
-  font-weight: 600;
-  color: #64748b;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.skillCount {
-  font-size: 34px;
+.modOpKPI-levelTitles span {
+  font-size: 11px;
+  font-weight: 600;
+  color: #a0a0a0;
+}
+
+.modOpKPI-levelCount {
+  font-size: 32px;
   font-weight: 900;
-  color: #0f172a;
   line-height: 1;
   margin-top: 4px;
 }
 
-.skillClickTip {
+.modOpKPI-clickTip {
   font-size: 11px;
-  color: #64748b;
+  color: #a0a0a0;
   font-weight: 600;
   opacity: 0;
   transition: opacity 0.2s;
   margin-top: 4px;
 }
 
-.skillLevelCard:hover .skillClickTip {
+.modOpKPI-levelCard:hover .modOpKPI-clickTip {
   opacity: 1;
 }
 
-/* Cores de borda superior dinâmicas para os cards */
-.card-c-dc2626 { border-top: 4px solid #dc2626; }
-.card-c-f59e0b { border-top: 4px solid #f59e0b; }
-.card-c-3b82f6 { border-top: 4px solid #3b82f6; }
-.card-c-8b5cf6 { border-top: 4px solid #8b5cf6; }
-.card-c-22c55e { border-top: 4px solid #22c55e; }
+/* =========================================
+   ESTADOS (LOADING / EMPTY)
+   ========================================= */
+.modOpKPI-loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 150px;
+}
+
+.modOpKPI-spinIcon {
+  color: #d40000;
+  animation: modOpKPISpin 1s linear infinite;
+}
+
+@keyframes modOpKPISpin {
+  100% { transform: rotate(360deg); }
+}
+
+.modOpKPI-emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 12px;
+  color: #888888;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  padding: 40px 20px;
+}
+.modOpKPI-emptyState p { margin: 0; }
 
 /* ========================================================
-   ESTILOS DO MODAL (Trazidos do Emergency Allocation)
+   MODAL CORPORATIVO (BLUR & ROUNDED)
    ======================================================== */
-.emergencyModalOverlay {
+.modOpKPI-modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10000;
-  animation: fadeIn 0.2s ease-out;
+  animation: modOpKPIFadeIn 0.3s ease-out;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.emergencyModalCard {
-  width: 90%;
-  max-width: 600px;
+.modOpKPI-modalCard {
+  width: 100%;
+  max-width: 500px;
   max-height: 85vh;
   background: #ffffff;
-  border-top: 6px solid #d40000;
-  border-radius: 8px;
+  border-radius: 28px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
-  animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
+  animation: modOpKPISlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
 }
 
-.emergencyHeader {
-  padding: 20px 24px;
+.modOpKPI-modalHeader {
+  padding: 24px 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #eee;
-  background: #fdfdfd;
+  border-bottom: 1px solid #f0f0f0;
+  background: #ffffff;
+  flex-shrink: 0;
 }
 
-.emergencyTitle {
+.modOpKPI-modalTitle {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
-.emergencyTitle h3 {
+.modOpKPI-modalTitle h3 {
   margin: 0;
   font-size: 18px;
   font-weight: 800;
-  color: #111;
+  color: #111111;
 }
 
-.emergencyIcon {
+.modOpKPI-modalIcon {
   display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
 }
 
-.closeEmergencyBtn {
+.modOpKPI-closeBtn {
   background: transparent;
   border: none;
-  color: #888;
+  color: #888888;
   cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  transition: all 0.2s;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
-.closeEmergencyBtn:hover {
-  background: #f0f0f0;
-  color: #111;
+.modOpKPI-closeBtn:hover {
+  background: #f5f5f5;
+  color: #111111;
 }
 
-.emergencyBody {
-  padding: 24px;
-  overflow-y: auto;
+.modOpKPI-modalBody {
+  padding: 24px 32px;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  background: #fcfcfc;
+  overflow: hidden; /* O scroll fica na lista interna */
+  flex: 1;
 }
 
-.emergencyResults {
+.modOpKPI-modalDesc {
+  color: #666666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.modOpKPI-modalDesc strong {
+  color: #111111;
+}
+
+/* 🆕 LIMITADOR DA LISTA (SCROLLBAR) */
+.modOpKPI-scrollableList {
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
-
-/* 🆕 LIMITADOR DA LISTA (SCROLLBAR) PARA ~10 ITENS */
-.kpiScrollableList {
-  max-height: 480px;
+  max-height: 400px;
   overflow-y: auto;
   padding-right: 8px;
 }
 
 /* Custom Scrollbar da Lista Interna */
-.kpiScrollableList::-webkit-scrollbar { width: 6px; }
-.kpiScrollableList::-webkit-scrollbar-track { background: transparent; }
-.kpiScrollableList::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+.modOpKPI-scrollableList::-webkit-scrollbar { width: 6px; }
+.modOpKPI-scrollableList::-webkit-scrollbar-track { background: transparent; margin: 4px 0; }
+.modOpKPI-scrollableList::-webkit-scrollbar-thumb { background-color: #dcdcdc; border-radius: 10px; }
 
-.suggestionCard {
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 16px;
+/* CARD DE CADA OPERADOR NA LISTA */
+.modOpKPI-suggestionCard {
+  border: 1px solid #f0f0f0;
+  border-radius: 16px;
+  padding: 16px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #fff;
-  transition: transform 0.2s, box-shadow 0.2s;
+  background: #ffffff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.suggestionCard:hover {
+.modOpKPI-suggestionCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  border-color: inherit;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.04);
 }
 
-.suggestionInfo {
+.modOpKPI-suggestionInfo {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
-.suggestionName {
-  font-size: 16px;
+.modOpKPI-suggestionName {
+  font-size: 15px;
   font-weight: 700;
-  color: #111;
+  color: #111111;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.suggestionCurrentLine {
-  font-size: 12px;
-  color: #666;
-  background: #f0f0f0;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-weight: 600;
+.modOpKPI-suggestionLine {
+  font-size: 11px;
+  color: #555555;
+  background: #f0f4f8;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
-.suggestionMetrics {
-  display: flex;
-  gap: 16px;
+.modOpKPI-suggestionMetrics {
   font-size: 13px;
-  color: #555;
+  color: #888888;
+  font-weight: 500;
 }
 
-.metricBadge {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-weight: 600;
-}
-
-.suggestionAction {
+.modOpKPI-suggestionAction {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 8px;
+  gap: 4px;
 }
 
-@keyframes slideUp {
-  from { transform: translateY(40px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+.modOpKPI-suggestionAction span {
+  font-size: 11px;
+  color: #888888;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
-@keyframes fadeIn {
+.modOpKPI-suggestionAction strong {
+  font-size: 14px;
+  color: #d40000;
+  font-weight: 800;
+  background: #fff0f0;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+/* Animações */
+@keyframes modOpKPISlideUp {
+  from { transform: translateY(40px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes modOpKPIFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+/* Responsividade */
+@media (max-width: 640px) {
+  .modOpKPI-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .modOpKPI-cardsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .modOpKPI-suggestionCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .modOpKPI-suggestionAction {
+    align-items: flex-start;
+  }
 }

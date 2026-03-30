@@ -1,107 +1,159 @@
 /* src/app/(system)/dashboard/components/LineOperatorsRadar.css */
 
-/* CARD CORPORATIVO */
-.lineRadarCard {
+.modLineRadar-card {
   background: #ffffff;
-  border-top: 6px solid #d40000;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
   min-height: 480px;
   box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* EMPTY STATE */
-.emptyRadarCard {
-  border-top: 6px solid #e0e0e0;
-  justify-content: center;
+.modLineRadar-card:hover {
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.06);
+}
+
+/* ========================================================
+   CABEÇALHO DO CARD
+   ======================================================== */
+.modLineRadar-header {
+  display: flex;
   align-items: center;
-  text-align: center;
-  gap: 16px;
-  background: #f9f9f9;
-}
-
-.emptyIcon {
-  color: #cccccc;
-}
-
-.emptyRadarCard p {
-  color: #888888;
-  font-size: 14px;
-  max-width: 320px;
-  margin: 0;
-  line-height: 1.5;
-}
-
-/* HEADER DO CARD */
-.lineRadarHeader {
+  gap: 12px;
   margin-bottom: 24px;
 }
 
-.lineRadarHeader h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 700;
-  color: #111111;
+.modLineRadar-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #f0f4f8; /* Cinza azulado bem leve */
+  color: #555555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
 }
 
-.lineRadarHeader h3 span {
+.modLineRadar-card:hover .modLineRadar-icon {
+  background: #fff0f0;
   color: #d40000;
 }
 
-/* CORPO DO CARD (Flex Column) */
-.lineRadarBody {
+.modLineRadar-titleBlock {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+}
+
+.modLineRadar-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111111;
+  letter-spacing: -0.3px;
+}
+
+.modLineRadar-title span {
+  color: #d40000;
+}
+
+.modLineRadar-subtitle {
+  margin: 2px 0 0 0;
+  font-size: 13px;
+  color: #888888;
+}
+
+/* ========================================================
+   CORPO DO CARD (Flex Column)
+   ======================================================== */
+.modLineRadar-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   flex: 1;
 }
 
 /* SELECT DE OPERADORES */
-.operatorSelectWrapper {
+.modLineRadar-operatorSelectWrapper {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.listTitle {
+.modLineRadar-listTitle {
   margin: 0;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   color: #555555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.corporateInput {
+.modLineRadar-inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
   width: 100%;
-  padding: 10px 14px;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  background: #f9f9f9;
-  font-size: 14px;
+}
+
+.modLineRadar-inputIcon {
+  position: absolute;
+  left: 16px;
+  color: #999999;
+  pointer-events: none;
+  transition: color 0.3s ease;
+}
+
+.modLineRadar-inputWrapper:focus-within .modLineRadar-inputIcon {
+  color: #d40000;
+}
+
+.modLineRadar-select {
+  width: 100%;
+  padding: 14px 16px 14px 44px; /* Espaço para o ícone */
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  background: #fcfcfc;
   color: #333333;
-  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
+  appearance: auto;
   cursor: pointer;
 }
 
-.corporateInput:focus {
-  outline: none;
-  border-color: #d40000;
+.modLineRadar-select:focus {
   background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
+  border-color: #d40000;
+  box-shadow: 0 0 0 4px rgba(212, 0, 0, 0.08);
 }
 
-.noOperatorsMsg {
+.modLineRadar-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.modLineRadar-noOperatorsMsg {
   font-size: 13px;
   color: #a0a0a0;
   font-style: italic;
-  padding: 8px 0;
+  padding: 8px 16px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  border: 1px dashed #e0e0e0;
 }
 
-/* GRÁFICO DE RADAR */
-.lineRadarChart {
+/* ========================================================
+   GRÁFICO DE RADAR
+   ======================================================== */
+.modLineRadar-chartArea {
   flex: 1;
   min-height: 320px; /* Garante que o radar não seja esmagado */
   width: 100%;
@@ -110,10 +162,43 @@
   align-items: center;
 }
 
-/* Customização do Tooltip do Recharts */
+/* Customização do Tooltip do Recharts na classe global para caso o inline style não cubra tudo */
 .recharts-default-tooltip {
-  background-color: rgba(255, 255, 255, 0.95) !important;
-  border-radius: 8px !important;
-  border: 1px solid #e0e0e0 !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  background-color: rgba(255, 255, 255, 0.98) !important;
+  border-radius: 16px !important;
+  border: none !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+  padding: 12px 16px !important;
+}
+
+/* ESTADOS DE CARREGAMENTO E VAZIO */
+.modLineRadar-loadingState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.modLineRadar-spinIcon {
+  color: #d40000;
+  animation: modLineRadarSpin 1s linear infinite;
+}
+
+@keyframes modLineRadarSpin {
+  100% { transform: rotate(360deg); }
+}
+
+.modLineRadar-emptyState {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  gap: 12px;
+  color: #888888;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
 }

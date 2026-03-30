@@ -1,310 +1,408 @@
 /* src/app/(system)/dashboard/components/TalentMatrix.css */
 
-.talentMatrixCard {
+.modTalent-card {
   background: #ffffff;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  border-top: 6px solid #d40000;
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
   height: 100%;
+  box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.matrixHeader {
-  margin-bottom: 20px;
+.modTalent-card:hover {
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.06);
 }
 
-.matrixHeader h2 {
-  margin: 0 0 4px 0;
+/* =========================================
+   CABEÇALHO
+   ========================================= */
+.modTalent-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.modTalent-iconWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #f0f4f8; /* Cinza azulado bem leve */
+  color: #555555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.modTalent-card:hover .modTalent-iconWrapper {
+  background: #fff0f0;
+  color: #d40000;
+}
+
+.modTalent-titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modTalent-title {
+  margin: 0;
   font-size: 18px;
   font-weight: 800;
-  color: #111;
+  color: #111111;
+  letter-spacing: -0.3px;
 }
 
-.matrixHeader p {
+.modTalent-subtitle {
   margin: 0;
-  font-size: 14px;
-  color: #666;
+  font-size: 13px;
+  color: #888888;
 }
 
-/* O GRID 2x2 */
-.matrixGrid {
+/* =========================================
+   O GRID 2x2
+   ========================================= */
+.modTalent-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+  flex: 1;
 }
 
-.quadrantBox {
+.modTalent-quadrant {
   padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border-radius: 20px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   min-height: 140px;
+  border: 1px solid transparent;
 }
 
-.quadrantBox:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+.modTalent-quadrant:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.05);
 }
 
-.quadHeader {
+.modTalent-quadHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  gap: 12px;
 }
 
-.quadTitle {
-  font-size: 16px;
+.modTalent-quadTitle {
+  font-size: 15px;
   font-weight: 800;
-  color: #111;
+  color: #111111;
   margin: 0 0 4px 0;
 }
 
-.quadSubtitle {
+.modTalent-quadSubtitle {
   font-size: 12px;
-  color: #666;
+  color: #666666;
   margin: 0;
+  font-weight: 500;
 }
 
-.quadCount {
-  font-size: 28px;
+.modTalent-quadCount {
+  font-size: 24px;
   font-weight: 900;
-  color: #111;
-  background: rgba(255,255,255,0.5);
+  color: #111111;
+  background: rgba(255,255,255,0.6);
   padding: 4px 12px;
-  border-radius: 6px;
+  border-radius: 12px;
+  line-height: 1.2;
 }
 
-.quadAction {
+.modTalent-quadAction {
   margin-top: 16px;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 6px 10px;
-  border-radius: 4px;
-  display: flex;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 10px;
+  display: inline-flex;
   align-items: center;
   width: fit-content;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.actionIcon {
+  display: flex;
+  margin-right: 6px;
 }
 
 /* CORES DOS QUADRANTES */
 /* Pilares: Verde */
-.q-pilares { background: #f0fdf4; border-left: 4px solid #22c55e; }
-.q-pilares .quadAction { background: #dcfce7; color: #15803d; }
+.q-pilares { background: #f0fdf4; border: 1px solid #dcfce7; }
+.q-pilares:hover { border-color: #22c55e; }
+.q-pilares .modTalent-quadAction { background: #dcfce7; color: #16a34a; }
 
 /* Tóxicos: Vermelho */
-.q-estrelas { background: #fef2f2; border-left: 4px solid #d40000; }
-.q-estrelas .quadAction { background: #fee2e2; color: #991b1b; }
+.q-estrelas { background: #fef2f2; border: 1px solid #fee2e2; }
+.q-estrelas:hover { border-color: #d40000; }
+.q-estrelas .modTalent-quadAction { background: #fee2e2; color: #d40000; }
 
 /* Oportunidades: Laranja */
-.q-oportunidades { background: #fffbeb; border-left: 4px solid #f59e0b; }
-.q-oportunidades .quadAction { background: #fef3c7; color: #b45309; }
+.q-oportunidades { background: #fffbeb; border: 1px solid #fef3c7; }
+.q-oportunidades:hover { border-color: #f59e0b; }
+.q-oportunidades .modTalent-quadAction { background: #fef3c7; color: #d97706; }
 
 /* Risco: Roxo */
-.q-riscos { background: #f5f3ff; border-left: 4px solid #8b5cf6; }
-.q-riscos .quadAction { background: #ede9fe; color: #5b21b6; }
+.q-riscos { background: #f5f3ff; border: 1px solid #ede9fe; }
+.q-riscos:hover { border-color: #8b5cf6; }
+.q-riscos .modTalent-quadAction { background: #ede9fe; color: #7e22ce; }
 
 
 /* ========================================================
-   ESTILOS DO MODAL E DOS CARDS DE OPERADORES
+   ESTADOS DE LOADING
    ======================================================== */
-.emergencyModalOverlay {
+.modTalent-loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 200px;
+}
+
+.modTalent-spinIcon {
+  color: #d40000;
+  animation: modTalentSpin 1s linear infinite;
+}
+
+@keyframes modTalentSpin {
+  100% { transform: rotate(360deg); }
+}
+
+/* ========================================================
+   ESTILOS DO MODAL (BLUR & ROUNDED)
+   ======================================================== */
+.modTalent-modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10000;
-  animation: fadeIn 0.2s ease-out;
+  animation: modTalentFadeIn 0.3s ease-out;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.emergencyModalCard {
-  width: 90%;
-  max-width: 500px;
+.modTalent-modalCard {
+  width: 100%;
+  max-width: 540px;
   max-height: 85vh;
   background: #ffffff;
-  border-top: 6px solid #d40000;
-  border-radius: 8px;
+  border-radius: 28px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
-  animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
+  animation: modTalentSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
 }
 
-.emergencyHeader {
-  padding: 20px 24px;
+.modTalent-modalHeader {
+  padding: 24px 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #eee;
-  background: #fdfdfd;
+  border-bottom: 1px solid #f0f0f0;
+  background: #ffffff;
+  flex-shrink: 0;
 }
 
-.emergencyTitle {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.emergencyTitle h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 800;
-  color: #111;
-}
-
-.emergencyIcon {
-  display: flex;
-}
-
-.closeEmergencyBtn {
-  background: transparent;
-  border: none;
-  color: #888;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  transition: all 0.2s;
-}
-
-.closeEmergencyBtn:hover {
-  background: #f0f0f0;
-  color: #111;
-}
-
-.emergencyBody {
-  padding: 24px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-}
-
-.emergencyResults {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-/* 🆕 NOVO LAYOUT DO CARD DO OPERADOR */
-.suggestionCard {
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 16px;
+.modTalent-modalTitle {
   display: flex;
   align-items: center;
   gap: 16px;
-  background: #fff;
-  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.suggestionCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  border-color: inherit;
+.modTalent-modalTitle h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111111;
 }
 
-.suggestionRanking {
+.modTalent-modalIcon {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
 }
 
-.rankNumber {
-  font-size: 18px;
+.modTalent-closeBtn {
+  background: transparent;
+  border: none;
+  color: #888888;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.modTalent-closeBtn:hover {
+  background: #f5f5f5;
+  color: #111111;
+}
+
+.modTalent-modalBody {
+  padding: 24px 32px;
+  overflow: hidden; 
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #fcfcfc;
+  flex: 1;
+}
+
+.modTalent-modalDesc {
+  margin: 0;
+  color: #666666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.modTalent-modalDesc strong {
+  color: #111111;
+}
+
+/* LISTA DE OPERADORES COM SCROLLBAR MINIMALISTA */
+.modTalent-scrollableList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.modTalent-scrollableList::-webkit-scrollbar { width: 6px; }
+.modTalent-scrollableList::-webkit-scrollbar-track { background: transparent; margin: 4px 0; }
+.modTalent-scrollableList::-webkit-scrollbar-thumb { background-color: #dcdcdc; border-radius: 10px; }
+
+/* 🆕 NOVO LAYOUT DO CARD DO OPERADOR */
+.modTalent-suggestionCard {
+  border: 1px solid #f0f0f0;
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #ffffff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modTalent-suggestionCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+}
+
+.modTalent-rankNumber {
+  font-size: 16px;
   font-weight: 900;
-  color: #94a3b8;
+  color: #a0a0a0;
+  min-width: 24px;
 }
 
-.suggestionMainInfo {
+.modTalent-suggestionInfo {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.suggestionName {
-  font-size: 16px;
+.modTalent-suggestionName {
+  font-size: 15px;
   font-weight: 700;
-  color: #111;
+  color: #111111;
 }
 
-.suggestionSubtitle {
+.modTalent-suggestionSub {
   font-size: 12px;
-  color: #64748b;
+  color: #888888;
   font-weight: 500;
 }
 
-/* 🆕 BADGES E DETALHES */
-.suggestionBadges {
+.modTalent-operatorTip {
+  font-size: 11px;
+  color: #a0a0a0;
+  margin-top: 2px;
+}
+
+/* BADGES (Skills / Assiduidade) */
+.modTalent-suggestionBadges {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 6px;
 }
 
-.badge {
+.modTalent-badge {
   padding: 4px 10px;
-  border-radius: 12px;
+  border-radius: 10px;
   color: white;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 800;
   display: inline-flex;
   align-items: center;
   white-space: nowrap;
 }
 
-.suggestionDetails {
-  width: 100%;
-  margin-top: 8px;
-  border-top: 1px dashed #e2e8f0;
-  padding-top: 8px;
-  display: none; /* Só mostra se quiser habilitar a linha de baixo com mais dados */
-}
-
-/* Estilos Reutilizáveis */
-.emptyState {
+.modTalent-emptyState {
   text-align: center;
-  color: #64748b;
+  color: #888888;
   font-size: 14px;
-  padding: 20px;
+  padding: 40px 20px;
 }
 
-.pageLoader {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(212, 0, 0, 0.1);
-  border-top: 3px solid #d40000;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+/* Animações */
+@keyframes modTalentSlideUp {
+  from { transform: translateY(40px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes slideUp {
-  from { transform: translateY(40px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes fadeIn {
+@keyframes modTalentFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
+/* Responsividade */
 @media (max-width: 768px) {
-  .matrixGrid {
+  .modTalent-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 500px) {
+  .modTalent-suggestionCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .modTalent-suggestionBadges {
+    flex-direction: row;
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 8px;
   }
 }

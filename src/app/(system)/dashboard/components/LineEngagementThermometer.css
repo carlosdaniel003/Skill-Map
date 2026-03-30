@@ -1,108 +1,189 @@
 /* src/app/(system)/dashboard/components/LineEngagementThermometer.css */
 
-.engagementCard {
+.modEng-card {
   background: #ffffff;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  border-top: 6px solid #d40000; /* Vermelho Corporativo */
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
   height: 100%;
+  box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.engHeader {
+.modEng-card:hover {
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.06);
+}
+
+.modEng-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  gap: 12px;
 }
 
-.engTitle {
+.modEng-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #f0f4f8; /* Cinza azulado suave */
+  color: #555555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.modEng-card:hover .modEng-icon {
+  background: #fff0f0;
+  color: #d40000;
+}
+
+.modEng-titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modEng-title {
   margin: 0;
   font-size: 18px;
   font-weight: 800;
-  color: #111;
+  color: #111111;
+  letter-spacing: -0.3px;
 }
 
-.engSubtitle {
-  margin: 4px 0 0 0;
+.modEng-subtitle {
+  margin: 0;
   font-size: 13px;
-  color: #666;
+  color: #666666;
 }
 
-.engRankingList {
+/* ========================================================
+   LISTA E RANKING
+   ======================================================== */
+.modEng-rankingList {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-top: 8px;
+  gap: 20px;
   flex: 1; /* Permite que a lista cresça para preencher o card se precisar */
-  overflow-y: auto; /* Adiciona scroll se a fábrica tiver muitas linhas */
+  overflow-y: auto; 
   max-height: 400px;
   padding-right: 8px;
 }
 
 /* Custom scrollbar para a lista de linhas */
-.engRankingList::-webkit-scrollbar { width: 6px; }
-.engRankingList::-webkit-scrollbar-track { background: transparent; }
-.engRankingList::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+.modEng-rankingList::-webkit-scrollbar { width: 6px; }
+.modEng-rankingList::-webkit-scrollbar-track { background: transparent; }
+.modEng-rankingList::-webkit-scrollbar-thumb { background-color: #dcdcdc; border-radius: 10px; }
 
-.engLineItem {
+.modEng-lineItem {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
-.engLineInfo {
+.modEng-lineInfo {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
 }
 
-.engLineName {
+.modEng-lineName {
   font-size: 14px;
   font-weight: 700;
-  color: #334155;
+  color: #333333;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.engLineScore {
+.modEng-lineScore {
   font-size: 15px;
   font-weight: 800;
-  color: #111;
+  color: #111111;
 }
 
-.engLineScore span {
+.modEng-lineScore span {
   font-size: 12px;
   font-weight: 600;
-  color: #94a3b8;
+  color: #a0a0a0;
   margin-left: 4px;
 }
 
 /* A BARRA DE TERMÔMETRO */
-.engBarTrack {
+.modEng-barTrack {
   width: 100%;
-  height: 10px;
-  background-color: #f1f5f9;
-  border-radius: 6px;
+  height: 12px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
   overflow: hidden;
 }
 
-.engBarFill {
+.modEng-barFill {
   height: 100%;
-  border-radius: 6px;
-  transition: width 1s ease-out;
+  border-radius: 10px;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Cores de Saúde - Ajustadas para a paleta corporativa */
-.health-excellent { background-color: #22c55e; } /* Verde Corporativo */
-.health-warning { background-color: #f59e0b; } /* Laranja Corporativo */
-.health-critical { background-color: #d40000; } /* Vermelho Corporativo */
+/* Cores de Saúde - Ajustadas para a paleta */
+.modEng-healthExcellent { background-color: #16a34a; } /* Verde */
+.modEng-healthWarning { background-color: #f59e0b; } /* Laranja */
+.modEng-healthCritical { background-color: #d40000; } /* Vermelho */
 
-.engMedal {
+.modEng-medal {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* ========================================================
+   ESTADOS DE LOADING E EMPTY
+   ======================================================== */
+.modEng-loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 200px;
+}
+
+.modEng-spinIcon {
+  color: #d40000;
+  animation: modEngSpin 1s linear infinite;
+}
+
+@keyframes modEngSpin {
+  100% { transform: rotate(360deg); }
+}
+
+.modEng-emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  text-align: center;
+  padding: 40px 20px;
+  color: #888888;
+  gap: 12px;
+}
+
+.modEng-emptyState p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ========================================================
+   RESPONSIVIDADE
+   ======================================================== */
+@media (max-width: 768px) {
+  .modEng-card {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
 }

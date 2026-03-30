@@ -126,29 +126,48 @@ export default function SkillMatrixHeatmap() {
   }
 
   return (
-    <div className="corporateCard heatmapCard animateFadeIn">
+    <div className="modHeatmap-card animateFadeIn">
 
-      <div className="heatmapHeader">
-        <h3>Skill Matrix — <span>{mapTitle}</span></h3>
+      <div className="modHeatmap-header">
+        <div className="modHeatmap-titleWrap">
+          <div className="modHeatmap-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <rect x="7" y="7" width="3" height="3"/>
+              <rect x="14" y="7" width="3" height="3"/>
+              <rect x="7" y="14" width="3" height="3"/>
+              <rect x="14" y="14" width="3" height="3"/>
+            </svg>
+          </div>
+          <div className="modHeatmap-titles">
+            <h3>Skill Matrix — <span>{mapTitle}</span></h3>
+            <p>Mapeamento visual do nível de habilidade por operador e posto.</p>
+          </div>
+        </div>
       </div>
 
-      <div className="heatmapTableContainer">
+      <div className="modHeatmap-tableContainer">
         {isLoading ? (
-          <div className="pageLoader" style={{ height: '40px', width: '40px', margin: '60px auto' }} />
+          <div className="modHeatmap-loadingArea">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="modHeatmap-spinIcon"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+          </div>
         ) : operators.length === 0 ? (
-          <div className="emptyState" style={{ textAlign: 'center', padding: '60px 20px', color: '#888' }}>
-            Nenhum operador ou habilidade mapeada para este filtro.
+          <div className="modHeatmap-emptyArea">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+            <p>Nenhum operador ou habilidade mapeada para este filtro.</p>
           </div>
         ) : (
-          <table className="heatmapTable">
+          <table className="modHeatmap-table">
 
             <thead>
               <tr>
-                <th className="operatorCol">Operador</th>
-                {/* Opcional: Mostrar a linha do operador se estiver na visão global */}
-                {!filters.linha && <th className="operatorCol">Linha</th>}
+                <th className="modHeatmap-operatorCol">Operador</th>
+                {/* Mostrar a linha do operador se estiver na visão global */}
+                {!filters.linha && <th className="modHeatmap-operatorCol">Linha</th>}
                 {postos.map(p => (
-                  <th key={p} title={p}>{p}</th>
+                  <th key={p} title={p}>
+                    <div className="modHeatmap-thContent">{p}</div>
+                  </th>
                 ))}
               </tr>
             </thead>
@@ -157,12 +176,12 @@ export default function SkillMatrixHeatmap() {
               {operators.map(op => (
                 <tr key={op.id}>
                   
-                  <td className="operatorCol">
+                  <td className="modHeatmap-operatorCol fw-700">
                     {op.nome}
                   </td>
 
                   {!filters.linha && (
-                    <td className="operatorCol" style={{ color: '#666', fontSize: '11px' }}>
+                    <td className="modHeatmap-operatorCol" style={{ color: '#888', fontSize: '11px', fontWeight: 600 }}>
                       {op.linha_atual || "Sem Linha"}
                     </td>
                   )}
@@ -172,7 +191,7 @@ export default function SkillMatrixHeatmap() {
                     
                     return (
                       <td key={p}>
-                        <div className={`levelSquare ${getLevelClass(level)}`} title={`${op.nome} - Posto: ${p} (Nível ${level})`}>
+                        <div className={`modHeatmap-levelSquare ${getLevelClass(level)}`} title={`${op.nome} - Posto: ${p} (Nível ${level})`}>
                           {level > 0 ? level : ""}
                         </div>
                       </td>

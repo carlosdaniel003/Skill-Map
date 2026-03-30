@@ -97,7 +97,7 @@ export default function OperatorKPIs() {
         { 
           name: "Iniciante", 
           quantidade: list1.length, 
-          color: "#dc2626", 
+          color: "#d40000", 
           description: "0 a 20% do domínio",
           icon: <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>,
           operadores: list1 
@@ -129,7 +129,7 @@ export default function OperatorKPIs() {
         { 
           name: "Instrutor", 
           quantidade: list5.length, 
-          color: "#22c55e", 
+          color: "#16a34a", 
           description: "81 a 100% do domínio",
           icon: <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>,
           operadores: list5 
@@ -149,44 +149,55 @@ export default function OperatorKPIs() {
   if (filters.turno) subtitleText += ` | ${filters.turno}`
 
   return (
-    <div className="kpiChartCard animateFadeIn">
-      <div className="kpiChartHeader">
-        <div>
-          <h2 className="kpiChartTitle">Distribuição de Habilidades</h2>
-          <p className="kpiChartSubtitle">
-            {subtitleText}
-          </p>
+    <div className="modOpKPI-card animateFadeIn">
+      <div className="modOpKPI-header">
+        <div className="modOpKPI-titleBlock">
+          <div className="modOpKPI-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          </div>
+          <div className="modOpKPI-titles">
+            <h2>Distribuição de Habilidades</h2>
+            <p>{subtitleText}</p>
+          </div>
         </div>
-        <span className="totalBadge">Total: {totalOperators} op.</span>
+        <span className="modOpKPI-totalBadge">Total: {totalOperators} op.</span>
       </div>
       
       {loading ? (
-        <div className="pageLoader" style={{ height: '30px', width: '30px', margin: 'auto' }} />
+        <div className="modOpKPI-loadingState">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="modOpKPI-spinIcon"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+        </div>
       ) : chartData.length === 0 ? (
-        <div className="emptyState" style={{ margin: 'auto' }}>Nenhum dado encontrado.</div>
+        <div className="modOpKPI-emptyState">
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          <p>Nenhum dado encontrado para os filtros selecionados.</p>
+        </div>
       ) : (
-        <div className="kpiCardsGrid">
+        <div className="modOpKPI-cardsGrid">
           {chartData.map((item, index) => (
             <div 
               key={index} 
-              className={`skillLevelCard card-c-${item.color.replace('#', '')}`}
+              className="modOpKPI-levelCard"
               onClick={() => {
                 if (item.quantidade > 0) setSelectedLevel(item)
               }}
-              style={{ opacity: item.quantidade === 0 ? 0.6 : 1 }}
+              style={{ 
+                opacity: item.quantidade === 0 ? 0.5 : 1,
+                cursor: item.quantidade === 0 ? 'default' : 'pointer'
+              }}
             >
-              <div className="cardIcon" style={{ color: item.color }}>
+              <div className="modOpKPI-levelIcon" style={{ color: item.color, background: `${item.color}15` }}>
                 {item.icon}
               </div>
-              <div className="cardTitles">
-                <h3>{item.name}</h3>
-                <span className="cardDesc">{item.description}</span>
+              <div className="modOpKPI-levelTitles">
+                <h3 style={{ color: item.color }}>{item.name}</h3>
+                <span>{item.description}</span>
               </div>
-              <div className="skillCount" style={{ color: item.color }}>
+              <div className="modOpKPI-levelCount" style={{ color: item.color }}>
                 {item.quantidade}
               </div>
-              <div className="skillClickTip">
-                {item.quantidade > 0 ? "Ver Nomes" : "Sem operadores"}
+              <div className="modOpKPI-clickTip">
+                {item.quantidade > 0 ? "Ver Nomes" : "Vazio"}
               </div>
             </div>
           ))}
@@ -195,47 +206,46 @@ export default function OperatorKPIs() {
 
       {/* MODAL DE DETALHES COM SCROLLBAR INTERNO */}
       {selectedLevel && (
-        <div className="emergencyModalOverlay" onClick={() => setSelectedLevel(null)}>
+        <div className="modOpKPI-modalOverlay" onClick={() => setSelectedLevel(null)}>
           <div 
-            className="emergencyModalCard" 
-            style={{ borderTopColor: selectedLevel.color }}
+            className="modOpKPI-modalCard" 
             onClick={(e) => e.stopPropagation()} 
           >
             
-            <div className="emergencyHeader">
-              <div className="emergencyTitle">
-                <div className="emergencyIcon" style={{ color: selectedLevel.color }}>
+            <div className="modOpKPI-modalHeader">
+              <div className="modOpKPI-modalTitle">
+                <div className="modOpKPI-modalIcon" style={{ color: selectedLevel.color, background: `${selectedLevel.color}15` }}>
                   {selectedLevel.icon}
                 </div>
                 <h3>Operadores - Nível: {selectedLevel.name}</h3>
               </div>
-              <button className="closeEmergencyBtn" onClick={() => setSelectedLevel(null)}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              <button className="modOpKPI-closeBtn" onClick={() => setSelectedLevel(null)} title="Fechar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
               </button>
             </div>
 
-            <div className="emergencyBody">
-              <p style={{ margin: 0, color: '#555', fontSize: '14px' }}>
+            <div className="modOpKPI-modalBody">
+              <p className="modOpKPI-modalDesc">
                 Total de <strong>{selectedLevel.quantidade}</strong> colaboradores agrupados nesta faixa média de domínio técnico ({selectedLevel.description}).
               </p>
 
-              {/* 🆕 AQUI ESTÁ A LISTA QUE TERÁ A SCROLLBAR */}
-              <div className="emergencyResults kpiScrollableList">
+              {/* LISTA QUE TERÁ A SCROLLBAR */}
+              <div className="modOpKPI-scrollableList">
                 {selectedLevel.operadores.map((op) => (
-                  <div key={op.id} className="suggestionCard" style={{ cursor: 'default' }}>
-                    <div className="suggestionInfo">
-                      <div className="suggestionName">
+                  <div key={op.id} className="modOpKPI-suggestionCard">
+                    <div className="modOpKPI-suggestionInfo">
+                      <div className="modOpKPI-suggestionName">
                         {op.nome}
-                        <span className="suggestionCurrentLine">{op.linha_atual || "Sem Linha"}</span>
+                        <span className="modOpKPI-suggestionLine">{op.linha_atual || "Sem Linha"}</span>
                       </div>
-                      <div className="suggestionMetrics">
-                        <span className="metricBadge">Posto: {op.posto_atual || "Não Alocado"}</span>
+                      <div className="modOpKPI-suggestionMetrics">
+                        <span>Posto Atual: {op.posto_atual || "Não Alocado"}</span>
                       </div>
                     </div>
                     
-                    <div className="suggestionAction" style={{ justifyContent: 'center' }}>
-                      <span style={{ fontSize: '12px', color: '#666', fontWeight: 600 }}>Matrícula</span>
-                      <strong style={{ fontSize: '14px', color: '#111' }}>{op.matricula}</strong>
+                    <div className="modOpKPI-suggestionAction">
+                      <span>Matrícula</span>
+                      <strong>{op.matricula}</strong>
                     </div>
                   </div>
                 ))}

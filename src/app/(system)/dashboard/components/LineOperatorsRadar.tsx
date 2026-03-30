@@ -145,70 +145,84 @@ export default function LineOperatorsRadar(){
   const averageLabel = filters.linha ? "Média da Linha" : "Média Global"
 
   return(
-    <div className="corporateCard lineRadarCard animateFadeIn">
+    <div className="modLineRadar-card">
 
-      <div className="lineRadarHeader">
-        <h3>{filters.linha ? "Comparativo da Linha — " : "Comparativo Global (Fábrica)"} {filters.linha && <span>{filters.linha}</span>}</h3>
+      <div className="modLineRadar-header">
+        <div className="modLineRadar-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </div>
+        <div className="modLineRadar-titleBlock">
+          <h3 className="modLineRadar-title">
+            {filters.linha ? "Comparativo da Linha — " : "Comparativo Global (Fábrica) "} 
+            {filters.linha && <span>{filters.linha}</span>}
+          </h3>
+          <p className="modLineRadar-subtitle">Compare o operador com a média do grupo</p>
+        </div>
       </div>
 
-      <div className="lineRadarBody">
+      <div className="modLineRadar-body">
 
-        <div className="operatorSelectWrapper">
-          <label className="listTitle">Comparar com o operador:</label>
+        <div className="modLineRadar-operatorSelectWrapper">
+          <label className="modLineRadar-listTitle">Comparar com o operador:</label>
           
-          {isLoading ? (
-            <select className="corporateInput" disabled>
-               <option>Carregando...</option>
-            </select>
-          ) : operators.length > 0 ? (
-            <select 
-              className="corporateInput"
-              value={selectedOperator}
-              onChange={(e) => setSelectedOperator(e.target.value)}
-            >
-              <option value="">Apenas {averageLabel}</option>
-              {operators.map(op => (
-                <option key={op.id} value={op.id}>
-                  {op.nome}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <div className="noOperatorsMsg">
-              Nenhum operador ativo nos filtros atuais.
-            </div>
-          )}
+          <div className="modLineRadar-inputWrapper">
+            <svg className="modLineRadar-inputIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            {isLoading ? (
+              <select className="modLineRadar-select" disabled>
+                 <option>Carregando dados...</option>
+              </select>
+            ) : operators.length > 0 ? (
+              <select 
+                className="modLineRadar-select"
+                value={selectedOperator}
+                onChange={(e) => setSelectedOperator(e.target.value)}
+              >
+                <option value="">Apenas {averageLabel}</option>
+                {operators.map(op => (
+                  <option key={op.id} value={op.id}>
+                    {op.nome}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <div className="modLineRadar-noOperatorsMsg">
+                Nenhum operador ativo nos filtros atuais.
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="lineRadarChart">
+        <div className="modLineRadar-chartArea">
           {isLoading ? (
-              <div style={{ display: 'flex', height: '100%', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                {/* 🛠️ MUDANÇA: Injetado o pageLoader vermelho padrão */}
-                <div className="pageLoader" style={{ height: '40px', width: '40px' }} />
+              <div className="modLineRadar-loadingState">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="modLineRadar-spinIcon"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
               </div>
           ) : radarData.length === 0 ? (
-              <div style={{ display: 'flex', height: '100%', justifyContent: 'center', alignItems: 'center', color: '#888', fontSize: '13px' }}>
+              <div className="modLineRadar-emptyState">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                 Nenhuma habilidade registrada para estes filtros.
               </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={radarData} margin={{ top: 10, right: 30, bottom: 10, left: 30 }}>
-                <PolarGrid stroke="#e0e0e0"/>
+                <PolarGrid stroke="#f0f0f0"/>
                 
                 <PolarAngleAxis
                   dataKey="posto"
-                  tick={{fill: "#555555", fontSize: 12, fontWeight: 600}}
+                  tick={{fill: "#555555", fontSize: 12, fontWeight: 700}}
                 />
                 
                 <PolarRadiusAxis
                   domain={[0,5]}
                   tickCount={6}
-                  tick={{fill: "#888888", fontSize: 11}}
+                  tick={{fill: "#a0a0a0", fontSize: 11}}
                 />
 
                 <Tooltip 
-                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                  itemStyle={{ fontWeight: 'bold' }}
+                  contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}
+                  itemStyle={{ fontWeight: '700' }}
                 />
 
                 <Radar
@@ -217,7 +231,7 @@ export default function LineOperatorsRadar(){
                   stroke="#3b82f6"
                   strokeWidth={2}
                   fill="#3b82f6"
-                  fillOpacity={0.2}
+                  fillOpacity={0.15}
                   animationDuration={600}
                 />
 
@@ -228,13 +242,13 @@ export default function LineOperatorsRadar(){
                     stroke="#d40000"
                     strokeWidth={2}
                     fill="#d40000"
-                    fillOpacity={0.45}
+                    fillOpacity={0.4}
                     animationDuration={600}
                   />
                 )}
 
                 <Legend 
-                  wrapperStyle={{ paddingTop: "10px", fontSize: "13px", fontWeight: "500", color: "#555" }} 
+                  wrapperStyle={{ paddingTop: "10px", fontSize: "13px", fontWeight: "600", color: "#555555" }} 
                 />
 
               </RadarChart>

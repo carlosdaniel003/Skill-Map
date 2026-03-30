@@ -235,75 +235,87 @@ export default function LineSkillsRadar() {
     return "#f59e0b" 
   }
 
-
   return (
-    <div className="corporateCard radarCard">
+    <div className="modLineSkillsRadar-card">
 
-      <div className="radarHeader">
-        <h3>
-          Radar da Equipe — <span>{filters.linha ? filters.linha : "Visão Global"}</span>
-        </h3>
+      <div className="modLineSkillsRadar-header">
+        
+        <div className="modLineSkillsRadar-titleBlock">
+          <div className="modLineSkillsRadar-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 12c0-4.97-4.03-9-9-9s-9 4.03-9 9"/><path d="M12 3v9l4 4"/>
+            </svg>
+          </div>
+          <div className="modLineSkillsRadar-titles">
+            <h3>
+              Radar da Equipe — <span>{filters.linha ? filters.linha : "Visão Global"}</span>
+            </h3>
+            <p>Mapeamento de maturidade operacional por turno.</p>
+          </div>
+        </div>
 
-        <div className="radarModeToggle">
+        <div className="modLineSkillsRadar-tabs">
           <button
-            className={`toggleBtn ${mode === "skills" ? "active red" : ""}`}
+            className={`modLineSkillsRadar-tabBtn ${mode === "skills" ? "active red" : ""}`}
             onClick={() => setMode("skills")}
-            title="Postos de trabalho"
+            title={!filters.linha ? "Selecione uma linha primeiro" : "Postos de trabalho"}
             disabled={!filters.linha} 
-            style={{ opacity: !filters.linha ? 0.3 : 1 }}
+            style={{ opacity: !filters.linha ? 0.3 : 1, cursor: !filters.linha ? "not-allowed" : "pointer" }}
           >
             Postos Atuais
           </button>
 
           <button
-            className={`toggleBtn ${mode === "categories" ? "active blue" : ""}`}
+            className={`modLineSkillsRadar-tabBtn ${mode === "categories" ? "active blue" : ""}`}
             onClick={() => setMode("categories")}
           >
             Categorias
           </button>
 
           <button
-            className={`toggleBtn ${mode === "models" ? "active orange" : ""}`}
+            className={`modLineSkillsRadar-tabBtn ${mode === "models" ? "active orange" : ""}`}
             onClick={() => setMode("models")}
           >
             Modelos
           </button>
         </div>
+        
       </div>
 
-      <div className="radarChartContainer">
+      <div className="modLineSkillsRadar-chartContainer">
         {isLoading ? (
-          <div className="radarLoading" style={{ display: 'flex', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
-            <div className="pageLoader" style={{ height: '40px', width: '40px' }} />
+          <div className="modLineSkillsRadar-loadingState">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="modLineSkillsRadar-spinIcon"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
           </div>
         ) : data.length === 0 ? (
-          <div className="emptyRadarData">
-             Nenhuma experiência registrada.
+          <div className="modLineSkillsRadar-emptyState">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <p>Nenhuma experiência registrada.</p>
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
-            <RadarChart data={data}>
-              <PolarGrid stroke="#e0e0e0" />
+            <RadarChart data={data} margin={{ top: 10, right: 30, bottom: 10, left: 30 }}>
+              <PolarGrid stroke="#f0f0f0" />
               <PolarAngleAxis
                 dataKey="label"
                 tick={{
                   fill: "#555555",
                   fontSize: 11,
-                  fontWeight: 600
+                  fontWeight: 700
                 }}
               />
               <PolarRadiusAxis
                 angle={30}
                 domain={[0, 5]}
-                tick={{ fill: "#888888" }}
+                tick={{ fill: "#a0a0a0", fontSize: 11 }}
               />
 
               <Tooltip
-                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                itemStyle={{ fontWeight: 'bold' }}
+                contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 8px 24px rgba(0,0,0,0.08)', padding: '12px 16px' }}
+                itemStyle={{ fontWeight: '700' }}
                 formatter={(value) => [value, "Lvl Médio"]}
               />
-              <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+              <Legend wrapperStyle={{ fontSize: '13px', paddingTop: '10px', fontWeight: '600' }} />
 
               {activeTurns.map((turno) => (
                 <Radar
@@ -313,7 +325,7 @@ export default function LineSkillsRadar() {
                   stroke={getColorForTurn(turno)}
                   strokeWidth={2}
                   fill={getColorForTurn(turno)}
-                  fillOpacity={0.3}
+                  fillOpacity={0.2}
                   animationDuration={600}
                 />
               ))}

@@ -42,7 +42,7 @@ export default function OperatorSkillGrade(){
         setMaxPoints(0)
         setRatio(0)
         setGrade("Sem Dados")
-        setColor("#e0e0e0")
+        setColor("#a0a0a0")
         setAssiduidade(0)
         setTitle("Sem Dados Disponíveis")
         return
@@ -53,7 +53,7 @@ export default function OperatorSkillGrade(){
       if (filters.operatorId && ops.length === 1) {
         setTitle(`Classificação: ${ops[0].nome}`)
       } else {
-        let t = "Média da Fábrica (operadores)"
+        let t = "Média da Fábrica"
         if (filters.linha) t = `Média: ${filters.linha}`
         if (filters.turno) {
           t += ` (${filters.turno})`
@@ -102,7 +102,7 @@ export default function OperatorSkillGrade(){
         barColor = "#8b5cf6"
       }else{
         gradeText = "Instrutor / Mestre"
-        barColor = "#22c55e"
+        barColor = "#16a34a"
       }
 
       setGrade(gradeText)
@@ -126,59 +126,77 @@ export default function OperatorSkillGrade(){
   }
 
   return(
-    <div className="corporateCard gradeCard animateFadeIn">
+    <div className="modOpGrade-card animateFadeIn">
 
-      <div className="gradeHeader">
-        <h3 title={title}>{title.length > 30 ? title.substring(0, 30) + "..." : title}</h3>
+      <div className="modOpGrade-header">
+        <div className="modOpGrade-iconWrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/>
+            <path d="M10 2c1 .5 2 2 2 5"/>
+          </svg>
+        </div>
+        <div className="modOpGrade-titleBlock">
+          <h2 className="modOpGrade-title">Skill Ratio</h2>
+          <p className="modOpGrade-subtitle" title={title}>
+            {title.length > 40 ? title.substring(0, 40) + "..." : title}
+          </p>
+        </div>
       </div>
 
       {isLoading ? (
-        <div style={{ display: 'flex', height: '100%', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <div className="pageLoader" style={{ height: '40px', width: '40px' }} />
+        <div className="modOpGrade-loadingState">
+           <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="modOpGrade-spinIcon"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
         </div>
       ) : (
         <>
-          <div className="gradeStatsGrid">
+          <div className="modOpGrade-statsGrid">
             
-            <div className="statBox">
-              <span className="statLabel">Total Points</span>
-              <span className="statValue">{totalPoints} <span style={{fontSize: 13, color: '#94a3b8', fontWeight: 600}}>/ {maxPoints}</span></span>
+            <div className="modOpGrade-statBox">
+              <span className="modOpGrade-statLabel">Total Points</span>
+              <div className="modOpGrade-statValueWrap">
+                <span className="modOpGrade-statValue">{totalPoints}</span>
+                <span className="modOpGrade-statDivider">/ {maxPoints}</span>
+              </div>
             </div>
 
-            <div className="statBox">
-              <span className="statLabel">Skill Ratio</span>
-              <span className="statValue" style={{color: color}}>{ratio}%</span>
+            <div className="modOpGrade-statBox">
+              <span className="modOpGrade-statLabel">Skill Ratio</span>
+              <div className="modOpGrade-statValueWrap">
+                <span className="modOpGrade-statValue" style={{color: color}}>{ratio}%</span>
+              </div>
             </div>
 
-            <div className="statBox">
-              <span className="statLabel">Assiduidade</span>
-              <span className="statValue" style={{ color: assiduidade >= 90 ? '#22c55e' : assiduidade >= 80 ? '#f59e0b' : '#d40000' }}>
-                {assiduidade}%
-              </span>
+            <div className="modOpGrade-statBox">
+              <span className="modOpGrade-statLabel">Assiduidade</span>
+              <div className="modOpGrade-statValueWrap">
+                <span className="modOpGrade-statValue" style={{ color: assiduidade >= 90 ? '#16a34a' : assiduidade >= 80 ? '#f59e0b' : '#d40000' }}>
+                  {assiduidade}%
+                </span>
+              </div>
             </div>
 
           </div>
 
-          <div className="classificationBox" style={{borderLeftColor: color}}>
-            <span className="classLabel">Classificação:</span>
-            <strong className="classValue" style={{color: color}}>{grade}</strong>
+          <div className="modOpGrade-classificationBox" style={{ borderLeftColor: color }}>
+            <span className="modOpGrade-classLabel">Classificação:</span>
+            <strong className="modOpGrade-classValue" style={{ color: color }}>{grade}</strong>
           </div>
 
-          <div className="progressSection">
-            <div className="progressLabels">
+          <div className="modOpGrade-progressSection">
+            <div className="modOpGrade-progressLabels">
               <span>Progresso de Habilidades</span>
-              <span>Meta: Especialista (80%)</span>
+              <span>Meta: 80%</span>
             </div>
             
-            <div className="progressBarContainer">
+            <div className="modOpGrade-progressBarContainer">
               <div
-                className="progressBarFill"
+                className="modOpGrade-progressBarFill"
                 style={{
                   width: `${ratio}%`,
                   backgroundColor: color
                 }}
               />
-              <div className="goalMarker" style={{left: "80%"}} title="Meta de Especialista (80%)" />
+              <div className="modOpGrade-goalMarker" style={{left: "80%"}} title="Meta de Especialista (80%)" />
             </div>
           </div>
         </>

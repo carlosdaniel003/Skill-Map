@@ -1,119 +1,241 @@
 /* src/app/(system)/dashboard/components/SkillMatrixHeatmap.css */
 
-.heatmapCard {
+.modHeatmap-card {
   background: #ffffff;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  border-top: 6px solid #d40000; /* Vermelho Corporativo */
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
   width: 100%;
+  box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.heatmapHeader {
+.modHeatmap-card:hover {
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.06);
+}
+
+/* ========================================================
+   CABEÇALHO
+   ======================================================== */
+.modHeatmap-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
-.heatmapHeader h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 800;
-  color: #111;
+.modHeatmap-titleWrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.heatmapHeader h3 span {
-  color: #d40000;
-}
-
-/* 🆕 CONTAINER DA TABELA (Scroll e Altura Fixa) */
-.heatmapTableContainer {
-  width: 100%;
-  max-height: 480px; /* Altura para ~10 Operadores */
-  overflow-y: auto; /* Rolagem vertical */
-  overflow-x: auto; /* Rolagem horizontal (caso tenha muitos postos) */
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  background: #fff;
-}
-
-/* Custom Scrollbar */
-.heatmapTableContainer::-webkit-scrollbar { width: 8px; height: 8px; }
-.heatmapTableContainer::-webkit-scrollbar-track { background: transparent; }
-.heatmapTableContainer::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
-
-.heatmapTable {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: center;
-}
-
-/* 🆕 CABEÇALHO TRAVADO (Sticky) */
-.heatmapTable thead th {
-  position: sticky;
-  top: 0; /* Trava no topo ao rolar */
-  z-index: 2; /* Fica acima das células */
-  background: #f8fafc; /* Fundo sólido para cobrir as células rolando */
-  color: #334155;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 12px 6px;
-  border-bottom: 2px solid #e2e8f0;
-  white-space: nowrap;
-  text-transform: uppercase;
-}
-
-.heatmapTable tbody td {
-  padding: 6px;
-  border-bottom: 1px solid #f1f5f9;
-  border-right: 1px solid #f1f5f9;
-}
-
-.operatorCol {
-  text-align: left;
-  font-weight: 600;
-  font-size: 13px;
-  color: #0f172a;
-  white-space: nowrap;
-  padding-left: 16px !important;
-  padding-right: 16px !important;
-  background: #ffffff; /* Fundo para garantir legibilidade */
-}
-
-/* Quadrados Níveis de Habilidade */
-.levelSquare {
-  width: 24px;
-  height: 24px;
-  margin: 0 auto;
-  border-radius: 4px;
+.modHeatmap-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #f0f4f8;
+  color: #555555;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.modHeatmap-card:hover .modHeatmap-icon {
+  background: #fff0f0;
+  color: #d40000;
+}
+
+.modHeatmap-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.modHeatmap-titles h3 {
+  margin: 0;
+  font-size: 18px;
   font-weight: 800;
-  transition: transform 0.1s, filter 0.1s;
+  color: #111111;
+  letter-spacing: -0.3px;
+}
+
+.modHeatmap-titles h3 span {
+  color: #d40000;
+}
+
+.modHeatmap-titles p {
+  margin: 0;
+  font-size: 13px;
+  color: #888888;
+}
+
+/* ========================================================
+   CONTAINER DA TABELA (Scroll e Altura Fixa)
+   ======================================================== */
+.modHeatmap-tableContainer {
+  width: 100%;
+  max-height: 480px; /* Altura para ~10 Operadores sem scroll */
+  overflow-y: auto; 
+  overflow-x: auto; 
+  border: 1px solid #f0f0f0;
+  border-radius: 20px;
+  background: #ffffff;
+}
+
+/* Custom Scrollbar minimalista */
+.modHeatmap-tableContainer::-webkit-scrollbar { width: 8px; height: 8px; }
+.modHeatmap-tableContainer::-webkit-scrollbar-track { background: transparent; margin: 12px; }
+.modHeatmap-tableContainer::-webkit-scrollbar-thumb { background-color: #dcdcdc; border-radius: 10px; }
+.modHeatmap-tableContainer::-webkit-scrollbar-thumb:hover { background-color: #bebebe; }
+
+/* TABELA DE HEATMAP */
+.modHeatmap-table {
+  width: 100%;
+  border-collapse: separate; /* Permite uso de borders arredondadas em thead */
+  border-spacing: 0;
+  text-align: center;
+}
+
+/* CABEÇALHO TRAVADO (Sticky) */
+.modHeatmap-table thead th {
+  position: sticky;
+  top: 0; 
+  z-index: 2; 
+  background: #fdfdfd; 
+  color: #555555;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 14px 8px;
+  border-bottom: 1px solid #e5e5e5;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Evita que o fundo do texto no scroll sobreponha o sticky indevidamente */
+.modHeatmap-table thead th::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.modHeatmap-thContent {
+  display: inline-block;
+  transform: rotate(-35deg); /* Rotação sutil para acomodar nomes grandes */
+  transform-origin: left bottom;
+  margin-bottom: 6px;
+  max-width: 60px;
+  overflow: visible;
+}
+
+.modHeatmap-table tbody td {
+  padding: 8px;
+  border-bottom: 1px solid #f5f5f5;
+  border-right: 1px dashed #f5f5f5;
+  background: #ffffff;
+}
+
+.modHeatmap-table tbody tr:hover td {
+  background-color: #fafafa;
+}
+
+/* COLUNA DO OPERADOR TRAVADA HORIZONTALMENTE (Opcional/Complexo, mantido no fluxo) */
+.modHeatmap-operatorCol {
+  text-align: left;
+  font-size: 13px;
+  color: #111111;
+  white-space: nowrap;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  border-right: 1px solid #f0f0f0 !important;
+}
+
+.fw-700 {
+  font-weight: 700;
+}
+
+/* ========================================================
+   QUADRADOS NÍVEIS DE HABILIDADE (HEATMAP)
+   ======================================================== */
+.modHeatmap-levelSquare {
+  width: 26px;
+  height: 26px;
+  margin: 0 auto;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
   cursor: crosshair;
 }
 
-.levelSquare:hover {
-  transform: scale(1.2);
-  filter: brightness(1.1);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+.modHeatmap-levelSquare:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 10;
+  position: relative;
 }
 
 /* Cores Baseadas no Padrão do Dashboard */
-.level-0 { background: #f1f5f9; color: transparent; }
-.level-1 { background: #fee2e2; color: #b91c1c; } /* Vermelho/Iniciante */
-.level-2 { background: #fef3c7; color: #b45309; } /* Laranja/Treinamento */
-.level-3 { background: #eff6ff; color: #1d4ed8; } /* Azul/Apto */
-.level-4 { background: #f3e8ff; color: #6d28d9; } /* Roxo/Especialista */
-.level-5 { background: #dcfce7; color: #15803d; } /* Verde/Instrutor */
+.level-0 { background: #f8fafc; color: transparent; border: 1px solid #f1f5f9; box-sizing: border-box;}
+.level-1 { background: #fef2f2; color: #dc2626; } /* Vermelho/Iniciante */
+.level-2 { background: #fffbeb; color: #d97706; } /* Laranja/Treinamento */
+.level-3 { background: #eff6ff; color: #2563eb; } /* Azul/Apto */
+.level-4 { background: #f3e8ff; color: #7e22ce; } /* Roxo/Especialista */
+.level-5 { background: #ecfdf5; color: #059669; } /* Verde/Instrutor */
 
-.emptyState {
-  color: #64748b;
-  font-size: 14px;
+
+/* ========================================================
+   ESTADOS (LOADING / EMPTY)
+   ======================================================== */
+.modHeatmap-loadingArea {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+}
+
+.modHeatmap-spinIcon {
+  color: #d40000;
+  animation: modHeatmapSpin 1s linear infinite;
+}
+
+@keyframes modHeatmapSpin {
+  100% { transform: rotate(360deg); }
+}
+
+.modHeatmap-emptyArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #888888;
+  gap: 12px;
+  text-align: center;
   padding: 20px;
+}
+.modHeatmap-emptyArea p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+  .modHeatmap-card {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
 }

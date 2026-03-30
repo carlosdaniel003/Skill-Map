@@ -12,7 +12,7 @@ interface OperatorMatrixData {
   matricula: string
   posto_atual: string
   linha_atual: string
-  turno: string // 🆕 Adicionado para exibir no modal
+  turno: string // Adicionado para exibir no modal
   high_skill_count: number 
   score_assiduidade: number
 }
@@ -73,7 +73,7 @@ export default function TalentMatrix() {
               matricula: row.matricula,
               posto_atual: row.posto_atual,
               linha_atual: row.linha_atual,
-              turno: row.turno || "Sem Turno", // 🆕 Tratamento do Turno
+              turno: row.turno || "Sem Turno", // Tratamento do Turno
               high_skill_count: 0,
               score_assiduidade: Number(row.score_assiduidade || 0)
             })
@@ -139,20 +139,30 @@ export default function TalentMatrix() {
   const IconClockBadge = <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '4px'}}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
 
   return (
-    <div className="talentMatrixCard animateFadeIn">
-      <div className="matrixHeader">
-        <h2>Matriz Talento vs. Confiabilidade</h2>
-        <p>Identifique em quem investir para resolver produtividade a médio prazo.</p>
+    <div className="modTalent-card animateFadeIn">
+      
+      <div className="modTalent-header">
+        <div className="modTalent-iconWrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/>
+          </svg>
+        </div>
+        <div className="modTalent-titleBlock">
+          <h2 className="modTalent-title">Matriz Talento vs. Confiabilidade</h2>
+          <p className="modTalent-subtitle">Identifique em quem investir para resolver produtividade a médio prazo.</p>
+        </div>
       </div>
 
       {loading ? (
-        <div className="pageLoader" style={{ height: '40px', width: '40px', margin: '40px auto' }} />
+        <div className="modTalent-loadingState">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="modTalent-spinIcon"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+        </div>
       ) : (
-        <div className="matrixGrid">
+        <div className="modTalent-grid">
           
           {/* SUPERIOR ESQUERDO: Oportunidades */}
           <div 
-            className="quadrantBox q-oportunidades"
+            className="modTalent-quadrant q-oportunidades"
             onClick={() => setSelectedQuadrant({ 
               title: 'Oportunidades', 
               action: 'Treinar e Desenvolver', 
@@ -162,47 +172,47 @@ export default function TalentMatrix() {
               operators: quadrants.oportunidades 
             })}
           >
-            <div className="quadHeader">
+            <div className="modTalent-quadHeader">
               <div>
-                <h3 className="quadTitle">Oportunidades</h3>
-                <p className="quadSubtitle">Baixa Skill + Alta Assiduidade</p>
+                <h3 className="modTalent-quadTitle">Oportunidades</h3>
+                <p className="modTalent-quadSubtitle">Baixa Skill + Alta Assiduidade</p>
               </div>
-              <div className="quadCount">{quadrants.oportunidades.length}</div>
+              <div className="modTalent-quadCount">{quadrants.oportunidades.length}</div>
             </div>
-            <span className="quadAction">
-              <span style={{ marginRight: '6px' }}>{IconOportunidades}</span>
+            <span className="modTalent-quadAction">
+              <span className="actionIcon">{IconOportunidades}</span>
               Ação: Treinar
             </span>
           </div>
 
           {/* SUPERIOR DIREITO: Pilares */}
           <div 
-            className="quadrantBox q-pilares"
+            className="modTalent-quadrant q-pilares"
             onClick={() => setSelectedQuadrant({ 
               title: 'Pilares da Linha', 
               action: 'Reconhecer e usar como instrutores', 
               colorClass: 'q-pilares', 
-              colorHex: '#22c55e', 
+              colorHex: '#16a34a', 
               icon: IconPilares, 
               operators: quadrants.pilares 
             })}
           >
-            <div className="quadHeader">
+            <div className="modTalent-quadHeader">
               <div>
-                <h3 className="quadTitle">Pilares</h3>
-                <p className="quadSubtitle">Alta Skill + Alta Assiduidade</p>
+                <h3 className="modTalent-quadTitle">Pilares</h3>
+                <p className="modTalent-quadSubtitle">Alta Skill + Alta Assiduidade</p>
               </div>
-              <div className="quadCount">{quadrants.pilares.length}</div>
+              <div className="modTalent-quadCount">{quadrants.pilares.length}</div>
             </div>
-            <span className="quadAction">
-              <span style={{ marginRight: '6px' }}>{IconPilares}</span>
-              Ação: Manter/Promover
+            <span className="modTalent-quadAction">
+              <span className="actionIcon">{IconPilares}</span>
+              Ação: Promover
             </span>
           </div>
 
           {/* INFERIOR ESQUERDO: Risco */}
           <div 
-            className="quadrantBox q-riscos"
+            className="modTalent-quadrant q-riscos"
             onClick={() => setSelectedQuadrant({ 
               title: 'Baixo Fit / Risco', 
               action: 'Acompanhar ou Realocação', 
@@ -212,22 +222,22 @@ export default function TalentMatrix() {
               operators: quadrants.riscos 
             })}
           >
-            <div className="quadHeader">
+            <div className="modTalent-quadHeader">
               <div>
-                <h3 className="quadTitle">Risco / Baixo Fit</h3>
-                <p className="quadSubtitle">Baixa Skill + Baixa Assiduidade</p>
+                <h3 className="modTalent-quadTitle">Risco / Baixo Fit</h3>
+                <p className="modTalent-quadSubtitle">Baixa Skill + Baixa Assiduidade</p>
               </div>
-              <div className="quadCount">{quadrants.riscos.length}</div>
+              <div className="modTalent-quadCount">{quadrants.riscos.length}</div>
             </div>
-            <span className="quadAction">
-              <span style={{ marginRight: '6px' }}>{IconRisco}</span>
+            <span className="modTalent-quadAction">
+              <span className="actionIcon">{IconRisco}</span>
               Ação: Acompanhar
             </span>
           </div>
 
           {/* INFERIOR DIREITO: Talento Inconsistente */}
           <div 
-            className="quadrantBox q-estrelas"
+            className="modTalent-quadrant q-estrelas"
             onClick={() => setSelectedQuadrant({ 
               title: 'Talento Inconsistente', 
               action: 'Reduzir dependência / Advertir', 
@@ -237,15 +247,15 @@ export default function TalentMatrix() {
               operators: quadrants.estrelas 
             })}
           >
-            <div className="quadHeader">
+            <div className="modTalent-quadHeader">
               <div>
-                <h3 className="quadTitle">Talento Inconsistente</h3>
-                <p className="quadSubtitle">Alta Skill + Baixa Assiduidade</p>
+                <h3 className="modTalent-quadTitle">Talento Inconsistente</h3>
+                <p className="modTalent-quadSubtitle">Alta Skill + Baixa Assiduidade</p>
               </div>
-              <div className="quadCount">{quadrants.estrelas.length}</div>
+              <div className="modTalent-quadCount">{quadrants.estrelas.length}</div>
             </div>
-            <span className="quadAction">
-              <span style={{ marginRight: '6px' }}>{IconToxicos}</span>
+            <span className="modTalent-quadAction">
+              <span className="actionIcon">{IconToxicos}</span>
               Ação: Advertir
             </span>
           </div>
@@ -253,63 +263,67 @@ export default function TalentMatrix() {
         </div>
       )}
 
-      {/* MODAL DE DETALHES */}
+      {/* MODAL DE DETALHES (PADRÃO BLUR/ROUNDED) */}
       {selectedQuadrant && (
-        <div className="emergencyModalOverlay" onClick={() => setSelectedQuadrant(null)}>
+        <div className="modTalent-modalOverlay" onClick={() => setSelectedQuadrant(null)}>
           <div 
-            className="emergencyModalCard" 
+            className="modTalent-modalCard" 
             style={{ borderTopColor: selectedQuadrant.colorHex }}
             onClick={(e) => e.stopPropagation()} 
           >
             
-            <div className="emergencyHeader">
-              <div className="emergencyTitle">
-                <div className="emergencyIcon" style={{ color: selectedQuadrant.colorHex }}>
+            <div className="modTalent-modalHeader">
+              <div className="modTalent-modalTitle">
+                <div className="modTalent-modalIcon" style={{ color: selectedQuadrant.colorHex, background: `${selectedQuadrant.colorHex}15` }}>
                   {selectedQuadrant.icon}
                 </div>
                 <h3>Perfil: {selectedQuadrant.title}</h3>
               </div>
-              <button className="closeEmergencyBtn" onClick={() => setSelectedQuadrant(null)}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              <button className="modTalent-closeBtn" onClick={() => setSelectedQuadrant(null)} title="Fechar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             </div>
 
-            <div className="emergencyBody">
-              <p style={{ margin: 0, color: '#555', fontSize: '14px', marginBottom: '16px' }}>
+            <div className="modTalent-modalBody">
+              <p className="modTalent-modalDesc">
                 Total de <strong>{selectedQuadrant.operators.length}</strong> colaboradores encontrados. 
-                <br/>Ação recomendada Produção: <strong>{selectedQuadrant.action}</strong>.
+                <br/>Ação recomendada Produção: <strong style={{color: selectedQuadrant.colorHex}}>{selectedQuadrant.action}</strong>.
               </p>
 
-              <div className="emergencyResults kpiScrollableList">
+              <div className="modTalent-scrollableList">
                 {selectedQuadrant.operators.length === 0 ? (
-                  <div className="emptyState">Nenhum operador com este perfil no filtro atual.</div>
+                  <div className="modTalent-emptyState">
+                    Nenhum operador com este perfil no filtro atual.
+                  </div>
                 ) : (
                   selectedQuadrant.operators.map((op, index) => (
-                    <div key={op.id} className="suggestionCard" style={{ cursor: 'default' }}>
+                    <div key={op.id} className="modTalent-suggestionCard">
                       
-                      {/* RANKING */}
-                      <div className="suggestionRanking">
-                        <span className="rankNumber">{index + 1}º</span>
+                      {/* RANKING NÚMERO */}
+                      <div className="modTalent-rankNumber">
+                        {index + 1}º
                       </div>
 
-                      {/* INFO PRINCIPAL (NOME + TURNO/LINHA) */}
-                      <div className="suggestionMainInfo">
-                        <div className="suggestionName">{op.nome}</div>
-                        <div className="suggestionSubtitle">
+                      {/* INFO PRINCIPAL */}
+                      <div className="modTalent-suggestionInfo">
+                        <div className="modTalent-suggestionName">
+                          {op.nome}
+                        </div>
+                        <div className="modTalent-suggestionSub">
                           Mat: {op.matricula} • {formatTurno(op.turno)} • {op.linha_atual || "Sem Linha"}
                         </div>
-                        <div className="operatorTip" style={{ fontSize: '11px', color: '#888', marginTop: '2px' }}>
+                        <div className="modTalent-operatorTip">
                           Posto atual: {op.posto_atual || "Não alocado"}
                         </div>
                       </div>
 
-                      {/* BADGES VERTICAIS */}
-                      <div className="suggestionBadges">
+                      {/* BADGES */}
+                      <div className="modTalent-suggestionBadges">
                         <span 
-                          className="badge"
+                          className="modTalent-badge"
                           title="Quantidade de postos com domínio"
                           style={{ 
-                            background: op.high_skill_count >= 3 ? '#22c55e' : op.high_skill_count >= 2 ? '#3b82f6' : '#f59e0b'
+                            background: op.high_skill_count >= 3 ? '#16a34a' : op.high_skill_count >= 2 ? '#3b82f6' : '#f59e0b'
                           }}
                         >
                           {IconSkillBadge}
@@ -317,10 +331,10 @@ export default function TalentMatrix() {
                         </span>
                         
                         <span 
-                          className="badge"
+                          className="modTalent-badge"
                           title="Score de Assiduidade (%)"
                           style={{ 
-                            background: op.score_assiduidade >= 90 ? '#22c55e' : op.score_assiduidade >= 75 ? '#f59e0b' : '#d40000'
+                            background: op.score_assiduidade >= 90 ? '#16a34a' : op.score_assiduidade >= 75 ? '#f59e0b' : '#d40000'
                           }}
                         >
                           {IconClockBadge}
@@ -337,6 +351,7 @@ export default function TalentMatrix() {
           </div>
         </div>
       )}
+
     </div>
   )
 }

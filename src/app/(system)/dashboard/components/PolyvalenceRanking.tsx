@@ -35,7 +35,7 @@ export default function PolyvalenceRanking() {
         // 1. Busca os operadores ativos
         let opQuery = supabase.from('operators').select('id, nome, matricula, linha_atual, posto_atual').eq('ativo', true)
         
-        // 🛠️ MUDANÇA: Reage a TODOS os filtros da sidebar
+        // Reage a TODOS os filtros da sidebar
         if (filters.linha) {
           opQuery = opQuery.eq('linha_atual', filters.linha)
         }
@@ -123,119 +123,124 @@ export default function PolyvalenceRanking() {
     kpiStatusText = "Em Desenvolvimento"
   }
 
-  // Ícone base para o modal e botões
-  const IconPoly = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m2 12 5.25 5 2.625-3M8 12l5.25 5 2.625-3M14 12l5.25 5 2.625-3"/></svg>
-  
-  const IconTrophy = <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '6px'}}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>;
-
   return (
-    <div className="polyvalenceCard animateFadeIn">
-      <div className="polyHeader">
-        <div>
-          <h2 className="polyTitle">Índice de Multifuncionalidade</h2>
-          <p className="polySubtitle">Média de postos com domínio Nível 3+ por colaborador.</p>
+    <div className="modPoly-card animateFadeIn">
+      <div className="modPoly-header">
+        <div className="modPoly-iconWrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/>
+            <path d="M10 2c1 .5 2 2 2 5"/>
+          </svg>
+        </div>
+        <div className="modPoly-titleBlock">
+          <h2 className="modPoly-title">Índice de Multifuncionalidade</h2>
+          <p className="modPoly-subtitle">Média de postos com domínio Nível 3+ por colaborador.</p>
         </div>
       </div>
 
       {loading ? (
-        <div className="pageLoader" style={{ height: '40px', width: '40px', margin: '40px auto' }} />
+        <div className="modPoly-loadingState">
+           <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="modPoly-spinIcon"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+        </div>
       ) : (
         <>
-          <div className="polyKpiBox">
-            <div className="polyKpiInfo">
+          <div className="modPoly-kpiBox">
+            <div className="modPoly-kpiInfo">
               <h4>Média da Equipe</h4>
-              <div className="polyKpiValue">
+              <div className="modPoly-kpiValue">
                 {metrics.polyvalenceIndex} <span>skills/op.</span>
               </div>
             </div>
-            <div className={`polyKpiStatus ${kpiStatusClass}`}>
+            <div className={`modPoly-kpiStatus ${kpiStatusClass}`}>
               {kpiStatusText}
             </div>
           </div>
 
-          <div className="polyRanking">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #eee', paddingBottom: '8px', marginBottom: '8px' }}>
-              <h4 style={{ margin: 0, borderBottom: 'none', paddingBottom: 0, display: 'flex', alignItems: 'center' }}>
-                {IconTrophy} Top 5 Operadores Coringas
+          <div className="modPoly-ranking">
+            <div className="modPoly-rankingHeader">
+              <h4>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '6px'}}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg> 
+                Top 5 Operadores Coringas
               </h4>
               {metrics.topJokers.length > 0 && (
-                <button className="viewAllBtn" onClick={() => setIsModalOpen(true)}>
+                <button className="modPoly-viewAllBtn" onClick={() => setIsModalOpen(true)}>
                   Ver Detalhes
                 </button>
               )}
             </div>
             
             {metrics.topJokers.length === 0 ? (
-              <div className="emptyRanking">
-                Nenhum operador com domínio autônomo (Nível 3+) encontrado.
+              <div className="modPoly-emptyRanking">
+                Nenhum operador com domínio autônomo (Nível 3+) encontrado nos filtros atuais.
               </div>
             ) : (
-              metrics.topJokers.map((joker, index) => (
-                <div key={joker.id} className="rankingItem" onClick={() => setIsModalOpen(true)}>
-                  <div className={`rankPos ${index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : 'normal'}`}>
-                    {index + 1}º
+              <div className="modPoly-rankingList">
+                {metrics.topJokers.map((joker, index) => (
+                  <div key={joker.id} className="modPoly-rankingItem" onClick={() => setIsModalOpen(true)}>
+                    <div className={`modPoly-rankPos ${index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : 'normal'}`}>
+                      {index + 1}º
+                    </div>
+                    <div className="modPoly-rankInfo">
+                      <strong>{joker.nome}</strong>
+                      <span>{joker.linha_atual || "Sem Linha"} • Mat: {joker.matricula}</span>
+                    </div>
+                    <div className="modPoly-rankScore" title="Quantidade de Skills Nível 3 ou 4">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                      {joker.highSkillsCount}
+                    </div>
                   </div>
-                  <div className="rankInfo">
-                    <strong>{joker.nome}</strong>
-                    <span>{joker.linha_atual || "Sem Linha"} • Mat: {joker.matricula}</span>
-                  </div>
-                  <div className="rankScore" title="Quantidade de Skills Nível 3 ou 4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                    {joker.highSkillsCount}
-                  </div>
-                </div>
-              ))
+                ))}
+              </div>
             )}
           </div>
         </>
       )}
 
-      {/* MODAL DE DETALHES (PADRÃO CORPORATIVO) */}
+      {/* MODAL DE DETALHES (PADRÃO CORPORATIVO BLUR/ROUNDED) */}
       {isModalOpen && (
-        <div className="emergencyModalOverlay" onClick={() => setIsModalOpen(false)}>
+        <div className="modPoly-modalOverlay" onClick={() => setIsModalOpen(false)}>
           <div 
-            className="emergencyModalCard" 
-            style={{ borderTopColor: '#3b82f6' }}
+            className="modPoly-modalCard" 
             onClick={(e) => e.stopPropagation()} 
           >
             
-            <div className="emergencyHeader">
-              <div className="emergencyTitle">
-                <div className="emergencyIcon" style={{ color: '#3b82f6' }}>
-                  {IconPoly}
+            <div className="modPoly-modalHeader">
+              <div className="modPoly-modalTitle">
+                <div className="modPoly-modalIcon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m2 12 5.25 5 2.625-3M8 12l5.25 5 2.625-3M14 12l5.25 5 2.625-3"/></svg>
                 </div>
                 <h3>Ranking Completo: Coringas</h3>
               </div>
-              <button className="closeEmergencyBtn" onClick={() => setIsModalOpen(false)}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              <button className="modPoly-closeBtn" onClick={() => setIsModalOpen(false)}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
               </button>
             </div>
 
-            <div className="emergencyBody">
-              <p style={{ margin: 0, color: '#555', fontSize: '14px' }}>
+            <div className="modPoly-modalBody">
+              <p className="modPoly-modalDesc">
                 Os operadores abaixo são os mais versáteis do filtro selecionado, possuindo o maior número de postos dominados (Nível 3 ou 4).
               </p>
 
-              <div className="emergencyResults">
+              <div className="modPoly-scrollableList">
                 {metrics.topJokers.map((op, index) => (
-                  <div key={op.id} className="suggestionCard" style={{ cursor: 'default', borderColor: index === 0 ? '#3b82f6' : '#eee' }}>
-                    <div className="suggestionInfo">
-                      <div className="suggestionName">
+                  <div key={op.id} className="modPoly-suggestionCard" style={{ borderColor: index === 0 ? '#3b82f6' : '#f0f0f0' }}>
+                    <div className="modPoly-suggestionInfo">
+                      <div className="modPoly-suggestionName">
                         <span style={{ color: '#3b82f6', fontWeight: 900, marginRight: '8px' }}>{index + 1}º</span>
                         {op.nome}
-                        <span className="suggestionCurrentLine">{op.linha_atual || "Sem Linha"}</span>
+                        <span className="modPoly-suggestionLine">{op.linha_atual || "Sem Linha"}</span>
                       </div>
-                      <div className="suggestionMetrics">
-                        <span className="metricBadge">Posto: {op.posto_atual || "Não Alocado"}</span>
+                      <div className="modPoly-suggestionMetrics">
+                        <span>Posto Atual: {op.posto_atual || "Não Alocado"}</span>
                       </div>
                     </div>
                     
-                    <div className="suggestionAction" style={{ alignItems: 'flex-end' }}>
-                      <div className="rankScore" style={{ background: '#eff6ff', color: '#3b82f6', marginBottom: '4px' }}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <div className="modPoly-suggestionAction">
+                      <div className="modPoly-rankScore" style={{ background: '#eff6ff', color: '#3b82f6', marginBottom: '4px' }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                         {op.highSkillsCount} Skills
                       </div>
-                      <span style={{ fontSize: '11px', color: '#666' }}>Mat: {op.matricula}</span>
+                      <span className="modPoly-matBadge">Mat: {op.matricula}</span>
                     </div>
                   </div>
                 ))}

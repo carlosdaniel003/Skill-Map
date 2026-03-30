@@ -42,7 +42,6 @@ export default function LineEngagementThermometer() {
 
           // Traduz o turno do banco para o nome amigável
           const turnoName = row.turno || "Sem Turno"
-          // Removido: não precisa mais traduzir se o banco estiver normalizado
 
           // Se o RH já filtrou um turno específico, mostramos só a Linha. 
           // Se não houver filtro de turno, nós desmembramos a linha nos dois turnos!
@@ -79,49 +78,63 @@ export default function LineEngagementThermometer() {
   }, [filters])
 
   function getHealthClass(score: number) {
-    if (score >= 90) return "health-excellent"
-    if (score >= 80) return "health-warning"
-    return "health-critical"
+    if (score >= 90) return "modEng-healthExcellent"
+    if (score >= 80) return "modEng-healthWarning"
+    return "modEng-healthCritical"
   }
 
-  // SVGs para Benchmark e Alerta
-  const TrophyIcon = <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>;
-  const WarningIcon = <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d40000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>;
-
   return (
-    <div className="engagementCard animateFadeIn">
-      <div className="engHeader">
-        <div>
-          <h2 className="engTitle">Termômetro de Engajamento</h2>
-          <p className="engSubtitle">Média de Assiduidade por Linha (Cultura e Liderança)</p>
+    <div className="modEng-card">
+      <div className="modEng-header">
+        <div className="modEng-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>
+            <path d="M12 16v-2"/>
+          </svg>
+        </div>
+        <div className="modEng-titleBlock">
+          <h2 className="modEng-title">Termômetro de Engajamento</h2>
+          <p className="modEng-subtitle">Média de Assiduidade por Linha (Cultura e Liderança)</p>
         </div>
       </div>
 
       {loading ? (
-        <div className="pageLoader" style={{ height: '40px', width: '40px', margin: '40px auto' }} />
+        <div className="modEng-loadingState">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="modEng-spinIcon"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+        </div>
       ) : ranking.length === 0 ? (
-        <div className="emptyState" style={{ textAlign: 'center', padding: '40px 20px', color: '#888' }}>
+        <div className="modEng-emptyState">
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
           <p>Dados insuficientes para gerar o termômetro com estes filtros.</p>
         </div>
       ) : (
-        <div className="engRankingList">
+        <div className="modEng-rankingList">
           {ranking.map((item, index) => (
-            <div key={item.linha} className="engLineItem">
+            <div key={item.linha} className="modEng-lineItem">
               
-              <div className="engLineInfo">
-                <div className="engLineName">
-                  {index === 0 && ranking.length > 1 && <span className="engMedal" title="Benchmark da Fábrica">{TrophyIcon}</span>}
-                  {index === ranking.length - 1 && ranking.length > 1 && <span className="engMedal" title="Ponto de Atenção Crítico">{WarningIcon}</span>}
+              <div className="modEng-lineInfo">
+                <div className="modEng-lineName">
+                  {/* Medalhas / Avisos */}
+                  {index === 0 && ranking.length > 1 && (
+                    <span className="modEng-medal" title="Benchmark da Fábrica">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+                    </span>
+                  )}
+                  {index === ranking.length - 1 && ranking.length > 1 && (
+                    <span className="modEng-medal" title="Ponto de Atenção Crítico">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d40000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    </span>
+                  )}
                   {item.linha}
                 </div>
-                <div className="engLineScore">
+                <div className="modEng-lineScore">
                   {item.avgScore.toFixed(1)}% <span>({item.operatorCount} op.)</span>
                 </div>
               </div>
 
-              <div className="engBarTrack">
+              <div className="modEng-barTrack">
                 <div 
-                  className={`engBarFill ${getHealthClass(item.avgScore)}`} 
+                  className={`modEng-barFill ${getHealthClass(item.avgScore)}`} 
                   style={{ width: `${item.avgScore}%` }}
                 />
               </div>

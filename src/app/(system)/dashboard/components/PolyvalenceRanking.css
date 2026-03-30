@@ -1,339 +1,468 @@
 /* src/app/(system)/dashboard/components/PolyvalenceRanking.css */
 
-.polyvalenceCard {
+.modPoly-card {
   background: #ffffff;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  border-top: 6px solid #d40000; /* Vermelho Corporativo */
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
   height: 100%;
+  box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.polyHeader {
+.modPoly-card:hover {
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.06);
+}
+
+/* =========================================
+   CABEÇALHO
+   ========================================= */
+.modPoly-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  gap: 12px;
 }
 
-.polyTitle {
+.modPoly-iconWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #f0f4f8;
+  color: #555555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.modPoly-card:hover .modPoly-iconWrapper {
+  background: #fff0f0;
+  color: #d40000;
+}
+
+.modPoly-titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modPoly-title {
   margin: 0;
   font-size: 18px;
   font-weight: 800;
-  color: #111;
+  color: #111111;
+  letter-spacing: -0.3px;
 }
 
-.polySubtitle {
-  margin: 4px 0 0 0;
+.modPoly-subtitle {
+  margin: 0;
   font-size: 13px;
-  color: #666;
+  color: #888888;
 }
 
-/* KPI PRINCIPAL */
-.polyKpiBox {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 16px;
+/* =========================================
+   KPI PRINCIPAL
+   ========================================= */
+.modPoly-kpiBox {
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+  border-radius: 16px;
+  padding: 20px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
-.polyKpiInfo h4 {
+.modPoly-kpiInfo h4 {
   margin: 0;
-  font-size: 14px;
-  color: #475569;
+  font-size: 12px;
+  color: #888888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+}
+
+.modPoly-kpiValue {
+  font-size: 32px;
+  font-weight: 900;
+  color: #111111;
+  margin-top: 4px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.modPoly-kpiValue span {
+  font-size: 13px;
+  font-weight: 700;
+  color: #a0a0a0;
+}
+
+.modPoly-kpiStatus {
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.polyKpiValue {
-  font-size: 32px;
-  font-weight: 900;
-  color: #0f172a;
-  margin-top: 4px;
-}
+.vulnerable { background: #fef2f2; color: #dc2626; } 
+.developing { background: #fffbeb; color: #d97706; } 
+.resilient { background: #ecfdf5; color: #059669; }
 
-.polyKpiValue span {
-  font-size: 14px;
-  font-weight: 600;
-  color: #64748b;
-  margin-left: 4px;
-}
-
-.polyKpiStatus {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 700;
-}
-/* Cores fiéis à paleta solicitada */
-.polyKpiStatus.vulnerable { background: #fef2f2; color: #d40000; } /* Vermelho */
-.polyKpiStatus.developing { background: #fffbeb; color: #f59e0b; } /* Laranja */
-.polyKpiStatus.resilient { background: #f0fdf4; color: #22c55e; }  /* Verde */
-
-/* LEADERBOARD (RANKING) */
-.polyRanking {
+/* =========================================
+   LEADERBOARD (RANKING)
+   ========================================= */
+.modPoly-ranking {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   flex: 1;
 }
 
-.polyRanking h4 {
-  font-size: 15px;
-  color: #111;
+.modPoly-rankingHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.viewAllBtn {
-  background: none;
+.modPoly-rankingHeader h4 {
+  font-size: 14px;
+  color: #111111;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  font-weight: 800;
+}
+
+.modPoly-viewAllBtn {
+  background: transparent;
   border: none;
-  color: #3b82f6; /* Azul */
-  font-size: 13px;
-  font-weight: 700;
+  color: #3b82f6; 
+  font-size: 12px;
+  font-weight: 800;
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 6px 12px;
+  border-radius: 8px;
   transition: background 0.2s;
+  text-transform: uppercase;
 }
 
-.viewAllBtn:hover {
+.modPoly-viewAllBtn:hover {
   background: #eff6ff;
 }
 
-.rankingItem {
+.modPoly-rankingList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modPoly-rankingItem {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px;
-  border-radius: 6px;
+  padding: 12px 16px;
+  border-radius: 12px;
   background: #ffffff;
-  border: 1px solid #f1f5f9;
-  transition: transform 0.2s, box-shadow 0.2s;
-  cursor: pointer; /* Indica que é clicável */
+  border: 1px solid #f5f5f5;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s;
+  cursor: pointer; 
 }
 
-.rankingItem:hover {
+.modPoly-rankingItem:hover {
   transform: translateX(4px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  border-color: #3b82f6; /* Azul no hover */
+  box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+  border-color: #3b82f6; 
 }
 
-.rankPos {
-  width: 28px;
-  height: 28px;
+.modPoly-rankPos {
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: 10px; /* Squircle */
   font-weight: 800;
-  font-size: 14px;
-  color: #fff;
+  font-size: 13px;
+  color: #ffffff;
   margin-right: 12px;
+  flex-shrink: 0;
 }
 
-/* Cores das Medalhas */
-.rankPos.gold { background: #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.4); } /* Laranja/Ouro */
-.rankPos.silver { background: #94a3b8; }
-.rankPos.bronze { background: #b45309; }
-.rankPos.normal { background: #cbd5e1; }
+.gold { background: #f59e0b; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3); } 
+.silver { background: #94a3b8; }
+.bronze { background: #b45309; }
+.normal { background: #cbd5e1; }
 
-.rankInfo {
+.modPoly-rankInfo {
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
-.rankInfo strong {
+.modPoly-rankInfo strong {
   font-size: 14px;
-  color: #111;
+  color: #111111;
+  font-weight: 700;
 }
 
-.rankInfo span {
+.modPoly-rankInfo span {
   font-size: 12px;
-  color: #666;
+  color: #888888;
+  font-weight: 500;
 }
 
-.rankScore {
+.modPoly-rankScore {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #f0f9ff;
-  color: #3b82f6; /* Azul */
+  background: #f0f4f8;
+  color: #3b82f6; 
   padding: 6px 12px;
-  border-radius: 20px;
-  font-weight: 700;
-  font-size: 14px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 13px;
 }
 
-.emptyRanking {
+.modPoly-emptyRanking {
   text-align: center;
-  padding: 20px;
-  color: #888;
-  font-size: 14px;
-  background: #f8fafc;
-  border-radius: 6px;
-  border: 1px dashed #cbd5e1;
+  padding: 40px 20px;
+  color: #888888;
+  font-size: 13px;
+  font-weight: 500;
+  background: #fafafa;
+  border-radius: 16px;
 }
-
 
 /* ========================================================
-   ESTILOS DO MODAL
+   ESTADOS (LOADING)
    ======================================================== */
-.emergencyModalOverlay {
+.modPoly-loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 200px;
+}
+
+.modPoly-spinIcon {
+  color: #d40000;
+  animation: modPolySpin 1s linear infinite;
+}
+
+@keyframes modPolySpin {
+  100% { transform: rotate(360deg); }
+}
+
+/* ========================================================
+   MODAL CORPORATIVO (BLUR & ROUNDED)
+   ======================================================== */
+.modPoly-modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10000;
-  animation: fadeIn 0.2s ease-out;
+  animation: modPolyFadeIn 0.3s ease-out;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.emergencyModalCard {
-  width: 90%;
-  max-width: 600px;
+.modPoly-modalCard {
+  width: 100%;
+  max-width: 540px;
   max-height: 85vh;
   background: #ffffff;
-  border-top: 6px solid #d40000; /* Vermelho por padrão para Polivalência */
-  border-radius: 8px;
+  border-radius: 28px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
-  animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
+  animation: modPolySlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
 }
 
-.emergencyHeader {
-  padding: 20px 24px;
+.modPoly-modalHeader {
+  padding: 24px 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #eee;
-  background: #fdfdfd;
+  border-bottom: 1px solid #f0f0f0;
+  background: #ffffff;
+  flex-shrink: 0;
 }
 
-.emergencyTitle {
+.modPoly-modalTitle {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
-.emergencyTitle h3 {
+.modPoly-modalTitle h3 {
   margin: 0;
   font-size: 18px;
   font-weight: 800;
-  color: #111;
+  color: #111111;
 }
 
-.emergencyIcon {
+.modPoly-modalIcon {
   display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #eff6ff; /* Fundo azul claro */
+  color: #3b82f6;      /* Ícone azul escuro */
 }
 
-.closeEmergencyBtn {
+.modPoly-closeBtn {
   background: transparent;
   border: none;
-  color: #888;
+  color: #888888;
   cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  transition: all 0.2s;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
-.closeEmergencyBtn:hover {
-  background: #f0f0f0;
-  color: #111;
+.modPoly-closeBtn:hover {
+  background: #f5f5f5;
+  color: #111111;
 }
 
-.emergencyBody {
-  padding: 24px;
-  overflow-y: auto;
+.modPoly-modalBody {
+  padding: 24px 32px;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  background: #fcfcfc;
+  overflow: hidden; /* Scroll movido para lista */
+  flex: 1;
 }
 
-.emergencyResults {
+.modPoly-modalDesc {
+  color: #666666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* LISTA COM SCROLL NO MODAL */
+.modPoly-scrollableList {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
 }
 
-.suggestionCard {
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 16px;
+.modPoly-scrollableList::-webkit-scrollbar { width: 6px; }
+.modPoly-scrollableList::-webkit-scrollbar-track { background: transparent; margin: 4px 0; }
+.modPoly-scrollableList::-webkit-scrollbar-thumb { background-color: #dcdcdc; border-radius: 10px; }
+
+/* CARD DE CADA OPERADOR NO MODAL */
+.modPoly-suggestionCard {
+  border: 1px solid #f0f0f0;
+  border-radius: 16px;
+  padding: 16px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #fff;
-  transition: transform 0.2s, box-shadow 0.2s;
+  background: #ffffff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.suggestionCard:hover {
+.modPoly-suggestionCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.04);
 }
 
-.suggestionInfo {
+.modPoly-suggestionInfo {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
-.suggestionName {
-  font-size: 16px;
+.modPoly-suggestionName {
+  font-size: 15px;
   font-weight: 700;
-  color: #111;
+  color: #111111;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.suggestionCurrentLine {
-  font-size: 12px;
-  color: #666;
-  background: #f0f0f0;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-weight: 600;
+.modPoly-suggestionLine {
+  font-size: 11px;
+  color: #555555;
+  background: #f0f4f8;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
-.suggestionMetrics {
-  display: flex;
-  gap: 16px;
+.modPoly-suggestionMetrics {
   font-size: 13px;
-  color: #555;
+  color: #888888;
+  font-weight: 500;
 }
 
-.metricBadge {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-weight: 600;
-}
-
-.suggestionAction {
+.modPoly-suggestionAction {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 8px;
+  gap: 4px;
 }
 
-@keyframes slideUp {
-  from { transform: translateY(40px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+.modPoly-matBadge {
+  font-size: 11px;
+  color: #888888;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
-@keyframes fadeIn {
+/* Animações */
+@keyframes modPolySlideUp {
+  from { transform: translateY(40px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes modPolyFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+/* Responsividade */
+@media (max-width: 640px) {
+  .modPoly-suggestionCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .modPoly-suggestionAction {
+    align-items: flex-start;
+  }
 }
