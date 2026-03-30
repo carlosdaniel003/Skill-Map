@@ -1,81 +1,137 @@
 /* src/app/(system)/dashboard/components/OperatorSkillsRadar.css */
 
-/* CARD CORPORATIVO PARA O RADAR */
-.radarCard {
+.modRadar-card {
   background: #ffffff;
-  /* A borda top voltou a ser o vermelho fixo da identidade corporativa */
-  border-top: 6px solid #d40000;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
-  height: 480px; /* Alinhado com a altura do Skill Grade e Line Radar */
+  height: 480px;
   box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* EMPTY STATE (Quando não tem operador selecionado) */
-.emptyRadarCard {
-  border-top: 6px solid #e0e0e0 !important;
-  justify-content: center;
+.modRadar-card:hover {
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.06);
+}
+
+/* =========================================
+   HEADER DO GRÁFICO
+   ========================================= */
+.modRadar-header {
+  display: flex;
   align-items: center;
-  text-align: center;
-  gap: 16px;
-  background: #f9f9f9;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
-.emptyIcon {
-  color: #cccccc;
-}
-
-.emptyRadarCard p {
-  color: #888888;
-  font-size: 14px;
-  max-width: 280px;
-  margin: 0;
-  line-height: 1.5;
-}
-
-/* HEADER DO GRÁFICO */
-.radarHeader {
-  margin-bottom: 20px;
-}
-
-.radarHeader h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 700;
-  color: #111111;
-  transition: color 0.4s ease;
-}
-
-.radarAverage {
-  margin: 4px 0 0 0;
-  font-size: 13px;
+.modRadar-iconWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #f0f4f8;
   color: #555555;
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
 }
 
-.radarAverage strong {
-  font-size: 15px;
-  transition: color 0.4s ease;
+.modRadar-card:hover .modRadar-iconWrapper {
+  background: #fff0f0;
+  color: #d40000;
 }
 
-.maxAverage {
-  color: #999999;
-  font-size: 12px;
+.modRadar-titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-/* CONTAINER DO GRÁFICO */
-.radarChartContainer {
+.modRadar-titleBlock h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  color: #111111;
+  letter-spacing: -0.3px;
+}
+
+.modRadar-average {
+  margin: 0;
+  font-size: 13px;
+  color: #666666;
+  font-weight: 600;
+}
+
+.modRadar-average strong {
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.modRadar-average span {
+  color: #a0a0a0;
+  font-size: 11px;
+}
+
+/* =========================================
+   CONTAINER DO GRÁFICO (RECHARTS)
+   ========================================= */
+.modRadar-chartContainer {
   flex: 1;
   width: 100%;
-  min-height: 0; /* Ajuda o Recharts a calcular a altura correta no Flexbox */
+  min-height: 0;
 }
-/* Customiza o Tooltip do Recharts */
+
+/* ESTADOS DE CARREGAMENTO E VAZIO */
+.modRadar-loadingArea,
+.modRadar-emptyArea {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  text-align: center;
+}
+
+.modRadar-spinIcon {
+  color: #d40000;
+  animation: modRadarSpin 1s linear infinite;
+}
+
+@keyframes modRadarSpin {
+  100% { transform: rotate(360deg); }
+}
+
+.modRadar-emptyArea {
+  color: #888888;
+  gap: 12px;
+}
+
+.modRadar-emptyArea p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  max-width: 240px;
+}
+
+/* Customiza o Tooltip do Recharts via CSS Global para garantir o arredondamento */
 .recharts-default-tooltip {
-  background-color: rgba(255, 255, 255, 0.95) !important;
-  border-radius: 8px !important;
-  border: 1px solid #e0e0e0 !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  background-color: rgba(255, 255, 255, 0.98) !important;
+  border-radius: 16px !important;
+  border: none !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* =========================================
+   RESPONSIVIDADE
+   ========================================= */
+@media (max-width: 768px) {
+  .modRadar-card {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
 }

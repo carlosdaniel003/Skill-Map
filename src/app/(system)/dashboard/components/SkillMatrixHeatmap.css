@@ -111,11 +111,18 @@
   color: #555555;
   font-size: 11px;
   font-weight: 700;
-  padding: 14px 8px;
+  padding: 14px 8px; /* Ajuste no padding para garantir respiro lateral */
   border-bottom: 1px solid #e5e5e5;
-  white-space: nowrap;
+  
+  /* Removemos o nowrap para permitir que nomes longos quebrem linha e não estiquem a tela infinitamente */
+  white-space: normal; 
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  
+  /* Adicionamos uma largura mínima e máxima para o texto das skills não ficar comprimido nem gigantesco */
+  min-width: 60px;
+  max-width: 100px;
+  line-height: 1.2;
 }
 
 /* Evita que o fundo do texto no scroll sobreponha o sticky indevidamente */
@@ -128,13 +135,12 @@
   border-bottom: 1px solid #f0f0f0;
 }
 
+/* O conteúdo interno agora é um bloco normal, sem rotação */
 .modHeatmap-thContent {
   display: inline-block;
-  transform: rotate(-35deg); /* Rotação sutil para acomodar nomes grandes */
-  transform-origin: left bottom;
-  margin-bottom: 6px;
-  max-width: 60px;
-  overflow: visible;
+  /* Removido o transform: rotate(-35deg); */
+  margin-bottom: 0; /* Removemos a margem extra do rotate */
+  width: 100%; /* Forçamos a ocupar a largura do TH */
 }
 
 .modHeatmap-table tbody td {

@@ -67,7 +67,7 @@ export default function OperatorSkillsRadar() {
       } else {
         let title = "Média Geral"
         if (filters.linha) title += ` - ${filters.linha}`
-                if (filters.turno) {
+        if (filters.turno) {
           title += ` (${filters.turno})`
         }
         setOperatorName(title)
@@ -137,22 +137,30 @@ export default function OperatorSkillsRadar() {
   /* RENDER DO GRÁFICO             */
   /* ----------------------------- */
   return (
-    <div className="corporateCard radarCard animateFadeIn">
+    <div className="modRadar-card animateFadeIn">
 
-      <div className="radarHeader">
-        <h3>Radar de Habilidades — <span style={{ color: radarColor }}>{operatorName}</span></h3>
-        <p className="radarAverage">Média Geral: <strong style={{ color: radarColor }}>{average}</strong> <span className="maxAverage">/ 5.00</span></p>
+      <div className="modRadar-header">
+        <div className="modRadar-iconWrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <div className="modRadar-titleBlock">
+            <h3>Radar: <span style={{ color: radarColor }}>{operatorName}</span></h3>
+            <p className="modRadar-average">
+                Média: <strong style={{ color: radarColor }}>{average}</strong> <span>/ 5.00</span>
+            </p>
+        </div>
       </div>
 
-      <div className="radarChartContainer">
+      <div className="modRadar-chartContainer">
         {isLoading ? (
-          <div style={{ display: 'flex', height: '100%', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            {/* 🛠️ MUDANÇA: Injetado o pageLoader vermelho padrão */}
-            <div className="pageLoader" style={{ height: '40px', width: '40px' }} />
+          <div className="modRadar-loadingArea">
+            {/* 🛠️ MUDANÇA: Injetado o pageLoader animado padrão */}
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="modRadar-spinIcon"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
           </div>
         ) : skills.length === 0 ? (
-          <div style={{ display: 'flex', height: '100%', justifyContent: 'center', alignItems: 'center', color: '#888', fontSize: '13px' }}>
-            Nenhuma habilidade registrada para estes filtros.
+          <div className="modRadar-emptyArea">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg>
+            <p>Nenhuma habilidade registrada para estes filtros.</p>
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
@@ -162,30 +170,33 @@ export default function OperatorSkillsRadar() {
 
               <PolarAngleAxis
                 dataKey="posto"
-                tick={{ fill: "#555555", fontSize: 12, fontWeight: 600 }}
+                tick={{ fill: "#555555", fontSize: 11, fontWeight: 700 }}
               />
 
               <PolarRadiusAxis
                 angle={30}
                 domain={[0, 5]}
-                tick={{ fill: "#888888" }}
+                tick={{ fill: "#888888", fontSize: 10 }}
                 tickCount={6}
               />
 
               <Tooltip
-                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                itemStyle={{ fontWeight: 'bold', color: radarColor }}
+                contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 8px 24px rgba(0,0,0,0.08)', padding: '12px' }}
+                itemStyle={{ fontWeight: '800', color: radarColor }}
                 formatter={(value) => [`Nível ${value}`, "Habilidade"]}
               />
 
+              {/* Removido 'animationEasing' inválido (cubic-bezier) que causava erro no TS.
+                Mantive a animação base nativa e o fill opacity. 
+              */}
               <Radar
                 name="Skill"
                 dataKey="nivel"
                 stroke={radarColor}
                 strokeWidth={2}
                 fill={radarColor}
-                fillOpacity={0.4}
-                animationDuration={600}
+                fillOpacity={0.25}
+                animationDuration={800}
               />
 
             </RadarChart>

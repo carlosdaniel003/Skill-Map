@@ -28,17 +28,24 @@
   gap: 12px;
 }
 
+/* O wrapper do ícone agora começa cinza */
 .modBleed-iconWrapper {
   width: 44px;
   height: 44px;
   border-radius: 14px;
-  background: #fff0f0;
-  color: #d40000; /* Ícone vermelho alertando para o absenteísmo */
+  background: #f0f4f8; /* Cinza azulado suave */
+  color: #555555;      /* Ícone cinza */
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   transition: all 0.3s ease;
+}
+
+/* Ao passar o mouse no CARD, o ícone fica vermelho */
+.modBleed-card:hover .modBleed-iconWrapper {
+  background: #fff0f0;
+  color: #d40000;
 }
 
 .modBleed-titleBlock {
@@ -53,6 +60,8 @@
   font-weight: 800;
   color: #111111;
   letter-spacing: -0.3px;
+  display: flex;
+  align-items: center;
 }
 
 .modBleed-subtitle {
