@@ -225,11 +225,11 @@ export default function TalentMatrix() {
             </span>
           </div>
 
-          {/* INFERIOR DIREITO: Estrelas Tóxicos */}
+          {/* INFERIOR DIREITO: Talento Inconsistente */}
           <div 
             className="quadrantBox q-estrelas"
             onClick={() => setSelectedQuadrant({ 
-              title: 'Estrelas Tóxicos', 
+              title: 'Talento Inconsistente', 
               action: 'Reduzir dependência / Advertir', 
               colorClass: 'q-estrelas', 
               colorHex: '#d40000', 
@@ -239,7 +239,7 @@ export default function TalentMatrix() {
           >
             <div className="quadHeader">
               <div>
-                <h3 className="quadTitle">Estrelas Tóxicos</h3>
+                <h3 className="quadTitle">Talento Inconsistente</h3>
                 <p className="quadSubtitle">Alta Skill + Baixa Assiduidade</p>
               </div>
               <div className="quadCount">{quadrants.estrelas.length}</div>

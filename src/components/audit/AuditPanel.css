@@ -1,355 +1,195 @@
 /* src/components/audit/AuditPanel.css */
 
-.auditPanel {
+.modAuditPanelContainer {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
   width: 100%;
+  animation: fadeIn 0.4s ease-out;
 }
 
-/* HEADER DO PAINEL */
-.auditHeader {
+/* AÇÕES E BOTÕES */
+.modAuditPanelActions {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  gap: 12px;
 }
 
-/* TABELA CORPORATIVA */
-.tableContainer {
+.modAuditSecondaryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #555555;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modAuditSecondaryButton:hover {
+  background: #f9f9f9;
+  border-color: #cccccc;
+  color: #111111;
+}
+
+.modAuditDangerButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: #fff0f0;
+  color: #d40000;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modAuditDangerButton:hover {
+  background: #d40000;
+  color: #ffffff;
+}
+
+/* WRAPPER E TABELA MODERNA */
+.modAuditTableWrapper {
+  max-height: 400px;
+  overflow-y: auto;
   overflow-x: auto;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
+  border: 1px solid #f0f0f0;
+  border-radius: 20px; /* Bordas arredondadas do padrão novo */
   background: #ffffff;
 }
 
-.corporateTable {
+/* Custom Scrollbar */
+.modAuditTableWrapper::-webkit-scrollbar { 
+  width: 8px; 
+  height: 8px;
+}
+.modAuditTableWrapper::-webkit-scrollbar-track { 
+  background: transparent; 
+  margin: 8px;
+}
+.modAuditTableWrapper::-webkit-scrollbar-thumb { 
+  background-color: #dcdcdc; 
+  border-radius: 20px; 
+}
+.modAuditTableWrapper::-webkit-scrollbar-thumb:hover { 
+  background-color: #bebebe; 
+}
+
+.modAuditTable {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
 }
 
-.corporateTable th {
-  background: #f9f9f9;
-  color: #555555;
-  font-weight: 600;
-  font-size: 13px;
-  padding: 12px 16px;
-  border-bottom: 2px solid #e0e0e0;
+.modAuditTable th {
+  background: #fafafa;
+  color: #888888;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   white-space: nowrap;
+  position: sticky;
+  top: 0; /* Para o header ficar fixo durante o scroll */
+  z-index: 10;
 }
 
-.corporateTable tbody tr td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #f0f0f0;
+.modAuditTable td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f5f5f5;
   color: #333333;
   font-size: 14px;
   vertical-align: middle;
+  transition: background 0.2s ease;
 }
 
-.corporateTable tbody tr:last-child td {
+.modAuditTable tr:hover td {
+  background: #fcfcfc;
+}
+
+.modAuditTable tr:last-child td {
   border-bottom: none;
 }
 
-.corporateTable tbody tr:hover td {
-  background: #fafafa;
-}
-
-.emptyState {
-  text-align: center;
-  padding: 40px !important;
-  color: #888888 !important;
-  font-style: italic;
-  background: #fafafa;
-}
-
-/* BOTÃO DE DELETAR/LIMPAR (Tabela) */
-.dangerButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border: 1px solid #ffcccc;
-  border-radius: 6px;
-  background: #fff0f0;
-  color: #d40000;
+/* TIPOGRAFIA ESPECÍFICA DA AUDITORIA */
+.modAuditTable .timeCell {
+  color: #888888;
   font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
-.dangerButton:hover:not(:disabled) {
-  background: #d40000;
-  color: #ffffff;
+.modAuditTable .authorCell {
+  color: #111111;
 }
 
-.dangerButton:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background: #f5f5f5;
-  border-color: #e0e0e0;
-  color: #999999;
+.modAuditTable .detailsCell {
+  color: #555555;
+  font-size: 13px;
+  line-height: 1.4;
 }
 
+.modAuditTable .fontWeight600 {
+  font-weight: 700;
+}
 
-/* =========================================
-   MODAL CORPORATIVO
-   ========================================= */
-
-.modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(4px);
+/* EMPTY STATE E LOADING */
+.modAuditLoading {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
-  animation: fadeIn 0.2s ease-out;
+  gap: 12px;
+  padding: 60px 40px;
+  text-align: center;
+  color: #888888;
+  font-weight: 500;
+  font-size: 14px;
+  background: #fafafa;
+  border-radius: 20px;
+  border: 1px dashed #e0e0e0;
 }
 
-.corporateModal {
-  width: 100%;
-  max-width: 420px;
-  background: #ffffff;
-  border-top: 6px solid #d40000;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+.spinIcon {
+  animation: spin 1s linear infinite;
+  color: #d40000;
+}
+
+.modAuditTable .emptyState {
+  padding: 60px 20px;
+  background: #fafafa;
+  text-align: center;
+}
+
+.emptyStateContent {
   display: flex;
   flex-direction: column;
-  animation: modalEnter 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.modalHeader {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.modalIcon {
-  display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: #fff0f0;
-  color: #d40000;
-  border-radius: 50%;
-}
-
-.modalHeader h3 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 700;
-  color: #111111;
-}
-
-.modalBody {
-  margin-bottom: 24px;
-}
-
-.modalBody p {
-  margin: 0;
-  font-size: 14px;
-  color: #555555;
-  line-height: 1.5;
-}
-
-.modalBody strong {
-  color: #111111;
-}
-
-.modalFooter {
-  display: flex;
-  justify-content: flex-end;
   gap: 12px;
-}
-
-/* Botões do Modal */
-.secondaryButton {
-  padding: 10px 16px;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  background: #ffffff;
-  color: #333333;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.secondaryButton:hover {
-  background: #f9f9f9;
-  border-color: #cccccc;
-}
-
-.primaryDangerButton {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  background: #d40000;
-  color: white;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.primaryDangerButton:hover {
-  background: #b30000;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
-}
-
-/* Animações do Modal */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes modalEnter {
-  from {
-    transform: translateY(20px) scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-}
-
-/* src/components/audit/AuditPanel.css */
-
-.auditPanelContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.auditPanelActions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.auditTableWrapper {
-  max-height: 380px;
-  overflow-y: auto;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-}
-
-/* Custom Scrollbar */
-.auditTableWrapper::-webkit-scrollbar { width: 6px; }
-.auditTableWrapper::-webkit-scrollbar-track { background: transparent; }
-.auditTableWrapper::-webkit-scrollbar-thumb { background-color: #cccccc; border-radius: 10px; }
-
-/* Tipografia específica da auditoria */
-.timeCell {
   color: #888888;
-  font-size: 12px;
-  white-space: nowrap;
-}
-
-.authorCell {
-  color: #111111;
-}
-
-.detailsCell {
-  color: #555555;
-  font-size: 13px;
-}
-
-.auditLoading {
-  padding: 40px;
-  text-align: center;
-  color: #888888;
-  font-style: italic;
-  font-size: 14px;
-}
-
-/* BADGES DAS AÇÕES */
-.auditBadge {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-
-.action-login { background: #eff6ff; color: #2563eb; } /* Azul */
-.action-create_user { background: #ecfdf5; color: #059669; } /* Verde */
-.action-remove_user { background: #fef2f2; color: #dc2626; } /* Vermelho */
-.action-change_password { background: #fffbeb; color: #d97706; } /* Laranja/Amarelo */
-.action-update_permissions { background: #faf5ff; color: #9333ea; } /* Roxo */
-
-/* src/components/audit/AuditPanel.css */
-
-.auditPanelContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.auditPanelActions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.auditTableWrapper {
-  max-height: 380px;
-  overflow-y: auto;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-}
-
-/* Custom Scrollbar */
-.auditTableWrapper::-webkit-scrollbar { width: 6px; }
-.auditTableWrapper::-webkit-scrollbar-track { background: transparent; }
-.auditTableWrapper::-webkit-scrollbar-thumb { background-color: #cccccc; border-radius: 10px; }
-
-/* Tipografia específica da auditoria */
-.timeCell {
-  color: #888888;
-  font-size: 12px;
-  white-space: nowrap;
-}
-
-.authorCell {
-  color: #111111;
-}
-
-.detailsCell {
-  color: #555555;
-  font-size: 13px;
-}
-
-.auditLoading {
-  padding: 40px;
-  text-align: center;
-  color: #888888;
-  font-style: italic;
-  font-size: 14px;
+  font-weight: 500;
 }
 
 /* BADGES DAS AÇÕES (Módulos Temáticos) */
-.auditBadge {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 4px;
+.modAuditBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 8px; /* Arredondamento moderno */
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
@@ -362,3 +202,29 @@
 .action-skill { background: #fffbeb; color: #d97706; } /* Laranja (Habilidades) */
 .action-history { background: #ecfdf5; color: #059669; } /* Verde (Registros) */
 .action-default { background: #f1f5f9; color: #475569; } /* Cinza Genérico */
+
+/* ANIMAÇÕES */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+  .modAuditTable th, .modAuditTable td { 
+    padding: 12px 16px; 
+  }
+  .modAuditPanelActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .modAuditSecondaryButton, .modAuditDangerButton {
+    justify-content: center;
+    padding: 12px;
+  }
+}

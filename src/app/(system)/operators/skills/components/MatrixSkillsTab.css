@@ -249,3 +249,29 @@ input:checked + .slider:before {
 .qtdInput[type=number] {
   -moz-apparance: textfield;
 }
+
+/* Atualize a classe matrixHeader existente para organizar o select e o botão lado a lado */
+.matrixHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px dashed #e0e0e0;
+}
+
+/* Novo estilo para destacar o botão de ação em massa no cabeçalho */
+.bulkActionBtn {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  padding: 8px 16px;
+  font-size: 13px;
+  color: #334155;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.bulkActionBtn:hover {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1d4ed8;
+}

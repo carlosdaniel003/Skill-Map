@@ -132,7 +132,7 @@ export default function PolyvalenceRanking() {
     <div className="polyvalenceCard animateFadeIn">
       <div className="polyHeader">
         <div>
-          <h2 className="polyTitle">Índice de Polivalência (ILUO)</h2>
+          <h2 className="polyTitle">Índice de Multifuncionalidade</h2>
           <p className="polySubtitle">Média de postos com domínio Nível 3+ por colaborador.</p>
         </div>
       </div>

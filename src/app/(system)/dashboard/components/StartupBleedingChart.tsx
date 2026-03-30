@@ -137,7 +137,7 @@ export default function StartupBleedingChart() {
         <div>
           <h2 className="bleedingTitle" style={{ display: 'flex', alignItems: 'center' }}>
             {IconBleeding}
-            Índice de Sangramento (Micro-absenteísmo)
+            Detalhamento de Absenteísmo e Atrasos
           </h2>
           <p className="bleedingSubtitle">
             Volume de atrasos e saídas antecipadas nos últimos 30 dias. 

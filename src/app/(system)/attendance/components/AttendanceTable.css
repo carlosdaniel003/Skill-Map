@@ -3,35 +3,36 @@
 /* ========================================================
    ESCOPO RAIZ DO COMPONENTE
    ======================================================== */
-.attendanceTableContainer {
+.modAttendanceTableContainer {
   width: 100%;
   max-height: 65vh;
   overflow: auto;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  border-radius: 24px; /* Bordas Super Arredondadas */
   background: #ffffff;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03); /* Sombra elegante */
+  transition: all 0.3s ease;
 }
 
 /* Scrollbar Customizada Limpa e Corporativa */
-.attendanceTableContainer::-webkit-scrollbar {
+.modAttendanceTableContainer::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
-.attendanceTableContainer::-webkit-scrollbar-track {
-  background: #f8fafc;
-  border-radius: 4px;
+.modAttendanceTableContainer::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 16px; /* Evita que a scrollbar grude nas bordas arredondadas */
 }
-.attendanceTableContainer::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
+.modAttendanceTableContainer::-webkit-scrollbar-thumb {
+  background: #dcdcdc;
+  border-radius: 20px;
 }
-.attendanceTableContainer::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+.modAttendanceTableContainer::-webkit-scrollbar-thumb:hover {
+  background: #bebebe;
 }
 
 /* ESTRUTURA DA TABELA */
-.attendanceTableContainer .excelTable {
+.modAttendanceTableContainer .excelTable {
   border-collapse: separate;
   border-spacing: 0;
   width: max-content;
@@ -40,50 +41,51 @@
 /* ========================================================
    CABEÇALHO (THEAD)
    ======================================================== */
-.attendanceTableContainer .excelTable th {
-  background: #f1f5f9;
-  color: #334155;
+.modAttendanceTableContainer .excelTable th {
+  background: #fafafa;
+  color: #888888;
   font-size: 12px;
   font-weight: 700;
-  padding: 12px 8px;
-  border-right: 1px solid #e2e8f0;
-  border-bottom: 2px solid #cbd5e1;
+  padding: 16px 8px;
+  border-right: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
   white-space: nowrap;
   position: sticky;
   top: 0;
   z-index: 10;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
 
 /* ========================================================
    CÉLULAS DO CORPO (TBODY)
    ======================================================== */
-.attendanceTableContainer .excelTable td {
-  border-right: 1px solid #e2e8f0;
-  border-bottom: 1px solid #e2e8f0;
+.modAttendanceTableContainer .excelTable td {
+  border-right: 1px solid #f5f5f5;
+  border-bottom: 1px solid #f5f5f5;
   padding: 0;
-  font-size: 13px;
-  color: #475569;
+  font-size: 14px;
+  color: #333333;
   background: #ffffff;
-  height: 42px; /* Garante alinhamento vertical com o AttendanceCell */
+  height: 48px; /* Maior respiro e alinhamento com AttendanceCell */
+  transition: background 0.2s ease;
 }
 
-.attendanceTableContainer .excelTable tbody tr:hover td {
-  background-color: #f8fafc !important;
+.modAttendanceTableContainer .excelTable tbody tr:hover td {
+  background-color: #fcfcfc !important;
 }
 
-.attendanceTableContainer .excelTable tr:last-child td {
+.modAttendanceTableContainer .excelTable tr:last-child td {
   border-bottom: none;
 }
 
-.attendanceTableContainer .text-center { text-align: center; }
-.attendanceTableContainer .fw-bold { font-weight: 600; color: #0f172a !important; }
+.modAttendanceTableContainer .text-center { text-align: center; }
+.modAttendanceTableContainer .fw-bold { font-weight: 700; color: #111111 !important; }
 
 /* ========================================================
-   COLUNAS CONGELADAS (STICKY COLUMNS) - CORREÇÃO DO BUG
+   COLUNAS CONGELADAS (STICKY COLUMNS) - CÁLCULOS EXATOS
    ======================================================== */
-.attendanceTableContainer .stickyCol {
+.modAttendanceTableContainer .stickyCol {
   position: sticky;
   z-index: 5;
   white-space: nowrap;
@@ -91,10 +93,10 @@
   text-overflow: ellipsis;
 }
 
-.attendanceTableContainer .excelTable th.stickyCol {
+.modAttendanceTableContainer .excelTable th.stickyCol {
   z-index: 20; 
-  background: #e2e8f0 !important;
-  color: #0f172a;
+  background: #fafafa !important;
+  color: #555555;
 }
 
 /* CÁLCULO EXATO DO LEFT PARA PREVENIR SOBREPOSIÇÃO:
@@ -106,14 +108,14 @@
    Linha:     width 120px (Left = 490 + 120 = 610px)
 */
 
-.attendanceTableContainer .col-id { 
+.modAttendanceTableContainer .col-id { 
   left: 0; 
   min-width: 50px; 
   max-width: 50px; 
-  background: #f8fafc !important; 
+  background: #fafafa !important; 
 }
 
-.attendanceTableContainer .col-matricula { 
+.modAttendanceTableContainer .col-matricula { 
   left: 50px; 
   min-width: 100px; 
   max-width: 100px; 
@@ -121,7 +123,7 @@
   padding: 0 12px !important; 
 }
 
-.attendanceTableContainer .col-nome { 
+.modAttendanceTableContainer .col-nome { 
   left: 150px; 
   min-width: 250px; 
   max-width: 250px; 
@@ -129,7 +131,7 @@
   padding: 0 12px !important; 
 }
 
-.attendanceTableContainer .col-turno { 
+.modAttendanceTableContainer .col-turno { 
   left: 400px; 
   min-width: 90px; 
   max-width: 90px; 
@@ -137,7 +139,7 @@
   padding: 0 8px !important; 
 }
 
-.attendanceTableContainer .col-posto { 
+.modAttendanceTableContainer .col-posto { 
   left: 490px; 
   min-width: 120px; 
   max-width: 120px; 
@@ -145,41 +147,55 @@
   padding: 0 12px !important; 
 }
 
-.attendanceTableContainer .col-linha { 
+.modAttendanceTableContainer .col-linha { 
   left: 610px; 
   min-width: 120px; 
   max-width: 120px; 
   background: #ffffff !important; 
   padding: 0 12px !important; 
-  border-right: 3px solid #cbd5e1 !important; /* Marca o limite da rolagem */
+  border-right: 2px solid #f0f0f0 !important; /* Divisor principal de scroll */
 }
 
-/* Badge do Turno Movida para o CSS */
-.attendanceTableContainer .turnoBadge {
+/* Hover State fix para as Colunas Congeladas */
+.modAttendanceTableContainer .excelTable tbody tr:hover td.stickyCol {
+  background-color: #fcfcfc !important;
+}
+
+.modAttendanceTableContainer .excelTable tbody tr:hover td.col-id {
+  background-color: #f5f5f5 !important;
+}
+
+/* Badge do Turno */
+.modAttendanceTableContainer .turnoBadge {
   font-size: 12px;
-  font-weight: 600;
-  color: #475569;
-  background: #f1f5f9;
-  padding: 4px 8px;
-  border-radius: 4px;
+  font-weight: 700;
+  color: #2563eb; /* Azul corporativo moderno */
+  background: #f0f4f8;
+  padding: 4px 10px;
+  border-radius: 8px;
+  display: inline-block;
 }
 
 /* ========================================================
    COLUNAS DOS DIAS DO MÊS (Não Fixas)
    ======================================================== */
-.attendanceTableContainer .dayCol {
-  min-width: 46px;
+.modAttendanceTableContainer .dayCol {
+  min-width: 48px;
   text-align: center;
 }
 
-.attendanceTableContainer .dayCol.weekend {
-  background: #fef2f2 !important;
+.modAttendanceTableContainer .dayCol.weekend {
+  background: #fff0f0 !important;
   color: #d40000;
+  font-weight: 800;
 }
 
-.attendanceTableContainer .noDataCell {
+.modAttendanceTableContainer .noDataCell {
   text-align: center;
-  padding: 40px !important;
-  color: #94a3b8;
-  font-style: italic;
+  padding: 60px !important;
+  color: #888888;
+  font-weight: 500;
+  font-size: 15px;
+  background: #fafafa !important;
+  vertical-align: middle;
 }

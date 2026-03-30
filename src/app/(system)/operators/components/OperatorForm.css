@@ -1,80 +1,149 @@
 /* src/app/(system)/operators/components/OperatorForm.css */
 
-.formCard {
+.modForm-card {
   background: #ffffff;
-  border-top: 6px solid #d40000;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
-.formCard h2 {
-  margin: 0 0 20px 0;
-  font-size: 18px;
-  font-weight: 700;
+.modForm-card:hover {
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.06);
+}
+
+.modForm-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.modForm-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #fff0f0;
+  color: #d40000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.modForm-card h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
   color: #111111;
+  letter-spacing: -0.3px;
 }
 
-.formGrid {
+.modForm-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
 
-.corporateInput {
-  padding: 12px 14px;
-  border-radius: 6px;
-  border: 1px solid #e0e0e0;
-  background: #f9f9f9;
+/* INPUTS COM ÍCONES */
+.modForm-inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.modForm-inputIcon {
+  position: absolute;
+  left: 16px;
+  color: #999999;
+  pointer-events: none;
+  transition: color 0.3s ease;
+}
+
+.modForm-inputWrapper:focus-within .modForm-inputIcon {
+  color: #d40000;
+}
+
+.modForm-input,
+.modForm-select {
+  width: 100%;
+  padding: 14px 16px 14px 44px; /* Espaço para o ícone */
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  background: #fcfcfc;
   color: #333333;
   font-size: 14px;
-  transition: all 0.2s ease;
-  width: 100%;
+  font-weight: 500;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
 }
 
-.corporateInput:focus {
-  outline: none;
+.modForm-select {
+  cursor: pointer;
+  appearance: auto;
+}
+
+/* Quando uma opção disabled (placeholder) está selecionada, a cor fica mais clara */
+.modForm-select:invalid,
+.modForm-select option[value=""] {
+  color: #888888;
+}
+
+.modForm-input:focus,
+.modForm-select:focus {
   background: #ffffff;
   border-color: #d40000;
-  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
+  box-shadow: 0 0 0 4px rgba(212, 0, 0, 0.08);
 }
 
-.primaryButton {
-  padding: 12px 16px;
+/* BOTÃO DE CADASTRO */
+.modForm-primaryBtn {
+  margin-top: 24px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
   border: none;
-  border-radius: 6px;
+  border-radius: 16px;
   background: #d40000;
   color: white;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.primaryButton:hover:not(:disabled) {
+.modForm-primaryBtn:hover:not(:disabled) {
   background: #b30000;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 0, 0, 0.25);
 }
 
-.primaryButton:disabled {
-  opacity: 0.5;
+.modForm-primaryBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.modForm-primaryBtn:disabled {
+  background: #e5e5e5;
+  color: #999999;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
 
-.primaryButton.fullWidth {
-  width: 100%;
-}
-
-.mt-3 {
-  margin-top: 16px;
-}
-
-@media (max-width: 600px) {
-  .formGrid {
+/* RESPONSIVIDADE */
+@media (max-width: 640px) {
+  .modForm-grid {
     grid-template-columns: 1fr;
+  }
+  .modForm-inputWrapper[style] {
+    grid-column: auto !important;
   }
 }

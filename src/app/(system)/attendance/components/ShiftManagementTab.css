@@ -4,71 +4,76 @@
 .shiftManagementTab {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
+}
+
+.modShiftFadeIn {
+  animation: shiftFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes shiftFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ========================================================
-   ESTRUTURAS BASE (Garante que não dependa do CSS global)
+   ESTRUTURAS BASE (Dashboard Arredondado)
    ======================================================== */
 
-.shiftManagementTab .corporateCard {
+.shiftManagementTab .shiftModCard {
   background: #ffffff;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0,0,0,0.02);
   box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.shiftManagementTab .primaryButton {
-  border: none;
-  border-radius: 6px;
-  background: #d40000;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.shiftManagementTab .shiftModCard:hover {
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.06);
 }
 
-.shiftManagementTab .primaryButton:hover:not(:disabled) {
-  background: #b30000;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
-}
-
-.shiftManagementTab .primaryButton:disabled {
-  background: #e0e0e0;
-  color: #999999;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.shiftManagementTab .emptyAttendance {
+/* ESTADOS VAZIOS */
+.shiftManagementTab .shiftModEmptyState {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 60px 20px;
-  background: #fcfcfc;
-  border: 2px dashed #e0e0e0;
-  border-radius: 8px;
+  background: #fafafa;
+  border-radius: 20px;
+  border: 1px dashed #dcdcdc;
   text-align: center;
+}
+
+.shiftManagementTab .shiftEmptyContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 16px;
 }
 
-.shiftManagementTab .emptyIcon {
-  color: #cccccc;
+.shiftManagementTab .shiftEmptyIcon {
+  color: #bbbbbb;
 }
 
-.shiftManagementTab .emptyAttendance p {
+.shiftManagementTab .shiftSpinIcon {
+  color: #d40000;
+  animation: shiftSpin 1s linear infinite;
+}
+
+.shiftManagementTab .shiftModEmptyState p {
   margin: 0;
   color: #666666;
   font-size: 15px;
   max-width: 400px;
-  line-height: 1.5;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+@keyframes shiftSpin {
+  100% { transform: rotate(360deg); }
 }
 
 /* ========================================================
@@ -76,7 +81,7 @@
    ======================================================== */
 
 .shiftManagementTab .shiftFilterCard {
-  border-top: 6px solid #d40000;
+  /* Card baseado apenas em sombra, sem linhas coloridas */
 }
 
 .shiftManagementTab .shiftFilterGroup {
@@ -86,200 +91,289 @@
 }
 
 .shiftManagementTab .shiftFilterGroup label {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
-  color: #111111;
+  color: #555555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.shiftManagementTab .shiftSelectInput {
+.shiftManagementTab .shiftInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
   width: 100%;
-  max-width: 400px;
-  padding: 14px 16px;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  background: #f9f9f9;
-  font-size: 15px;
-  color: #333;
-  outline: none;
-  transition: all 0.2s ease;
-  cursor: pointer;
 }
 
-.shiftManagementTab .shiftSelectInput:focus {
+.shiftManagementTab .shiftInputIcon {
+  position: absolute;
+  left: 16px;
+  color: #999;
+  pointer-events: none;
+  transition: color 0.3s ease;
+}
+
+.shiftManagementTab .shiftInputWrapper:focus-within .shiftInputIcon {
+  color: #d40000;
+}
+
+.shiftManagementTab .shiftModSelect {
+  width: 100%;
+  padding: 14px 16px 14px 44px;
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  background: #fcfcfc;
+  color: #333333;
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  appearance: auto;
+}
+
+.shiftManagementTab .shiftModSelect:focus {
   border-color: #d40000;
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(212, 0, 0, 0.08);
 }
 
 /* ========================================================
    COCKPIT DE PRONTIDÃO (KPI CARDS)
    ======================================================== */
 
-.shiftManagementTab .readinessCockpit {
+.shiftManagementTab .shiftReadinessCockpit {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 24px;
 }
 
-.shiftManagementTab .readinessCard {
-  background: #fff;
-  border-radius: 8px;
+.shiftManagementTab .shiftReadinessCard {
+  background: #ffffff;
+  border-radius: 24px;
   padding: 24px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  border: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.shiftManagementTab .shiftReadinessCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.06);
+}
+
+/* Ícone de destaque em vez de borda lateral */
+.shiftManagementTab .readinessIconWrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.shiftManagementTab .shiftReadinessCard.success .readinessIconWrap { background: #f0fdf4; color: #16a34a; }
+.shiftManagementTab .shiftReadinessCard.danger .readinessIconWrap { background: #fff0f0; color: #d40000; }
+.shiftManagementTab .shiftReadinessCard.neutral .readinessIconWrap { background: #f0f6ff; color: #2563eb; }
+
+.shiftManagementTab .readinessContent {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  border-left: 4px solid #ccc;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  gap: 4px;
 }
 
-.shiftManagementTab .readinessCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-}
-
-.shiftManagementTab .readinessCard.success { border-left-color: #00b050; }
-.shiftManagementTab .readinessCard.danger { border-left-color: #d40000; }
-.shiftManagementTab .readinessCard.neutral { border-left-color: #0078d4; }
-
-.shiftManagementTab .readinessCard h4 {
+.shiftManagementTab .readinessContent h4 {
   margin: 0;
-  font-size: 14px;
-  color: #555;
+  font-size: 13px;
+  color: #888;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.shiftManagementTab .readinessValue {
-  font-size: 32px;
+.shiftManagementTab .shiftReadinessValue {
+  font-size: 28px;
   font-weight: 800;
   color: #111;
+  line-height: 1;
 }
 
-.shiftManagementTab .readinessValue span {
-  font-size: 20px;
-  color: #888;
+.shiftManagementTab .shiftReadinessValue span {
+  font-size: 18px;
+  color: #aaa;
   font-weight: 600;
 }
 
-.shiftManagementTab .readinessSub {
+.shiftManagementTab .shiftReadinessSub {
   margin: 0;
   font-size: 13px;
   color: #666;
+  font-weight: 500;
 }
 
 /* ========================================================
    RADAR DE RISCO
    ======================================================== */
 
-.shiftManagementTab .radarCard {
-  border-top: 6px solid #d40000;
+.shiftManagementTab .shiftRadarCard {
+  /* Removido o background linear gradient do topo */
 }
 
-.shiftManagementTab .radarHeader {
+.shiftManagementTab .shiftRadarHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
-.shiftManagementTab .radarHeader h3 {
+.shiftManagementTab .shiftRadarHeader h3 {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 800;
   color: #111;
   letter-spacing: -0.5px;
 }
 
-/* Botão Específico "Motor de Emergência" */
-.shiftManagementTab .smartAllocBtn {
-  gap: 8px;
-  padding: 10px 16px;
-}
-
-.shiftManagementTab .radarList {
+.shiftManagementTab .shiftRadarList {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.shiftManagementTab .radarItem {
+.shiftManagementTab .shiftRadarItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
-  border-radius: 8px;
-  background: #fdfdfd;
-  border: 1px solid #e0e0e0;
-  transition: transform 0.2s, box-shadow 0.2s;
+  padding: 20px;
+  border-radius: 20px;
+  background: #fcfcfc;
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
 }
 
-.shiftManagementTab .radarItem:hover {
+.shiftManagementTab .shiftRadarItem:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
   background: #ffffff;
+  border-color: #e5e5e5;
 }
 
-.shiftManagementTab .radarItem.risk-high { border-left: 4px solid #d40000; }
-.shiftManagementTab .radarItem.risk-medium { border-left: 4px solid #f39c12; }
-
-.shiftManagementTab .radarInfo {
+.shiftManagementTab .shiftRadarInfo {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.shiftManagementTab .radarBadge {
-  padding: 6px 12px;
-  border-radius: 20px;
+.shiftManagementTab .shiftRadarBadge {
+  padding: 8px 14px;
+  border-radius: 12px;
   font-size: 13px;
   font-weight: 800;
   color: white;
+  white-space: nowrap;
 }
 
-.shiftManagementTab .radarBadge.danger { background: #d40000; }
-.shiftManagementTab .radarBadge.warning { background: #f39c12; }
+.shiftManagementTab .shiftRadarBadge.danger { background: #d40000; box-shadow: 0 4px 10px rgba(212,0,0,0.2); }
+.shiftManagementTab .shiftRadarBadge.warning { background: #f59e0b; box-shadow: 0 4px 10px rgba(245,158,11,0.2); }
 
-.shiftManagementTab .radarDetails {
+.shiftManagementTab .shiftRadarDetails {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
-.shiftManagementTab .radarDetails strong {
-  font-size: 15px;
+.shiftManagementTab .shiftRadarDetails strong {
+  font-size: 16px;
   font-weight: 700;
   color: #111;
 }
 
-.shiftManagementTab .radarDetails strong span {
+.shiftManagementTab .shiftRadarDetails strong span {
   font-size: 13px;
   color: #888;
-  font-weight: normal;
-  margin-left: 4px;
+  font-weight: 500;
+  margin-left: 6px;
 }
 
-.shiftManagementTab .radarDetails span {
+.shiftManagementTab .shiftRadarSubDetails {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.shiftManagementTab .shiftTurnoTag {
+  background: #f0f4f8;
+  color: #2563eb;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.shiftManagementTab .shiftPostoTag {
   font-size: 13px;
   color: #555;
+  font-weight: 500;
 }
 
-.shiftManagementTab .replaceBtn {
-  font-size: 13px;
-  padding: 8px 16px;
-  border: 1px solid #e0e0e0;
+/* ========================================================
+   BOTÕES MODERNOS
+   ======================================================== */
+
+.shiftManagementTab .shiftModPrimaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 16px;
+  background: #d40000;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.shiftManagementTab .shiftModPrimaryButton:hover:not(:disabled) {
+  background: #b30000;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 0, 0, 0.25);
+}
+
+.shiftManagementTab .shiftModPrimaryButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.shiftManagementTab .shiftModSecondaryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
   background: #ffffff;
-  color: #555555;
-  border-radius: 6px;
-  font-weight: 600;
+  color: #555;
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.shiftManagementTab .replaceBtn:hover {
-  background: #f5f5f5;
-  color: #111111;
-  border-color: #cccccc;
+.shiftManagementTab .shiftModSecondaryButton:hover:not(:disabled) {
+  background: #f9f9f9;
+  border-color: #ccc;
+  color: #111;
 }
 
 /* ========================================================
@@ -287,15 +381,25 @@
    ======================================================== */
 
 @media (max-width: 768px) {
-  .shiftManagementTab .radarItem {
+  .shiftManagementTab .shiftModCard {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+  .shiftManagementTab .shiftRadarItem {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
+    padding: 16px;
   }
-  .shiftManagementTab .replaceBtn {
+  .shiftManagementTab .shiftReplaceBtn {
     width: 100%;
+    justify-content: center;
   }
-  .shiftManagementTab .readinessCockpit {
-    grid-template-columns: 1fr;
+  .shiftManagementTab .shiftRadarHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .shiftManagementTab .shiftSmartAllocBtn {
+    width: 100%;
   }
 }

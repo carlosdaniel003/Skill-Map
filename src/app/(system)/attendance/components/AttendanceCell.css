@@ -3,353 +3,392 @@
 /* ========================================================
    ESCOPO DA CÉLULA DA TABELA (TD)
    ======================================================== */
-td.inputCell {
-  width: 46px;
-  height: 40px;
+td.modInputCell {
+  width: 50px;
+  height: 48px;
   position: relative;
-  padding: 0; /* Remove padding padrão da tabela */
-  border: 1px solid #e2e8f0;
+  padding: 4px; /* Respiro interno para o input não encostar nas bordas */
+  border-right: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
   background: #ffffff;
   transition: background-color 0.2s ease;
 }
 
-td.inputCell.weekend {
-  background: #f8fafc !important; /* Cinza sutil para fim de semana */
+td.modInputCell.weekend {
+  background: #fffafa !important; /* Fundo levemente avermelhado/cinza para FDS */
 }
 
-td.inputCell .excelInput {
+td.modInputCell .modCell-inputWrapper {
   width: 100%;
   height: 100%;
-  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+td.modInputCell .modCell-excelInput {
+  width: 100%;
+  height: 100%;
+  border: 1px solid transparent;
   background: transparent;
   text-align: center;
   font-size: 14px;
   font-weight: 800;
-  color: #0f172a;
+  color: #111111;
   text-transform: uppercase;
   outline: none;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: text;
   box-sizing: border-box;
-  border-radius: 2px;
+  border-radius: 8px; /* Cantos arredondados do input */
 }
 
-td.inputCell .excelInput:focus {
+td.modInputCell .modCell-excelInput:focus {
   background: #ffffff;
-  box-shadow: inset 0 0 0 2px #d40000; /* Borda interna vermelha */
+  border-color: #d40000;
+  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.15);
+  transform: scale(1.05); /* Pequeno destaque ao clicar na célula */
+  z-index: 10;
+  position: relative;
 }
 
-td.inputCell .excelInput:disabled {
-  opacity: 0.6;
+td.modInputCell .modCell-excelInput:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 /* ========================================================
    INDICADORES DE STATUS NA CÉLULA
    ======================================================== */
-td.inputCell .sync-indicator {
+td.modInputCell .modCell-sync-indicator {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 6px;
+  right: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2;
+  z-index: 12;
   pointer-events: none;
 }
 
-td.inputCell .sync-spinner {
-  width: 10px;
-  height: 10px;
+td.modInputCell .modCell-sync-spinner {
+  width: 8px;
+  height: 8px;
   border: 2px solid rgba(212, 0, 0, 0.2);
   border-top-color: #d40000;
   border-radius: 50%;
-  animation: attendanceCellSpin 0.8s linear infinite;
+  animation: modCellSpin 0.8s linear infinite;
 }
 
-td.inputCell .sync-error {
+td.modInputCell .modCell-sync-error {
   width: 8px;
   height: 8px;
-  background-color: #ef4444;
+  background-color: #dc2626;
   border-radius: 50%;
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px rgba(220, 38, 38, 0.2);
 }
 
-td.inputCell .sync-success {
+td.modInputCell .modCell-sync-success {
   width: 8px;
   height: 8px;
-  background-color: #22c55e;
+  background-color: #16a34a;
   border-radius: 50%;
-  animation: attendanceCellFadeOut 2s forwards;
+  box-shadow: 0 0 0 2px #ffffff;
+  animation: modCellFadeOut 2s forwards;
 }
 
-td.inputCell .obs-triangle {
+td.modInputCell .modCell-obs-triangle {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 4px;
+  right: 4px;
   width: 0;
   height: 0;
   border-left: 8px solid transparent;
   border-top: 8px solid #d40000;
-  z-index: 1;
+  border-right: 0 solid transparent;
+  border-bottom: 0 solid transparent;
+  z-index: 11;
   pointer-events: none;
+  filter: drop-shadow(-1px 1px 1px rgba(0,0,0,0.1));
 }
 
 /* ========================================================
-   POPOVER (BALÃO FLUTUANTE) - Escopado por ID
+   POPOVER (BALÃO FLUTUANTE)
    ======================================================== */
-#attendance-popover.statusPopover {
+#modAttendance-popover.modStatusPopover {
   position: absolute;
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  border: 1px solid #f0f0f0;
+  border-radius: 20px; /* Borda bem redonda */
+  padding: 16px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
   z-index: 99998;
-  width: 160px;
+  width: 200px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  animation: popoverFadeIn 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
+  gap: 12px;
+  animation: popoverScaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-#attendance-popover .statusGrid {
+#modAttendance-popover .modStatusGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
+  gap: 8px;
 }
 
-#attendance-popover .statusBtn {
-  border: none;
-  border-radius: 6px;
-  padding: 8px 4px;
-  font-size: 11px;
-  font-weight: 700;
+#modAttendance-popover .modStatusBtn {
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 10px 4px;
+  font-size: 13px;
+  font-weight: 800;
   cursor: pointer;
-  color: #1e293b;
-  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
-  background-color: #f1f5f9;
+  color: #333333;
+  transition: all 0.2s ease;
+  background-color: #f8fafc;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-#attendance-popover .statusBtn:hover {
-  transform: translateY(-1px) scale(1.05);
+#modAttendance-popover .modStatusBtn:hover {
+  transform: translateY(-2px);
   filter: brightness(0.95);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-#attendance-popover .popoverDivider {
+#modAttendance-popover .modPopoverDivider {
   height: 1px;
-  background-color: #e2e8f0;
-  margin: 2px 0;
+  background-color: #f0f0f0;
+  margin: 4px 0;
 }
 
-#attendance-popover .addObsBtn {
+#modAttendance-popover .modPopoverAddObsBtn,
+#modAttendance-popover .modPopoverClearBtn {
   background: transparent;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  padding: 8px;
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  padding: 10px;
   font-size: 12px;
-  font-weight: 600;
-  color: #334155;
+  font-weight: 700;
+  color: #555555;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
 }
 
-#attendance-popover .addObsBtn:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+#modAttendance-popover .modPopoverAddObsBtn:hover {
+  background: #f9f9f9;
+  border-color: #dcdcdc;
+  color: #111111;
+}
+
+#modAttendance-popover .modPopoverClearBtn {
+  background: #fff0f0;
+  border-color: transparent;
   color: #d40000;
 }
 
-#attendance-popover .clearBtn {
-  background: #fff1f2;
-  border: 1px dashed #fecdd3;
-  border-radius: 6px;
-  padding: 8px;
-  font-size: 11px;
-  font-weight: 600;
-  color: #e11d48;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-#attendance-popover .clearBtn:hover {
-  background: #ffe4e6;
-  border-color: #fda4af;
-  color: #be123c;
+#modAttendance-popover .modPopoverClearBtn:hover {
+  background: #d40000;
+  color: #ffffff;
 }
 
 /* ========================================================
-   CORES DINÂMICAS EXCLUSIVAS
+   CORES DINÂMICAS EXCLUSIVAS (Fundos Translúcidos)
    ======================================================== */
-/* Atuam garantindo a cor correta tanto na célula quanto nos botões do popover */
-td.inputCell .status-p, #attendance-popover .status-p { background-color: rgba(34, 197, 94, 0.15) !important; color: #16a34a !important; }
-td.inputCell .status-he, #attendance-popover .status-he { background-color: rgba(20, 184, 166, 0.15) !important; color: #0d9488 !important; }
-td.inputCell .status-f, #attendance-popover .status-f { background-color: rgba(239, 68, 68, 0.15) !important; color: #dc2626 !important; }
-td.inputCell .status-a, #attendance-popover .status-a { background-color: rgba(225, 29, 72, 0.15) !important; color: #be123c !important; }
-td.inputCell .status-s, #attendance-popover .status-s { background-color: rgba(244, 63, 94, 0.15) !important; color: #e11d48 !important; }
-td.inputCell .status-fj, #attendance-popover .status-fj { background-color: rgba(249, 115, 22, 0.15) !important; color: #ea580c !important; }
-td.inputCell .status-aj, #attendance-popover .status-aj { background-color: rgba(245, 158, 11, 0.15) !important; color: #d97706 !important; }
-td.inputCell .status-sj, #attendance-popover .status-sj { background-color: rgba(234, 179, 8, 0.15) !important; color: #ca8a04 !important; }
-td.inputCell .status-at, #attendance-popover .status-at { background-color: rgba(168, 85, 247, 0.15) !important; color: #9333ea !important; }
-td.inputCell .status-fe, #attendance-popover .status-fe { background-color: rgba(59, 130, 246, 0.15) !important; color: #2563eb !important; }
-td.inputCell .status-lp, #attendance-popover .status-lp { background-color: rgba(6, 182, 212, 0.15) !important; color: #0891b2 !important; }
-td.inputCell .status-lm, #attendance-popover .status-lm { background-color: rgba(236, 72, 153, 0.15) !important; color: #db2777 !important; }
+td.modInputCell .modStatus-p, #modAttendance-popover .modStatus-p { background-color: rgba(34, 197, 94, 0.15) !important; color: #16a34a !important; }
+td.modInputCell .modStatus-he, #modAttendance-popover .modStatus-he { background-color: rgba(20, 184, 166, 0.15) !important; color: #0d9488 !important; }
+td.modInputCell .modStatus-f, #modAttendance-popover .modStatus-f { background-color: rgba(239, 68, 68, 0.15) !important; color: #dc2626 !important; }
+td.modInputCell .modStatus-a, #modAttendance-popover .modStatus-a { background-color: rgba(225, 29, 72, 0.15) !important; color: #be123c !important; }
+td.modInputCell .modStatus-s, #modAttendance-popover .modStatus-s { background-color: rgba(244, 63, 94, 0.15) !important; color: #e11d48 !important; }
+td.modInputCell .modStatus-fj, #modAttendance-popover .modStatus-fj { background-color: rgba(249, 115, 22, 0.15) !important; color: #ea580c !important; }
+td.modInputCell .modStatus-aj, #modAttendance-popover .modStatus-aj { background-color: rgba(245, 158, 11, 0.15) !important; color: #d97706 !important; }
+td.modInputCell .modStatus-sj, #modAttendance-popover .modStatus-sj { background-color: rgba(234, 179, 8, 0.15) !important; color: #ca8a04 !important; }
+td.modInputCell .modStatus-at, #modAttendance-popover .modStatus-at { background-color: rgba(168, 85, 247, 0.15) !important; color: #9333ea !important; }
+td.modInputCell .modStatus-fe, #modAttendance-popover .modStatus-fe { background-color: rgba(59, 130, 246, 0.15) !important; color: #2563eb !important; }
+td.modInputCell .modStatus-lp, #modAttendance-popover .modStatus-lp { background-color: rgba(6, 182, 212, 0.15) !important; color: #0891b2 !important; }
+td.modInputCell .modStatus-lm, #modAttendance-popover .modStatus-lm { background-color: rgba(236, 72, 153, 0.15) !important; color: #db2777 !important; }
 
 /* ========================================================
-   MODAL DE OBSERVAÇÃO (CENTRO DA TELA)
+   MODAL DE OBSERVAÇÃO (CENTRO DA TELA) - ESTILO DASHBOARD
    ======================================================== */
-.obsModalOverlay {
+.modObsModalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 99999;
-  animation: obsFadeOverlay 0.2s ease-out;
+  animation: obsFadeOverlay 0.3s ease-out;
+  padding: 20px;
 }
 
-.obsModalOverlay .obsModalCard {
+.modObsModalOverlay .modObsModalCard {
   width: 100%;
   max-width: 480px;
   background: #ffffff;
-  border-top: 6px solid #d40000;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+  border-radius: 28px; /* Removido border-top colorido, cantos super redondos */
+  padding: 32px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  animation: obsSlideUpModal 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: obsSlideUpModal 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.obsModalOverlay .obsModalHeader {
+.modObsModalOverlay .modObsModalHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #f1f5f9;
-  padding-bottom: 16px;
-}
-
-.obsModalOverlay .obsModalHeader h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 800;
-  color: #0f172a;
-}
-
-.obsModalOverlay .obsModalDate {
-  font-size: 12px;
-  font-weight: 700;
-  color: #d40000;
-  background: #fef2f2;
-  padding: 6px 12px;
-  border-radius: 20px;
-  border: 1px solid #fee2e2;
-}
-
-.obsModalOverlay .obsModalBody {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
   margin-bottom: 24px;
 }
 
-.obsModalOverlay .obsModalBody label {
-  font-size: 14px;
-  font-weight: 700;
-  color: #334155;
+.modObsTitleWrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.obsModalOverlay .obsModalTextarea {
+.modObsIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: #fff0f0;
+  color: #d40000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.modObsModalOverlay .modObsModalHeader h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111111;
+  letter-spacing: -0.3px;
+}
+
+.modObsModalOverlay .modObsModalDate {
+  font-size: 12px;
+  font-weight: 800;
+  color: #d40000;
+  background: #fff0f0;
+  padding: 6px 12px;
+  border-radius: 12px;
+}
+
+.modObsModalOverlay .modObsModalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.modObsModalOverlay .modObsModalBody label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #555555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modObsModalOverlay .modObsModalTextarea {
   width: 100%;
-  min-height: 120px;
+  min-height: 140px;
   resize: vertical;
-  padding: 14px;
+  padding: 16px;
   font-size: 14px;
-  color: #1e293b;
-  background: #f8fafc;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  color: #111111;
+  background: #fcfcfc;
+  border: 1px solid #f0f0f0;
+  border-radius: 16px; /* Borda do input modernizada */
   outline: none;
   font-family: inherit;
-  transition: all 0.2s ease;
-  line-height: 1.5;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  line-height: 1.6;
 }
 
-.obsModalOverlay .obsModalTextarea:focus {
+.modObsModalOverlay .modObsModalTextarea:focus {
   background: #ffffff;
   border-color: #d40000;
-  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
+  box-shadow: 0 0 0 4px rgba(212, 0, 0, 0.08);
 }
 
-.obsModalOverlay .obsModalFooter {
+.modObsModalOverlay .modObsModalFooter {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 
-.obsModalOverlay .obsModalBtn {
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.obsModalOverlay .obsModalBtn.secondary {
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  color: #475569;
-}
-
-.obsModalOverlay .obsModalBtn.secondary:hover {
-  background: #f1f5f9;
-  border-color: #94a3b8;
-  color: #0f172a;
-}
-
-.obsModalOverlay .obsModalBtn.primary {
-  background: #d40000;
+.modObsModalOverlay .modObsGhostBtn {
+  padding: 12px 20px;
   border: none;
-  color: #ffffff;
+  background: transparent;
+  color: #555555;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
-.obsModalOverlay .obsModalBtn.primary:hover {
+.modObsModalOverlay .modObsGhostBtn:hover {
+  background: #f0f0f0;
+  color: #111111;
+}
+
+.modObsModalOverlay .modObsPrimaryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 16px;
+  background: #d40000;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modObsModalOverlay .modObsPrimaryBtn:hover {
   background: #b30000;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 0, 0, 0.25);
+}
+
+.modObsModalOverlay .modObsPrimaryBtn:active {
+  transform: translateY(0);
 }
 
 /* ========================================================
    ANIMAÇÕES ESCOPADAS
    ======================================================== */
-@keyframes attendanceCellSpin {
+@keyframes modCellSpin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-@keyframes attendanceCellFadeOut {
+@keyframes modCellFadeOut {
   0% { opacity: 1; transform: scale(1); }
   80% { opacity: 1; transform: scale(1); }
   100% { opacity: 0; transform: scale(0); }
 }
 
-@keyframes popoverFadeIn {
-  from { opacity: 0; transform: translate(-50%, -10px); }
-  to { opacity: 1; transform: translate(-50%, 0); }
+@keyframes popoverScaleIn {
+  from { opacity: 0; transform: translate(-50%, -10px) scale(0.95); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
 }
 
 @keyframes obsFadeOverlay {
@@ -358,6 +397,23 @@ td.inputCell .status-lm, #attendance-popover .status-lm { background-color: rgba
 }
 
 @keyframes obsSlideUpModal {
-  from { transform: translateY(20px) scale(0.95); opacity: 0; }
+  from { transform: translateY(40px) scale(0.95); opacity: 0; }
   to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* RESPONSIVIDADE DO MODAL E POPOVER */
+@media (max-width: 480px) {
+  .modObsModalOverlay .modObsModalCard {
+    padding: 24px;
+    border-radius: 20px;
+  }
+  .modObsModalOverlay .modObsModalFooter {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .modObsModalOverlay .modObsGhostBtn,
+  .modObsModalOverlay .modObsPrimaryBtn {
+    width: 100%;
+    justify-content: center;
+  }
 }

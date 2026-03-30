@@ -244,6 +244,58 @@ export function useManageSkills() {
     })
   }
 
+  // NOVA FUNÇÃO: Aplica TODAS as configurações da matriz atual para TODAS as linhas de produção
+  function applyAllSkillsToAllLines() {
+    if (!selectedLine) return
+
+    setConfirmConfig({
+      title: "Aplicar TUDO a todos os modelos?",
+      message: `Atenção: A configuração COMPLETA de habilidades do modelo "${selectedLine}" será copiada para TODOS os outros modelos. Deseja prosseguir?`,
+      onConfirm: async () => {
+        try {
+          const toUpsert: any[] = []
+          const toDeletePostos: string[] = []
+
+          // Percorre a configuração atual da tela (draftMatrix)
+          Object.entries(draftMatrix).forEach(([posto, draft]) => {
+            if (draft.active) {
+              // Prepara a inserção/atualização para TODAS as linhas ativas
+              lines.forEach(l => {
+                toUpsert.push({
+                  linha: l.nome,
+                  posto,
+                  dificuldade: draft.diff,
+                  qtd_necessaria: draft.qtd
+                })
+              })
+            } else {
+              // Se a skill está desativada no modelo atual, vamos remover de TODOS os modelos para manter a paridade
+              toDeletePostos.push(posto)
+            }
+          })
+
+          // 1. Remove as skills inativas de todas as linhas
+          if (toDeletePostos.length > 0) {
+            await supabase.from('line_skill_difficulty').delete().in('posto', toDeletePostos)
+          }
+
+          // 2. Faz o Upsert (cria ou atualiza) das skills ativas para todas as linhas
+          if (toUpsert.length > 0) {
+            await supabase.from('line_skill_difficulty').upsert(toUpsert, { onConflict: 'linha,posto' })
+          }
+
+          await logAction(sessionUser?.username || "sistema", "matrix_bulk_update_all", `Replicou a matriz do modelo ${selectedLine} para todos os outros`)
+          
+          setAlertConfig({ title: "Sucesso", message: "Configuração completa replicada para todos os modelos com sucesso!" })
+          loadMatrixData(selectedLine) // Recarrega os dados e limpa o status de edição
+        } catch (error) {
+          console.error(error)
+          setAlertConfig({ title: "Erro", message: "Ocorreu um erro ao replicar a configuração." })
+        }
+      }
+    })
+  }
+
   async function saveMatrixChanges() {
     try {
       const toDelete: string[] = []
@@ -302,9 +354,15 @@ export function useManageSkills() {
       lines,
       selectedLine, handleLineChange,
       skills,
-      // NOVO: Exporta a função changeQuantityInLine
-      draftMatrix, toggleSkillInLine, changeDifficultyInLine, changeQuantityInLine, applySkillToAllLines,
-      hasMatrixChanges, saveMatrixChanges, cancelMatrixChanges
+      draftMatrix, 
+      toggleSkillInLine, 
+      changeDifficultyInLine, 
+      changeQuantityInLine, 
+      applySkillToAllLines,
+      applyAllSkillsToAllLines, // <--- EXPORTADA AQUI AGORA
+      hasMatrixChanges, 
+      saveMatrixChanges, 
+      cancelMatrixChanges
     },
     handleBackClick
   }

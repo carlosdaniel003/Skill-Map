@@ -73,23 +73,36 @@ export default function AuditPanel() {
   }
 
   if (loading) {
-    return <div className="auditLoading">Carregando histórico de auditoria...</div>
+    return (
+      <div className="modAuditLoading">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="spinIcon">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+        </svg>
+        <span>Carregando histórico de auditoria...</span>
+      </div>
+    )
   }
 
   return (
-    <div className="auditPanelContainer">
+    <div className="modAuditPanelContainer">
       
-      <div className="auditPanelActions">
-        <button className="secondaryButton smallButton" onClick={loadAuditData}>
+      <div className="modAuditPanelActions">
+        <button className="modAuditSecondaryButton" onClick={loadAuditData} title="Atualizar Logs">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+          </svg>
           Atualizar Logs
         </button>
-        <button className="dangerButton smallButton" onClick={handleClearLogs}>
+        <button className="modAuditDangerButton" onClick={handleClearLogs} title="Limpar Histórico">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>
+          </svg>
           Limpar Histórico
         </button>
       </div>
 
-      <div className="auditTableWrapper">
-        <table className="corporateTable">
+      <div className="modAuditTableWrapper">
+        <table className="modAuditTable">
           <thead>
             <tr>
               <th>Data e Hora</th>
@@ -106,7 +119,7 @@ export default function AuditPanel() {
                 </td>
                 <td className="fontWeight600 authorCell">{log.username}</td>
                 <td>
-                  <span className={`auditBadge action-${getActionCategory(log.action)}`}>
+                  <span className={`modAuditBadge action-${getActionCategory(log.action)}`}>
                     {formatAction(log.action)}
                   </span>
                 </td>
@@ -116,7 +129,12 @@ export default function AuditPanel() {
             
             {logs.length === 0 && (
               <tr>
-                <td colSpan={4} className="emptyState">Nenhuma ação registrada recentemente no sistema.</td>
+                <td colSpan={4} className="emptyState">
+                  <div className="emptyStateContent">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                    <span>Nenhuma ação registrada recentemente no sistema.</span>
+                  </div>
+                </td>
               </tr>
             )}
           </tbody>

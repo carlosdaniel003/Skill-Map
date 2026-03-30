@@ -53,7 +53,7 @@ export default function OperatorSkillGrade(){
       if (filters.operatorId && ops.length === 1) {
         setTitle(`Classificação: ${ops[0].nome}`)
       } else {
-        let t = "Média da Fábrica"
+        let t = "Média da Fábrica (operadores)"
         if (filters.linha) t = `Média: ${filters.linha}`
         if (filters.turno) {
           t += ` (${filters.turno})`

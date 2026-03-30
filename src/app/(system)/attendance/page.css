@@ -3,23 +3,44 @@
 .attendancePageWrapper {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
+  animation: pageFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #333;
 }
 
+/* HEADER DA PÁGINA */
 .attendancePageHeader {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 16px;
+  align-items: center;
+  margin-bottom: 8px;
   gap: 20px;
   flex-wrap: wrap;
+}
+
+.attendanceHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.attendanceHeaderIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #d40000 0%, #a30000 100%);
+  color: white;
+  border-radius: 20px;
+  box-shadow: 0 8px 16px rgba(212, 0, 0, 0.2);
+  flex-shrink: 0;
 }
 
 .attendanceHeaderTitles {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .attendancePageTitle {
@@ -37,76 +58,117 @@
 }
 
 /* =======================================
-   NAVEGAÇÃO POR ABAS (TABS)
+   NAVEGAÇÃO POR ABAS (TABS MODERNAS)
    ======================================= */
 .attendanceTabNavigation {
   display: flex;
-  background: #f0f0f0;
-  padding: 4px;
-  border-radius: 8px;
+  background: #f4f4f5;
+  padding: 6px;
+  border-radius: 16px; /* Borda bem arredondada para o visual pill */
   gap: 4px;
 }
 
 .attendanceTabBtn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 20px;
+  padding: 12px 20px;
   border: none;
   background: transparent;
-  color: #666666;
+  color: #555555;
   font-size: 14px;
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .attendanceTabBtn:hover:not(.active) {
-  background: #e4e4e4;
-  color: #333;
+  background: #e4e4e7;
+  color: #111111;
 }
 
 .attendanceTabBtn.active {
   background: #ffffff;
   color: #d40000;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-weight: 700;
 }
 
 .attendanceAnimateFadeIn {
-  animation: attendanceFadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: attendanceFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes attendanceFadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pageFadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Base style for corporate cards */
+/* =======================================
+   CARDS CORPORATIVOS ARREDONDADOS
+   ======================================= */
 .attendanceCorporateCard {
   background: #ffffff;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0,0,0,0.02);
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* ESTADOS VAZIOS COMPARTILHADOS */
+.attendanceCorporateCard:hover {
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.06);
+}
+
+.attendanceMonthlyCard {
+  /* Detalhe vermelho super sutil no topo simulando o red dot do dashboard */
+  position: relative;
+  overflow: hidden;
+}
+
+.attendanceMonthlyCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+
+}
+
+/* =======================================
+   ESTADOS VAZIOS COMPARTILHADOS
+   ======================================= */
 .attendanceEmptyState {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 60px 20px;
-  background: #fcfcfc;
-  border: 2px dashed #e0e0e0;
-  border-radius: 8px;
+  background: #fafafa;
+  border-radius: 20px;
+  border: 1px dashed #dcdcdc;
   text-align: center;
+}
+
+.attendanceEmptyStateContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 16px;
 }
 
 .attendanceEmptyIcon {
-  color: #cccccc;
+  color: #bbbbbb;
 }
 
 .attendanceEmptyState p {
@@ -114,146 +176,158 @@
   color: #666666;
   font-size: 15px;
   max-width: 400px;
-  line-height: 1.5;
+  line-height: 1.6;
+  font-weight: 500;
 }
 
 /* =======================================
-   ABA 2: APONTAMENTO MENSAL
+   MODAL CORPORATIVO ARREDONDADO E BLUR
    ======================================= */
-.attendanceMonthlyCard {
-    border-top: 6px solid #d40000;
-}
-
-/* BUTTONS GERAIS */
-.attendancePrimaryButton {
-  border: none;
-  border-radius: 6px;
-  background: #d40000;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.attendancePrimaryButton:hover:not(:disabled) {
-  background: #b30000;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
-}
-
-.attendancePrimaryButton:disabled {
-  background: #e0e0e0;
-  color: #999999;
-  cursor: not-allowed;
-}
-
-/* MODAL GERAL DO SISTEMA */
 .attendanceModalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  animation: attendanceModalFadeIn 0.2s ease-out;
+  animation: fadeIn 0.3s ease-out;
+  padding: 20px;
 }
 
-.attendanceCorporateModal {
+.attendanceModernModal {
   width: 100%;
-  max-width: 400px;
+  max-width: 440px;
   background: #ffffff;
-  border-top: 6px solid #f59e0b;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  animation: attendanceCorporateModalEnter 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: modalEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .attendanceModalHeader {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
 .attendanceModalIcon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
   flex-shrink: 0;
 }
 
-.attendanceWarningIcon {
-  background: #fffbeb;
-  color: #f59e0b;
+.attendanceWarningIcon { 
+  background: #fff0f0; 
+  color: #d40000; 
 }
 
 .attendanceModalHeader h3 {
   margin: 0;
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 800;
   color: #111111;
-  letter-spacing: -0.3px;
 }
 
-.attendanceModalBody {
-  margin-bottom: 24px;
+.attendanceModalBody { 
+  margin-bottom: 28px; 
 }
 
 .attendanceModalBody p {
-  margin: 0 0 8px 0;
-  font-size: 14px;
+  margin: 0;
+  font-size: 15px;
   color: #555555;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .attendanceModalFooter {
   display: flex;
   justify-content: flex-end;
+  gap: 12px;
 }
 
-.attendanceModalFooter .attendancePrimaryButton {
-    padding: 12px 20px;
-    font-size: 14px;
+/* =======================================
+   BOTÕES MODERNOS 
+   ======================================= */
+.attendanceModernPrimaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 16px;
+  background: #d40000;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes attendanceModalFadeIn {
+.attendanceModernPrimaryButton:hover:not(:disabled) {
+  background: #b30000;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 0, 0, 0.25);
+}
+
+.attendanceModernPrimaryButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.attendanceModernPrimaryButton:disabled { 
+  opacity: 0.5; 
+  cursor: not-allowed; 
+  background: #cccccc;
+  box-shadow: none;
+  transform: none;
+}
+
+/* KEYFRAMES DO MODAL */
+@keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-@keyframes attendanceCorporateModalEnter {
-  from {
-    transform: translateY(30px) scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
+@keyframes modalEnter {
+  from { transform: translateY(30px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
 }
 
-/* RESPONSIVIDADE GERAL DA PÁGINA */
-@media (max-width: 768px) {
+/* =======================================
+   RESPONSIVIDADE GERAL
+   ======================================= */
+@media (max-width: 1024px) {
   .attendancePageHeader {
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-start;
   }
   .attendanceTabNavigation {
     width: 100%;
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .attendanceCorporateCard { 
+    padding: 20px; 
+    border-radius: 20px; 
   }
   .attendanceTabBtn {
     flex: 1;
     justify-content: center;
+    white-space: nowrap;
+    padding: 10px 16px;
   }
 }

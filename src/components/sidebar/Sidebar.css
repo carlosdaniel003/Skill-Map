@@ -1,7 +1,7 @@
 /* src/components/sidebar/Sidebar.css */
 
-.sidebar {
-  width: 240px;
+.modSidebar {
+  width: 260px; /* Levemente mais larga para acomodar melhor o visual arredondado */
   height: 100vh;
   
   position: fixed;
@@ -10,587 +10,447 @@
   
   display: flex;
   flex-direction: column;
-  padding: 26px 18px;
+  padding: 24px 20px;
   
-  /* Tema Executivo: Sidebar Branca */
+  /* Tema Dashboard: Branco limpo com sombras translúcidas */
   background: #ffffff;
-  border-right: 1px solid #e0e0e0;
-  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.03);
+  border-right: 1px solid rgba(0, 0, 0, 0.03);
+  box-shadow: 4px 0 30px rgba(0, 0, 0, 0.02);
   
   color: #333333;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   
-  transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 100;
+  overflow-x: hidden;
 }
 
 /* COLLAPSED */
-.sidebar.collapsed {
-  width: 76px;
+.modSidebar.collapsed {
+  width: 88px;
+  padding: 24px 16px;
 }
 
-/* HEADER */
-.sidebarHeader {
+/* HEADER E LOGO */
+.modSidebarHeader {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   margin-bottom: 32px;
   overflow: hidden;
   white-space: nowrap;
 }
 
-.sidebarHeader h2 {
-  margin: 0;
-  font-size: 24px;
+.sidebarLogoWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #d40000 0%, #a30000 100%);
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
+  margin-left: 6px;
+  transition: all 0.3s ease;
+}
+
+.modSidebar.collapsed .sidebarLogoWrapper {
+  margin-left: 4px;
+}
+
+.sidebarTitle {
+  font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.5px;
-  color: #d40000; /* Destaque no logo da sidebar */
-  min-width: 40px;
-  text-align: center;
-}
-
-.sidebarHeader span {
-  font-size: 16px;
-  font-weight: 600;
   color: #111111;
 }
 
-/* SESSION CARD */
-.sessionCard {
-  background: #f9f9f9;
-  border: 1px solid #e0e0e0;
-  padding: 14px;
-  border-radius: 8px;
-  margin-bottom: 26px;
-  min-height: 80px; /* Evita pulos de layout quando minimizado */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.sidebar.collapsed .sessionCard {
-  padding: 0;
-  border: none;
-  background: transparent;
-  min-height: 0;
-  margin-bottom: 16px;
-}
-
-.userName {
-  font-weight: 700;
-  color: #111111;
-  margin-bottom: 4px;
-  font-size: 14px;
-}
-
-.sessionTimer, .sessionRemaining {
-  font-size: 12px;
-  color: #666666;
-}
-
-/* MENU AREA */
-.menuArea {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex: 1;
-}
-
-/* MENU ITEM */
-.menuItem {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 12px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  transition: all 0.2s ease;
-  overflow: hidden;
-  white-space: nowrap;
-  color: #555555;
-}
-
-/* HOVER */
-.menuItem:hover {
-  background: #f5f5f5;
-  color: #111111;
-}
-
-/* HOVER BAR */
-.menuItem::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 15%;
-  width: 4px;
-  height: 70%;
-  border-radius: 0 4px 4px 0;
-  background: #d40000;
-  opacity: 0;
-  transition: 0.2s ease;
-}
-
-.menuItem:hover::before {
-  opacity: 0.5;
-}
-
-/* ACTIVE */
-.menuItem.active {
-  background: #fff0f0; /* Fundo avermelhado super leve */
-  color: #d40000;
-  font-weight: 600;
-}
-
-.menuItem.active::before {
-  opacity: 1;
-}
-
-/* ICON */
-.menuIcon {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.menuIcon svg {
-  width: 20px;
-  height: 20px;
-  fill: none;
-  stroke: #666666;
-  stroke-width: 2;
-  transition: all 0.2s ease;
-}
-
-.menuItem:hover svg {
-  stroke: #111111;
-}
-
-.menuItem.active svg {
-  stroke: #d40000;
-}
-
-/* LABEL */
-.menuItem span {
-  font-size: 14px;
-}
-
-/* LOGOUT */
-.logoutArea {
-  margin-top: auto;
-}
-
-.logoutButton {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 6px;
-  background: #d40000;
-  color: white;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.logoutButton:hover {
-  background: #b30000;
-  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
-}
-
-.logoutButton.collapsedBtn {
-  padding: 12px 0;
-}
-
-/* TRANSITION LOADER DA PÁGINA INTERNA (Translúcido e elegante) */
-.pageTransition {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  
-  /* Fundo branco translúcido com leve embaçado */
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(4px);
-  
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.pageLoader {
-  width: 40px;
-  height: 40px;
-  /* Anel de fundo vermelho bem fraquinho */
-  border: 3px solid rgba(212, 0, 0, 0.1); 
-  /* Parte que gira em vermelho sólido */
-  border-top: 3px solid #d40000; 
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* src/components/sidebar/Sidebar.css */
-
-.sidebar {
-  width: 240px;
-  height: 100vh;
-  
-  position: fixed;
-  left: 0;
-  top: 0;
-  
-  display: flex;
-  flex-direction: column;
-  padding: 26px 18px;
-  
-  /* Tema Executivo: Sidebar Branca */
-  background: #ffffff;
-  border-right: 1px solid #e0e0e0;
-  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.03);
-  
-  color: #333333;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  
-  transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-  z-index: 100;
-}
-
-/* COLLAPSED */
-.sidebar.collapsed {
-  width: 76px;
-}
-
-/* HEADER E LOGO SVG */
-.sidebarHeader {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+/* SESSION CARD MODERNO */
+.modSessionCard {
+  background: #fcfcfc;
+  border: 1px solid #f0f0f0;
+  padding: 16px;
+  border-radius: 20px;
   margin-bottom: 32px;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.sidebarLogo {
-  flex-shrink: 0;
-  margin-left: 2px;
-}
-
-.sidebarHeader span {
-  font-size: 16px;
-  font-weight: 600;
-  color: #111111;
-}
-
-/* SESSION CARD */
-.sessionCard {
-  background: #f9f9f9;
-  border: 1px solid #e0e0e0;
-  padding: 14px;
-  border-radius: 8px;
-  margin-bottom: 26px;
-  min-height: 80px; /* Evita pulos de layout quando minimizado */
+  min-height: 100px; 
   display: flex;
   flex-direction: column;
   justify-content: center;
   overflow: hidden;
   white-space: nowrap;
+  transition: all 0.3s ease;
 }
 
-.sidebar.collapsed .sessionCard {
+.modSidebar.collapsed .modSessionCard {
   padding: 0;
   border: none;
   background: transparent;
   min-height: 0;
-  margin-bottom: 16px;
-}
-
-.userName {
-  font-weight: 700;
-  color: #111111;
-  margin-bottom: 4px;
-  font-size: 14px;
-}
-
-.sessionTimer, .sessionRemaining {
-  font-size: 12px;
-  color: #666666;
-}
-
-/* MENU AREA */
-.menuArea {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex: 1;
-}
-
-/* MENU ITEM */
-.menuItem {
-  display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 12px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  transition: all 0.2s ease;
-  overflow: hidden;
-  white-space: nowrap;
-  color: #555555;
-}
-
-/* HOVER */
-.menuItem:hover {
-  background: #f5f5f5;
-  color: #111111;
-}
-
-/* HOVER BAR */
-.menuItem::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 15%;
-  width: 4px;
-  height: 70%;
-  border-radius: 0 4px 4px 0;
-  background: #d40000;
-  opacity: 0;
-  transition: 0.2s ease;
-}
-
-.menuItem:hover::before {
-  opacity: 0.5;
-}
-
-/* ACTIVE */
-.menuItem.active {
-  background: #fff0f0; 
-  color: #d40000;
-  font-weight: 600;
-}
-
-.menuItem.active::before {
-  opacity: 1;
-}
-
-/* ICON */
-.menuIcon {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.menuIcon svg {
-  width: 20px;
-  height: 20px;
-  fill: none;
-  stroke: #666666;
-  stroke-width: 2;
-  transition: all 0.2s ease;
-}
-
-.menuItem:hover svg {
-  stroke: #111111;
-}
-
-.menuItem.active svg {
-  stroke: #d40000;
-}
-
-/* LABEL */
-.menuItem span {
-  font-size: 14px;
-}
-
-/* LOGOUT */
-.logoutArea {
-  margin-top: auto;
-}
-
-.logoutButton {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 6px;
-  background: #d40000;
-  color: white;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.logoutButton:hover {
-  background: #b30000;
-  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
-}
-
-.logoutButton.collapsedBtn {
-  padding: 12px 0;
-}
-
-/* TRANSITION LOADER DA PÁGINA INTERNA */
-.pageTransition {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.pageLoader {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(212, 0, 0, 0.1); 
-  border-top: 3px solid #d40000; 
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* =========================================
-   MODAL DA SIDEBAR (Renovar Sessão)
-   ========================================= */
-.sidebarModalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000; /* Deve ficar acima de tudo */
-  animation: fadeIn 0.2s ease-out;
-}
-
-.sidebarCorporateModal {
-  width: 100%;
-  max-width: 400px;
-  background: #ffffff;
-  border-top: 6px solid #f59e0b; /* Laranja para alertar tempo */
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  display: flex;
-  flex-direction: column;
-  animation: modalEnter 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.sidebarModalHeader {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.sidebarModalIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.sidebarModalIcon.warningIcon {
-  background: #fffbeb;
-  color: #f59e0b;
-}
-
-.sidebarModalHeader h3 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 700;
-  color: #111111;
-}
-
-.sidebarModalBody {
   margin-bottom: 24px;
 }
 
-.sidebarModalBody p {
-  margin: 0 0 8px 0;
-  font-size: 14px;
-  color: #555555;
-  line-height: 1.5;
+.sessionUserInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-.sidebarModalFooter {
+.sessionAvatar, .collapsedSessionAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: #f0f4f8;
+  color: #d40000;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.collapsedSessionAvatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #f0f4f8;
+}
+
+.sessionText {
+  display: flex;
+  flex-direction: column;
+}
+
+.userName {
+  font-weight: 700;
+  color: #111111;
+  font-size: 14px;
+}
+
+.sessionTimer {
+  font-size: 12px;
+  color: #888888;
+  font-weight: 500;
+}
+
+.sessionRemainingBox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #555555;
+  transition: all 0.3s ease;
+}
+
+.remainingDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #16a34a;
+}
+
+/* ESTADO DE AVISO DA SESSÃO */
+.modSessionCard.warningState {
+  background: #fffafa;
+  border-color: #ffdddd;
+}
+
+.modSessionCard.warningState .sessionRemainingBox {
+  background: #fff0f0;
+  border-color: #ffcccc;
+  color: #d40000;
+}
+
+.modSessionCard.warningState .remainingDot {
+  background: #d40000;
+  animation: pulseWarning 1.5s infinite;
+}
+
+@keyframes pulseWarning {
+  0% { box-shadow: 0 0 0 0 rgba(212, 0, 0, 0.4); }
+  70% { box-shadow: 0 0 0 4px rgba(212, 0, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(212, 0, 0, 0); }
+}
+
+/* MENU AREA */
+.modMenuArea {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+/* MENU ITEM MODERNO (Pílulas) */
+.modMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  white-space: nowrap;
+  color: #555555;
+  font-weight: 500;
+}
+
+.modSidebar.collapsed .modMenuItem {
+  justify-content: center;
+  padding: 14px;
+}
+
+/* HOVER */
+.modMenuItem:hover {
+  background: #fcfcfc;
+  color: #111111;
+}
+
+/* ACTIVE */
+.modMenuItem.active {
+  background: #fff0f0; 
+  color: #d40000;
+  font-weight: 700;
+}
+
+/* ICON */
+.modMenuIcon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.modMenuIcon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: #888888;
+  stroke-width: 2.2;
+  transition: all 0.2s ease;
+}
+
+/* Ícones de SVG preenchidos (Dashboard) e delineados (Resto) */
+.modMenuItem .modMenuIcon svg[fill="currentColor"] {
+  fill: #888888;
+  stroke: none;
+}
+
+.modMenuItem:hover .modMenuIcon svg { stroke: #111111; }
+.modMenuItem:hover .modMenuIcon svg[fill="currentColor"] { fill: #111111; stroke: none; }
+
+.modMenuItem.active .modMenuIcon svg { stroke: #d40000; }
+.modMenuItem.active .modMenuIcon svg[fill="currentColor"] { fill: #d40000; stroke: none; }
+
+/* LABEL */
+.modMenuItem span {
+  font-size: 14px;
+}
+
+/* LOGOUT */
+.modLogoutArea {
+  margin-top: auto;
+}
+
+.modLogoutButton {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 16px;
+  background: #f9f9f9;
+  color: #555555;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.modLogoutButton:hover {
+  background: #fff0f0;
+  color: #d40000;
+}
+
+.modLogoutButton.collapsedBtn {
+  padding: 14px 0;
+  background: transparent;
+}
+
+.modLogoutButton.collapsedBtn:hover {
+  background: #fff0f0;
+}
+
+/* =========================================
+   MODAL DA SIDEBAR (Renovar Sessão) - Estilo Dashboard
+   ========================================= */
+.modSidebarModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease-out;
+  padding: 20px;
+}
+
+.modSidebarModal {
+  width: 100%;
+  max-width: 440px;
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  animation: modalEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modSidebarModalHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.modSidebarModalIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  flex-shrink: 0;
+}
+
+.modSidebarModalIcon.warningIcon {
+  background: #fff0f0; /* Vermelho invés do antigo amarelo, seguindo a paleta */
+  color: #d40000;
+}
+
+.modSidebarModalHeader h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #111111;
+}
+
+.modSidebarModalBody {
+  margin-bottom: 28px;
+}
+
+.modSidebarModalBody p {
+  margin: 0 0 10px 0;
+  font-size: 15px;
+  color: #555555;
+  line-height: 1.6;
+}
+
+.modSidebarModalBody strong {
+  color: #d40000;
+  font-weight: 800;
+}
+
+.modSidebarModalFooter {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 
-.sidebarPrimaryButton {
-  padding: 12px 16px;
+.modSidebarPrimaryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
   border: none;
-  border-radius: 6px;
+  border-radius: 14px;
   background: #d40000;
   color: white;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
-.sidebarPrimaryButton:hover {
+.modSidebarPrimaryButton:hover {
   background: #b30000;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 0, 0, 0.25);
 }
 
+.modSidebarGhostButton {
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  color: #555;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modSidebarGhostButton:hover {
+  background: #f0f0f0;
+  color: #111;
+}
+
+/* TRANSITION LOADER DA PÁGINA INTERNA */
+.modPageTransition {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modPageLoader {
+  color: #d40000;
+}
+
+.spinIcon {
+  animation: spin 1s linear infinite;
+}
+
+/* KEYFRAMES */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
 @keyframes modalEnter {
-  from {
-    transform: translateY(20px) scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
+  from { transform: translateY(30px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

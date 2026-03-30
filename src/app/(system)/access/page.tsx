@@ -209,73 +209,98 @@ export default function AccessPage(){
     <div className="accessPage">
 
       <div className="pageHeader">
-        <h1 className="accessTitle">Gerenciamento de Acesso</h1>
-        <p className="accessSubtitle">Controle os usuários, permissões e monitore as ações do sistema.</p>
+        <div className="headerIconWrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div>
+          <h1 className="accessTitle">Gerenciamento de Acesso</h1>
+          <p className="accessSubtitle">Controle os usuários, permissões e monitore as ações do sistema.</p>
+        </div>
       </div>
 
       <div className="accessGrid">
 
         {/* CARD CRIAR USUÁRIO */}
         <div className="accessCard createUserCard">
-          <h2>Criar Usuário</h2>
+          <div className="cardHeader">
+            <div className="cardRedDot"></div>
+            <h2>Criar Usuário</h2>
+          </div>
+          
           <div className="formGroup">
-            <input
-              className="corporateInput"
-              placeholder="Nome de Usuário"
-              value={username}
-              onChange={e=>setUsername(e.target.value)}
-            />
-            <input
-              className="corporateInput"
-              placeholder="Senha"
-              type="password"
-              value={password}
-              onChange={e=>setPassword(e.target.value)}
-            />
+            <div className="inputWrapper">
+              <svg className="inputIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <input
+                className="dashboardInput"
+                placeholder="Nome de Usuário"
+                value={username}
+                onChange={e=>setUsername(e.target.value)}
+              />
+            </div>
+            
+            <div className="inputWrapper">
+              <svg className="inputIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <input
+                className="dashboardInput"
+                placeholder="Senha"
+                type="password"
+                value={password}
+                onChange={e=>setPassword(e.target.value)}
+              />
+            </div>
             
             {isMaster && (
-              <select 
-                className="corporateInput" 
-                value={newUserRole} 
-                onChange={e=>setNewUserRole(e.target.value)}
-                title="Definir cargo"
-              >
-                <option value="user">Usuário Padrão</option>
-                <option value="admin">Administrador (Admin)</option>
-              </select>
+              <div className="inputWrapper">
+                 <svg className="inputIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <select 
+                  className="dashboardInput" 
+                  value={newUserRole} 
+                  onChange={e=>setNewUserRole(e.target.value)}
+                  title="Definir cargo"
+                >
+                  <option value="user">Usuário Padrão</option>
+                  <option value="admin">Administrador (Admin)</option>
+                </select>
+              </div>
             )}
           </div>
 
           <div className="permissionsGroup">
-            <span className="groupLabel">Permissões de Acesso:</span>
+            <span className="groupLabel">Permissões Iniciais:</span>
             <div className="permissionsList">
               {ALL_PAGES.map(page=>(
-                <label key={page} className="corporateCheckbox">
+                <label key={page} className="modernCheckbox">
                   <input
                     type="checkbox"
                     checked={allowedPages.includes(page)}
                     onChange={()=>togglePage(page)}
                   />
-                  <span>{page}</span>
+                  <span className="checkmark"></span>
+                  <span className="checkLabel">{page}</span>
                 </label>
               ))}
             </div>
           </div>
 
           <button
-            className="primaryButton fullWidth"
+            className="modernPrimaryButton fullWidth"
             onClick={handleCreateUser}
             disabled={!username || !password}
           >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Criar Usuário
           </button>
         </div>
 
         {/* CARD USUÁRIOS */}
         <div className="accessCard usersCard">
-          <h2>Usuários Ativos</h2>
+          <div className="cardHeader">
+            <div className="cardRedDot"></div>
+            <h2>Usuários Ativos</h2>
+          </div>
+          
           <div className="tableWrapper">
-            <table className="usersTable corporateTable">
+            <table className="modernTable">
               <thead>
                 <tr>
                   <th>Usuário</th>
@@ -290,50 +315,51 @@ export default function AccessPage(){
                   const isTargetMaster = user.role === "master";
                   const isTargetAdmin = user.role === "admin";
                   
-                  // Apenas Admin comum fica bloqueado de mexer em Master ou outros Admins
                   const adminBlocked = isAdmin && (isTargetAdmin || isTargetMaster);
 
                   return(
                     <tr key={user.id}>
-                      <td className="fontWeight600">
-                        {user.username}
-                        
-                        {isTargetMaster && <span className="statusBadge badge-active" style={{marginLeft: 8}}>Master</span>}
-                        
-                        {!isTargetMaster && isMaster ? (
-                          <select 
-                            className="corporateInput"
-                            style={{marginLeft: 8, padding: '2px 6px', fontSize: '11px', width: 'auto', display: 'inline-block'}}
-                            value={user.role}
-                            onChange={(e) => handleChangeRole(user.id, e.target.value)}
-                          >
-                            <option value="user">USER</option>
-                            <option value="admin">ADMIN</option>
-                          </select>
-                        ) : (
-                          !isTargetMaster && isTargetAdmin && <span className="statusBadge badge-active" style={{marginLeft: 8}}>Admin</span>
-                        )}
+                      <td className="userCell">
+                        <div className="userAvatar">
+                          {user.username.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="userInfo">
+                          <span className="fontWeight600">{user.username}</span>
+                          <div className="roleTags">
+                            {isTargetMaster && <span className="statusBadge badge-master">Master</span>}
+                            
+                            {!isTargetMaster && isMaster ? (
+                              <select 
+                                className="inlineRoleSelect"
+                                value={user.role}
+                                onChange={(e) => handleChangeRole(user.id, e.target.value)}
+                              >
+                                <option value="user">USER</option>
+                                <option value="admin">ADMIN</option>
+                              </select>
+                            ) : (
+                              !isTargetMaster && isTargetAdmin && <span className="statusBadge badge-admin">Admin</span>
+                            )}
+                          </div>
+                        </div>
                       </td>
 
                       <td className="passwordCell">
-                        <span className="pwdText">
-                          ••••••••
-                        </span>
+                        <span className="pwdText">••••••••</span>
                       </td>
 
                       <td>
                         <div className="inlinePermissions">
                           {ALL_PAGES.map(page=>(
-                            <label key={page} className="corporateCheckbox smallCheckbox">
+                            <label key={page} className={`modernCheckbox smallCheckbox ${isTargetMaster || adminBlocked ? 'disabled' : ''}`}>
                               <input
                                 type="checkbox"
-                                // REGRA APLICADA: Se for master, mostra checked. Senão, olha no banco de dados.
                                 checked={isTargetMaster ? true : user.allowedPages.includes(page)}
                                 onChange={()=>handleToggleUserPage(user.id,page)}
-                                // REGRA APLICADA: Master pode editar todo mundo (menos ele mesmo). Admin não edita outros Admins/Master.
                                 disabled={isTargetMaster || adminBlocked}
                               />
-                              <span>{page.replace("/", "")}</span>
+                              <span className="checkmark"></span>
+                              <span className="checkLabel">{page.replace("/", "")}</span>
                             </label>
                           ))}
                         </div>
@@ -341,18 +367,21 @@ export default function AccessPage(){
 
                       <td className="actionsCell">
                         <button
-                          className="secondaryButton smallButton"
+                          className="modernSecondaryButton"
                           onClick={()=>handleChangePassword(user.id)}
                           disabled={adminBlocked}
+                          title="Alterar Senha"
                         >
-                          Nova Senha
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z"/><circle cx="16.5" cy="7.5" r=".5"/></svg>
+                          <span>Senha</span>
                         </button>
                         <button
-                          className="dangerButton smallButton"
+                          className="modernDangerButton iconOnly"
                           onClick={()=>handleRemoveUser(user.id)}
                           disabled={isTargetMaster || adminBlocked}
+                          title="Remover Usuário"
                         >
-                          Remover
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
                         </button>
                       </td>
                     </tr>
@@ -365,17 +394,20 @@ export default function AccessPage(){
 
         {/* AUDITORIA */}
         <div className="accessCard auditCard">
-          <h2>Painel de Auditoria</h2>
+          <div className="cardHeader">
+            <div className="cardRedDot"></div>
+            <h2>Painel de Auditoria</h2>
+          </div>
           <AuditPanel />
         </div>
 
       </div>
 
-      {/* MODAIS CORPORATIVOS (MANTIDOS) */}
+      {/* MODAIS CORPORATIVOS */}
       
       {alertConfig && (
         <div className="modalOverlay">
-          <div className="corporateModal">
+          <div className="modernModal">
             <div className="modalHeader">
               <div className={`modalIcon ${alertConfig.title === "Sucesso" ? "successIcon" : "warningIcon"}`}>
                 {alertConfig.title === "Sucesso" ? (
@@ -397,7 +429,7 @@ export default function AccessPage(){
               <p>{alertConfig.message}</p>
             </div>
             <div className="modalFooter">
-              <button className="primaryButton" onClick={() => setAlertConfig(null)}>
+              <button className="modernPrimaryButton" onClick={() => setAlertConfig(null)}>
                 Entendi
               </button>
             </div>
@@ -407,7 +439,7 @@ export default function AccessPage(){
 
       {confirmConfig && (
         <div className="modalOverlay">
-          <div className="corporateModal">
+          <div className="modernModal">
             <div className="modalHeader">
               <div className="modalIcon warningIcon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -422,17 +454,17 @@ export default function AccessPage(){
               <p>{confirmConfig.message}</p>
             </div>
             <div className="modalFooter">
-              <button className="secondaryButton" onClick={() => setConfirmConfig(null)}>
+              <button className="modernGhostButton" onClick={() => setConfirmConfig(null)}>
                 Cancelar
               </button>
               <button 
-                className="dangerButtonSolid" 
+                className="modernDangerButtonSolid" 
                 onClick={() => {
                   confirmConfig.onConfirm();
                   setConfirmConfig(null);
                 }}
               >
-                Confirmar
+                Confirmar Exclusão
               </button>
             </div>
           </div>
@@ -441,7 +473,7 @@ export default function AccessPage(){
 
       {promptConfig && (
         <div className="modalOverlay">
-          <div className="corporateModal">
+          <div className="modernModal">
             <div className="modalHeader">
               <div className="modalIcon infoIcon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -452,18 +484,21 @@ export default function AccessPage(){
               <h3>{promptConfig.title}</h3>
             </div>
             <div className="modalBody">
-              <input
-                autoFocus
-                className="corporateInput"
-                type="text"
-                placeholder="Digite a nova senha aqui..."
-                value={promptValue}
-                onChange={e => setPromptValue(e.target.value)}
-              />
+              <div className="inputWrapper">
+                <svg className="inputIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <input
+                  autoFocus
+                  className="dashboardInput"
+                  type="text"
+                  placeholder="Digite a nova senha aqui..."
+                  value={promptValue}
+                  onChange={e => setPromptValue(e.target.value)}
+                />
+              </div>
             </div>
             <div className="modalFooter">
               <button 
-                className="secondaryButton" 
+                className="modernGhostButton" 
                 onClick={() => {
                   setPromptConfig(null);
                   setPromptValue("");
@@ -472,7 +507,7 @@ export default function AccessPage(){
                 Cancelar
               </button>
               <button 
-                className="primaryButton" 
+                className="modernPrimaryButton" 
                 onClick={() => {
                   promptConfig.onConfirm(promptValue);
                   setPromptConfig(null);

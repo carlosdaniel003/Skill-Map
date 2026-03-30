@@ -18,7 +18,7 @@ interface Props {
 
 export default function AttendanceTable({ operators, daysInMonth, attendanceData, onSaveCell }: Props) {
   return (
-    <div className="attendanceTableContainer">
+    <div className="modAttendanceTableContainer">
       <table className="excelTable">
         <thead>
           <tr>
@@ -85,7 +85,10 @@ export default function AttendanceTable({ operators, daysInMonth, attendanceData
           {operators.length === 0 && (
             <tr>
               <td colSpan={6 + daysInMonth.length} className="noDataCell">
-                Nenhum operador encontrado.
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#dcdcdc" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2.5L7 3h4l1.5 2H14a2 2 0 0 1 2 2v1"/><rect x="16" y="5" width="6" height="6" rx="1"/><path d="M19 8v4"/><path d="M19 15v.01"/></svg>
+                  <span>Nenhum operador encontrado para o modelo de produção selecionado.</span>
+                </div>
               </td>
             </tr>
           )}

@@ -12,10 +12,10 @@ const MENU = [
     path:"/dashboard",
     icon:(
       <svg viewBox="0 0 24 24" fill="currentColor">
-        <rect x="3" y="3" width="7" height="7"/>
-        <rect x="14" y="3" width="7" height="7"/>
-        <rect x="14" y="14" width="7" height="7"/>
-        <rect x="3" y="14" width="7" height="7"/>
+        <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+        <rect x="3" y="14" width="7" height="7" rx="1.5"/>
       </svg>
     )
   },
@@ -23,7 +23,7 @@ const MENU = [
     label:"Operadores",
     path:"/operators",
     icon:(
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="7" r="4"/>
         <path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
       </svg>
@@ -45,7 +45,7 @@ const MENU = [
     label:"Acesso",
     path:"/access",
     icon:(
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="11" width="18" height="10" rx="2"/>
         <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
       </svg>
@@ -102,15 +102,11 @@ export default function Sidebar(){
 
       setSessionTime(formatTime(elapsed > 0 ? elapsed : 0))
 
-      // CORREÇÃO AQUI: Se o tempo acabou ou está negativo, encerra tudo na hora
       if(remaining <= 0){
         clearInterval(interval)
-        setShowRenewModal(false) // Garante que o modal suma para não prender a tela
+        setShowRenewModal(false) 
         setRemainingTime("00:00")
-        logout() // Limpa os dados de sessão do localStorage
-        
-        // Usa o window.location para um redirecionamento "duro" em vez do router.push, 
-        // garantindo que ele vá para o login independentemente do estado do React.
+        logout() 
         window.location.href = "/login?expired=true"
         return
       }
@@ -146,8 +142,6 @@ export default function Sidebar(){
   }
 
   function handleRenewSession() {
-    // CORREÇÃO AQUI: Validação de segurança ao clicar em renovar.
-    // Se o usuário deixou a tela aberta muito tempo e tentou renovar quando já tinha passado...
     const sessionData = getSessionData()
     if(!sessionData || (sessionData.expiresAt - Date.now()) <= 0) {
         setShowRenewModal(false)
@@ -172,51 +166,56 @@ export default function Sidebar(){
   return(
     <>
       <aside
-        className={`sidebar ${collapsed ? "collapsed" : ""}`}
+        className={`modSidebar ${collapsed ? "collapsed" : ""}`}
         onMouseEnter={()=>setCollapsed(false)}
         onMouseLeave={()=>setCollapsed(true)}
       >
-        <div className="sidebarHeader">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="36" height="36" className="sidebarLogo">
-            <text x="50%" y="50%" textAnchor="middle" dominantBaseline="central" fontSize="110" fontFamily="system-ui, sans-serif" fontWeight="800" fill="#d40000">SM</text>
-          </svg>
+        <div className="modSidebarHeader">
+          <div className="sidebarLogoWrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="36" height="36" className="sidebarLogo">
+              <text x="50%" y="50%" textAnchor="middle" dominantBaseline="central" fontSize="110" fontFamily="system-ui, sans-serif" fontWeight="800" fill="#ffffff">SM</text>
+            </svg>
+          </div>
           {!collapsed && (
-            <span>SkillMap</span>
+            <span className="sidebarTitle">SkillMap</span>
           )}
         </div>
 
-        <div className="sessionCard">
-          {!collapsed && (
+        <div className={`modSessionCard ${isWarning ? 'warningState' : ''}`}>
+          {!collapsed ? (
             <>
-              <div className="userName">
-                {username}
+              <div className="sessionUserInfo">
+                <div className="sessionAvatar">
+                  {username ? username.charAt(0).toUpperCase() : "U"}
+                </div>
+                <div className="sessionText">
+                  <div className="userName">{username}</div>
+                  <div className="sessionTimer">Sessão {sessionTime}</div>
+                </div>
               </div>
-              <div className="sessionTimer">
-                sessão {sessionTime}
-              </div>
-              <div
-                className="sessionRemaining"
-                style={{
-                  color: isWarning ? "#d40000" : "#666666",
-                  fontWeight: isWarning ? "600" : "normal"
-                }}
-              >
-                expira em {remainingTime}
+              <div className="sessionRemainingBox">
+                <div className="remainingDot"></div>
+                <span>Expira em {remainingTime}</span>
               </div>
             </>
+          ) : (
+            <div className="collapsedSessionAvatar">
+              {username ? username.charAt(0).toUpperCase() : "U"}
+            </div>
           )}
         </div>
 
-        <nav className="menuArea">
+        <nav className="modMenuArea">
           {allowedMenu.map(item => {
             const active = pathname.startsWith(item.path)
             return(
               <div
                 key={item.path}
-                className={`menuItem ${active ? "active" : ""}`}
+                className={`modMenuItem ${active ? "active" : ""}`}
                 onClick={()=>handleNavigate(item.path)}
+                title={collapsed ? item.label : undefined}
               >
-                <div className="menuIcon">
+                <div className="modMenuIcon">
                   {item.icon}
                 </div>
                 {!collapsed && (
@@ -227,16 +226,23 @@ export default function Sidebar(){
           })}
         </nav>
 
-        <div className="logoutArea">
+        <div className="modLogoutArea">
           <button
-            className={`logoutButton ${collapsed ? "collapsedBtn" : ""}`}
+            className={`modLogoutButton ${collapsed ? "collapsedBtn" : ""}`}
             onClick={handleLogout}
             title="Sair do sistema"
           >
             {!collapsed ? (
-              "Sair"
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <polyline points="16 17 21 12 16 7"/>
+                  <line x1="21" x2="9" y1="12" y2="12"/>
+                </svg>
+                Sair da Conta
+              </>
             ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                 <polyline points="16 17 21 12 16 7"/>
                 <line x1="21" x2="9" y1="12" y2="12"/>
@@ -247,27 +253,35 @@ export default function Sidebar(){
 
       </aside>
 
+      {/* MODAL MODERNO DE AVISO DE SESSÃO */}
       {showRenewModal && (
-        <div className="sidebarModalOverlay">
-          <div className="sidebarCorporateModal">
+        <div className="modSidebarModalOverlay">
+          <div className="modSidebarModal">
             
-            <div className="sidebarModalHeader">
-              <div className="sidebarModalIcon warningIcon">
+            <div className="modSidebarModalHeader">
+              <div className="modSidebarModalIcon warningIcon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"/>
-                  <polyline points="12 6 12 12 16 14"/>
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <line x1="12" x2="12" y1="9" y2="13"/>
+                  <line x1="12" x2="12.01" y1="17" y2="17"/>
                 </svg>
               </div>
               <h3>Sessão Expirando</h3>
             </div>
             
-            <div className="sidebarModalBody">
+            <div className="modSidebarModalBody">
               <p>Por inatividade, sua sessão irá expirar em <strong>{remainingTime}</strong>.</p>
-              <p>Deseja renovar sua sessão para continuar trabalhando e não perder seus dados?</p>
+              <p>Deseja renovar sua sessão para continuar trabalhando e não perder seus dados não salvos?</p>
             </div>
             
-            <div className="sidebarModalFooter">
-              <button className="sidebarPrimaryButton" onClick={handleRenewSession}>
+            <div className="modSidebarModalFooter">
+              <button className="modSidebarGhostButton" onClick={handleLogout}>
+                Sair Agora
+              </button>
+              <button className="modSidebarPrimaryButton" onClick={handleRenewSession}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+                </svg>
                 Renovar Sessão
               </button>
             </div>
@@ -276,9 +290,14 @@ export default function Sidebar(){
         </div>
       )}
 
+      {/* LOADER DE TRANSIÇÃO MODERNO */}
       {(loggingOut || navigating) && (
-        <div className="pageTransition">
-          <div className="pageLoader"/>
+        <div className="modPageTransition">
+          <div className="modPageLoader">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="spinIcon">
+              <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+            </svg>
+          </div>
         </div>
       )}
 

@@ -6,13 +6,14 @@ export default function MatrixSkillsTab({ data }: { data: any }) {
   const { 
     lines, selectedLine, handleLineChange, 
     skills, draftMatrix, toggleSkillInLine, changeDifficultyInLine, changeQuantityInLine, applySkillToAllLines,
+    applyAllSkillsToAllLines, // <-- NOVA FUNÇÃO ADICIONADA AQUI
     hasMatrixChanges, saveMatrixChanges, cancelMatrixChanges
   } = data
 
   return (
     <div className="corporateCard matrixCard">
       <div className="matrixHeader">
-        <div className="formGroup" style={{maxWidth: 400}}>
+        <div className="formGroup" style={{maxWidth: 400, margin: 0}}>
           <label>Selecione o Modelo de Produção</label>
           <select 
             className="corporateInput"
@@ -25,6 +26,22 @@ export default function MatrixSkillsTab({ data }: { data: any }) {
             ))}
           </select>
         </div>
+
+        {/* NOVO BOTÃO DE AÇÃO GLOBAL EM MASSA */}
+        {selectedLine && (
+          <button 
+            className="globalActionBtn bulkActionBtn" 
+            onClick={() => applyAllSkillsToAllLines()}
+            title="Copiar TODA a configuração atual deste modelo para TODOS os outros modelos"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              <polyline points="9 14 11 16 15 12"></polyline>
+            </svg>
+            Aplicar TUDO em Todos os Modelos
+          </button>
+        )}
       </div>
 
       {!selectedLine ? (
@@ -63,7 +80,6 @@ export default function MatrixSkillsTab({ data }: { data: any }) {
                     
                     <td className="fontWeight600">{skill.nome}</td>
                     
-                    {/* NOVO CAMPO: Quantidade */}
                     <td>
                       <div className={`qtdSelector ${!config.active ? 'disabled' : ''}`}>
                         <input 
