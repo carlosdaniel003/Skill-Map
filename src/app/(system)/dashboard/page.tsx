@@ -34,56 +34,64 @@ export default function DashboardPage(){
 
     <DashboardFilterProvider>
 
-      <div className="dashboardPageContainer">
+      <div className="modDashboardContainer">
 
-        <div className="dashboardPageHeader">
-          <h1 className="dashboardPageTitle">Dashboard</h1>
-          <p className="dashboardPageSubtitle">Visão geral analítica de habilidades, linhas de produção e performance.</p>
+        <div className="modDashboardHeader">
+          <div className="modDashboardIconWrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="7" height="9"/>
+              <rect x="14" y="3" width="7" height="5"/>
+              <rect x="14" y="12" width="7" height="9"/>
+              <rect x="3" y="16" width="7" height="5"/>
+            </svg>
+          </div>
+          <div className="modDashboardTitleBlock">
+            <h1 className="modDashboardTitle">Dashboard Analítico</h1>
+            <p className="modDashboardSubtitle">Visão geral de habilidades, alocação de linhas de produção e performance.</p>
+          </div>
         </div>
 
         {/* ==========================================
             0. CONTROLE GLOBAL: FILTROS
             ========================================== */}
-        <div className="dashboardPageSection">
+        <div className="modDashboardSection">
           <DashboardFilters />
         </div>
-
 
         {/* ==========================================
             1. MÓDULO: SKILL MAP E HABILIDADES
             ========================================== */}
             
         {/* Centro de Controle de Radares (33/33/33) */}
-        <div className="dashboardPageGrid dashboardGridTriple">
+        <div className="modDashboardGrid modDashboardGridTriple">
           <LineSkillsRadar />
           <LineOperatorsRadar />
           <OperatorSkillsRadar />
         </div>
 
         {/* Visão Cirúrgica: Heatmap (100% Largura) */}
-        <div className="dashboardPageSection dashboardHeatmapArea">
+        <div className="modDashboardSection modDashboardHeatmapArea">
           <SkillMatrixHeatmap />
         </div>
 
         {/* Distribuição Geral e Nota do Operador (50/50) */}
-        <div className="dashboardPageGrid dashboardGridHalf">
+        <div className="modDashboardGrid modDashboardGridHalf">
           <OperatorKPIs />
           <OperatorSkillGrade />
         </div>
-
 
         {/* ==========================================
             2. MÓDULO: ASSIDUIDADE, ENGAJAMENTO E CULTURA
             ========================================== */}
             
         {/* Estratégia de Equipe: Talentos vs Polivalência (50/50) */}
-        <div className="dashboardPageGrid dashboardGridHalf">
+        <div className="modDashboardGrid modDashboardGridHalf">
           <TalentMatrix />
           <PolyvalenceRanking />
         </div>
 
         {/* Clima e Impacto: Termômetro vs Sangramento (50/50) */}
-        <div className="dashboardPageGrid dashboardGridHalf">
+        <div className="modDashboardGrid modDashboardGridHalf">
           <LineEngagementThermometer />
           <StartupBleedingChart />
         </div>

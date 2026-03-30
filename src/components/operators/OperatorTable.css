@@ -1,135 +1,183 @@
 /* src/components/operators/OperatorTable.css */
 
-.operatorTableWrapper {
+.modOpTable-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
   width: 100%;
 }
 
-.tableContainer {
+/* CONTAINER DA TABELA */
+.modOpTable-container {
   overflow-x: auto;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
+  border: 1px solid #f0f0f0;
+  border-radius: 20px;
   background: #ffffff;
+  /* Uma sombra super suave para descolar levemente se o card principal for branco também */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
 }
 
-.corporateTable {
+.modOpTable {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
 }
 
 /* CABEÇALHO */
-.corporateTable th {
-  background: #f9f9f9;
-  color: #555555;
-  font-weight: 600;
-  font-size: 13px;
-  padding: 12px 16px;
-  border-bottom: 2px solid #e0e0e0;
+.modOpTable th {
+  background: #fafafa;
+  color: #888888;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   white-space: nowrap;
 }
 
-.sortableTh {
+.modOpTable-sortableTh {
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s ease, color 0.2s ease;
   user-select: none;
 }
 
-.sortableTh:hover {
-  background: #f0f0f0;
+.modOpTable-sortableTh:hover {
+  background: #f5f5f5;
   color: #111111;
 }
 
-.thContent {
+.modOpTable-thContent {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
-.sortIcon {
+/* ÍCONES DE SORT */
+.modOpTable-sortIcon {
+  transition: all 0.2s ease;
+}
+
+.modOpTable-sortIcon.active {
   color: #d40000;
+  transform: scale(1.1);
 }
 
-/* LINHAS DA TABELA */
-.corporateTable td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #f0f0f0;
+.modOpTable-sortIcon.inactive {
+  color: #cccccc;
+  opacity: 0.5;
+}
+
+.modOpTable-sortableTh:hover .modOpTable-sortIcon.inactive {
+  color: #a0a0a0;
+  opacity: 1;
+}
+
+/* LINHAS DA TABELA (Afeta diretamente o componente OperatorRow) */
+.modOpTable td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f5f5f5;
   color: #333333;
   font-size: 14px;
   vertical-align: middle;
+  transition: background 0.2s ease;
 }
 
-/* Oculta a borda inferior da última linha se for o fim da tabela */
-.corporateTable tr:last-child td {
+.modOpTable tr:last-child td {
   border-bottom: none;
 }
 
-.corporateTable tr:hover td {
-  background: #fafafa;
+.modOpTable tbody tr:hover td {
+  background: #fcfcfc;
 }
 
-/* UTILITÁRIOS DENTRO DA TABELA */
-.alignRight {
-  text-align: right;
-}
-
-.actionColumn {
+/* UTILITÁRIOS */
+.modOpTable-actionColumn {
   text-align: right;
   width: 260px;
 }
 
-.emptyState {
+/* ESTADO VAZIO */
+.modOpTable-emptyState {
   text-align: center;
-  padding: 40px !important;
-  color: #888888 !important;
-  font-style: italic;
-  background: #fafafa;
+  padding: 60px 20px !important;
+  background: #fafafa !important;
 }
 
-/* PAGINAÇÃO CORPORATIVA */
-.corporatePagination {
+.modOpTable-emptyContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: #888888;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+/* ========================================================
+   PAGINAÇÃO CORPORATIVA (DASHBOARD STYLE)
+   ======================================================== */
+.modOpTable-pagination {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  padding: 8px 4px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
-.paginationInfo {
+.modOpTable-paginationInfo {
   font-size: 13px;
-  color: #555555;
+  color: #666666;
+  font-weight: 500;
 }
 
-.paginationInfo strong {
+.modOpTable-paginationInfo strong {
   color: #111111;
+  font-weight: 800;
 }
 
-.paginationBtn {
-  display: flex;
+.modOpTable-paginationBtn {
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid #e5e5e5;
+  border-radius: 14px;
   background: #ffffff;
-  color: #333333;
+  color: #555555;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.paginationBtn:hover:not(:disabled) {
+.modOpTable-paginationBtn:hover:not(:disabled) {
   background: #f9f9f9;
   border-color: #cccccc;
-  color: #d40000;
+  color: #111111;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
-.paginationBtn:disabled {
-  opacity: 0.4;
+.modOpTable-paginationBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.modOpTable-paginationBtn:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
   background: #f5f5f5;
+  border-color: #e5e5e5;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 600px) {
+  .modOpTable-pagination {
+    flex-direction: column;
+  }
+  .modOpTable-paginationBtn {
+    width: 100%;
+    justify-content: center;
+  }
 }

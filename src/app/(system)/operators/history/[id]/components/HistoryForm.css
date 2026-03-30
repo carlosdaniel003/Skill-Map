@@ -1,138 +1,313 @@
 /* src/app/(system)/operators/history/[id]/components/HistoryForm.css */
 
-.formCard {
+.modHistoryForm-card {
   background: #ffffff;
-  border-top: 6px solid #d40000;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.formCard h2 {
-  margin: 0 0 8px 0;
-  font-size: 18px;
-  font-weight: 700;
-  color: #111111;
+.modHistoryForm-card:hover {
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.06);
 }
 
-.formGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+.modHistoryForm-header {
+  display: flex;
+  align-items: flex-start;
   gap: 16px;
+  margin-bottom: 24px;
 }
 
-.inputGroup {
+.modHistoryForm-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: #fff0f0;
+  color: #d40000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.modHistoryForm-titleBlock {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.inputGroup label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #555555;
+.modHistoryForm-titleBlock h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #111111;
+  letter-spacing: -0.3px;
 }
 
-.corporateInput {
-  padding: 12px 14px;
-  border-radius: 6px;
-  border: 1px solid #e0e0e0;
-  background: #f9f9f9;
+.modHistoryForm-titleBlock p {
+  margin: 0;
+  font-size: 14px;
+  color: #666666;
+  line-height: 1.5;
+}
+
+.modHistoryForm-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modHistoryForm-inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+}
+
+.modHistoryForm-inputGroup label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #555555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* INPUTS COM ÍCONES */
+.modHistoryForm-inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.modHistoryForm-inputIcon {
+  position: absolute;
+  left: 16px;
+  color: #999999;
+  pointer-events: none;
+  transition: color 0.3s ease;
+}
+
+.modHistoryForm-inputWrapper:focus-within .modHistoryForm-inputIcon {
+  color: #d40000;
+}
+
+.modHistoryForm-select {
+  width: 100%;
+  padding: 14px 16px 14px 44px;
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  background: #fcfcfc;
   color: #333333;
   font-size: 14px;
-  transition: all 0.2s ease;
-  width: 100%;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
+  appearance: auto;
+  cursor: pointer;
 }
 
-.corporateInput:focus {
-  outline: none;
+.modHistoryForm-select:focus {
   background: #ffffff;
   border-color: #d40000;
-  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
+  box-shadow: 0 0 0 4px rgba(212, 0, 0, 0.08);
 }
 
-.primaryButton {
-  padding: 12px 16px;
-  border: none;
-  border-radius: 6px;
-  background: #d40000;
-  color: white;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.primaryButton:hover:not(:disabled) {
-  background: #b30000;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
-}
-
-.primaryButton:disabled {
-  opacity: 0.5;
+.modHistoryForm-select:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
-.fullWidth {
-  width: 100%;
-}
-
-.mt-3 {
-  margin-top: 16px;
-}
-
 /* AVALIAÇÃO DE SKILLS */
-.assessmentList {
+.modHistoryForm-assessmentContainer {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  max-height: 400px;
-  overflow-y: auto;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 8px;
-  background: #fafafa;
+  gap: 12px;
+  margin-top: 8px;
 }
 
-.assessmentRow {
+.modHistoryForm-assessmentHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modHistoryForm-assessmentHeader label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #555555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modHistoryForm-assessmentHeader p {
+  margin: 0;
+  font-size: 13px;
+  color: #888888;
+}
+
+.modHistoryForm-assessmentList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 4px 8px 4px 0; /* Padding extra para scrollbar */
+}
+
+/* Custom Scrollbar */
+.modHistoryForm-assessmentList::-webkit-scrollbar { width: 6px; }
+.modHistoryForm-assessmentList::-webkit-scrollbar-track { background: transparent; }
+.modHistoryForm-assessmentList::-webkit-scrollbar-thumb { background-color: #dcdcdc; border-radius: 10px; }
+.modHistoryForm-assessmentList::-webkit-scrollbar-thumb:hover { background-color: #bebebe; }
+
+.modHistoryForm-assessmentRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #fff;
-  padding: 10px 14px;
-  border-radius: 6px;
+  background: #fcfcfc;
+  padding: 16px 20px;
+  border-radius: 16px;
   border: 1px solid #f0f0f0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-.assessmentInfo {
+.modHistoryForm-assessmentRow:hover {
+  background: #ffffff;
+  border-color: #e5e5e5;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+  transform: translateX(2px);
+}
+
+.modHistoryForm-assessmentInfo {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.assName {
-  font-weight: 600;
-  color: #333;
-  font-size: 14px;
-}
-
-.assDiffBadge {
-  font-size: 10px;
+.modHistoryForm-assName {
   font-weight: 700;
-  padding: 3px 6px;
-  border-radius: 4px;
-  text-transform: uppercase;
+  color: #111111;
+  font-size: 15px;
 }
 
-.diff-simple { background: #e8f5e9; color: #2e7d32; }
-.diff-medium { background: #fff8e1; color: #f57c00; }
-.diff-complex { background: #ffebee; color: #c62828; }
+.modHistoryForm-diffBadge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
 
-.slimSelect {
-  padding: 6px 10px;
+.modDiff-simple { background: #ecfdf5; color: #059669; }
+.modDiff-medium { background: #fffbeb; color: #d97706; }
+.modDiff-complex { background: #fef2f2; color: #dc2626; }
+
+/* SELECT MENOR PARA OS NÍVEIS */
+.modHistoryForm-slimInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 220px;
+}
+
+.modHistoryForm-slimInputIcon {
+  position: absolute;
+  left: 12px;
+  color: #999999;
+  pointer-events: none;
+  transition: color 0.3s ease;
+}
+
+.modHistoryForm-slimInputWrapper:focus-within .modHistoryForm-slimInputIcon {
+  color: #d40000;
+}
+
+.modHistoryForm-slimSelect {
+  width: 100%;
+  padding: 10px 12px 10px 36px;
+  border-radius: 12px;
+  border: 1px solid #e5e5e5;
+  background: #ffffff;
+  color: #333333;
   font-size: 13px;
-  width: 180px;
-  background: #fdfdfd;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  appearance: auto;
+  cursor: pointer;
+}
+
+.modHistoryForm-slimSelect:focus {
+  border-color: #d40000;
+  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.08);
+}
+
+.modHistoryForm-slimSelect:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* BOTÃO DE SALVAR */
+.modHistoryForm-primaryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 16px;
+  background: #d40000;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100%;
+  margin-top: 24px;
+}
+
+.modHistoryForm-primaryBtn:hover:not(:disabled) {
+  background: #b30000;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 0, 0, 0.25);
+}
+
+.modHistoryForm-primaryBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.modHistoryForm-primaryBtn:disabled {
+  background: #e5e5e5;
+  color: #999999;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.spinIcon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 600px) {
+  .modHistoryForm-assessmentRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .modHistoryForm-slimInputWrapper {
+    width: 100%;
+  }
 }

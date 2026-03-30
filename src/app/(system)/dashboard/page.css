@@ -1,63 +1,92 @@
 /* src/app/(system)/dashboard/page.css */
 
-.dashboardPageContainer {
+.modDashboardContainer {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  animation: dashboardPageFadeIn 0.4s ease-out;
+  gap: 28px;
+  animation: modDashboardFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.dashboardPageHeader {
+/* ========================================================
+   CABEÇALHO DA PÁGINA
+   ======================================================== */
+.modDashboardHeader {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  gap: 16px;
   margin-bottom: 8px;
 }
 
-.dashboardPageTitle {
-  margin: 0 0 4px 0;
+.modDashboardIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #d40000 0%, #a30000 100%);
+  color: white;
+  border-radius: 20px;
+  box-shadow: 0 8px 16px rgba(212, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.modDashboardTitleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modDashboardTitle {
+  margin: 0;
   font-size: 28px;
   font-weight: 800;
   color: #111111;
   letter-spacing: -0.5px;
 }
 
-.dashboardPageSubtitle {
+.modDashboardSubtitle {
   margin: 0;
   color: #666666;
-  font-size: 14px;
+  font-size: 15px;
 }
 
+/* ========================================================
+   CONTAINERS DE LAYOUT (GRIDS E SEÇÕES)
+   ======================================================== */
+
 /* CONTAINER 100% LARGURA */
-.dashboardPageSection {
+.modDashboardSection {
   width: 100%;
 }
 
 /* CONTAINER BASE DO GRID */
-.dashboardPageGrid {
+.modDashboardGrid {
   display: grid;
-  gap: 24px;
+  gap: 28px;
   width: 100%;
 }
 
 /* GRID 50% / 50% */
-.dashboardGridHalf {
+.modDashboardGridHalf {
   grid-template-columns: 1fr 1fr;
   align-items: stretch; 
 }
 
-/* GRID 33% / 33% / 33% (Usado para Radares e KPIs de Cultura/Habilidade) */
-.dashboardGridTriple {
+/* GRID 33% / 33% / 33% */
+.modDashboardGridTriple {
   grid-template-columns: repeat(3, 1fr);
   align-items: stretch;
 }
 
-.dashboardHeatmapArea {
-  margin-bottom: 24px;
+.modDashboardHeatmapArea {
+  margin-bottom: 0;
 }
 
-@keyframes dashboardPageFadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+/* ========================================================
+   ANIMAÇÕES
+   ======================================================== */
+@keyframes modDashboardFadeIn {
+  from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -65,16 +94,39 @@
    RESPONSIVIDADE (Tablets e Celulares)
    ======================================================== */
 
-@media (max-width: 1200px) {
-  .dashboardGridTriple {
-    /* Em telas médias, quebra para 1 coluna para os gráficos/cards não ficarem espremidos */
+/* TV / Telas Ultra Largas (Extra) */
+@media (min-width: 1920px) {
+  .modDashboardGridTriple {
+    gap: 32px;
+  }
+  .modDashboardGridHalf {
+    gap: 32px;
+  }
+}
+
+/* Tablets maiores e Notebooks pequenos */
+@media (max-width: 1300px) {
+  .modDashboardGridTriple {
     grid-template-columns: 1fr; 
   }
 }
 
+/* Tablets em pé / Celulares deitados */
 @media (max-width: 1024px) {
-  .dashboardGridHalf {
-    /* As duplas de gráficos também quebram para 1 coluna em telas menores */
+  .modDashboardGridHalf {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .modDashboardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .modDashboardContainer {
+    gap: 20px;
+  }
+  .modDashboardGrid {
+    gap: 20px;
   }
 }

@@ -60,14 +60,18 @@ export default function OperatorTable({
   },[sortedOperators,page])
 
   function renderSortIndicator(column:string){
-    if(sortColumn !== column) return null
+    if(sortColumn !== column) return (
+      <svg className="modOpTable-sortIcon inactive" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/>
+      </svg>
+    )
 
     return sortDirection === "asc" ? (
-      <svg className="sortIcon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="modOpTable-sortIcon active" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
         <path d="m18 15-6-6-6 6"/>
       </svg>
     ) : (
-      <svg className="sortIcon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="modOpTable-sortIcon active" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
         <path d="m6 9 6 6 6-6"/>
       </svg>
     )
@@ -75,34 +79,34 @@ export default function OperatorTable({
 
   return(
 
-    <div className="operatorTableWrapper">
+    <div className="modOpTable-wrapper">
 
-      <div className="tableContainer">
-        <table className="corporateTable">
+      <div className="modOpTable-container">
+        <table className="modOpTable">
 
           <thead>
             <tr>
-              <th onClick={()=>toggleSort("matricula")} className="sortableTh">
-                <div className="thContent">Matrícula {renderSortIndicator("matricula")}</div>
+              <th onClick={()=>toggleSort("matricula")} className="modOpTable-sortableTh">
+                <div className="modOpTable-thContent">Matrícula {renderSortIndicator("matricula")}</div>
               </th>
 
-              <th onClick={()=>toggleSort("nome")} className="sortableTh">
-                <div className="thContent">Nome {renderSortIndicator("nome")}</div>
+              <th onClick={()=>toggleSort("nome")} className="modOpTable-sortableTh">
+                <div className="modOpTable-thContent">Nome {renderSortIndicator("nome")}</div>
               </th>
 
-              <th onClick={()=>toggleSort("turno")} className="sortableTh">
-                <div className="thContent">Turno {renderSortIndicator("turno")}</div>
+              <th onClick={()=>toggleSort("turno")} className="modOpTable-sortableTh">
+                <div className="modOpTable-thContent">Turno {renderSortIndicator("turno")}</div>
               </th>
 
-              <th onClick={()=>toggleSort("linha_atual")} className="sortableTh">
-                <div className="thContent">Modelo {renderSortIndicator("linha_atual")}</div>
+              <th onClick={()=>toggleSort("linha_atual")} className="modOpTable-sortableTh">
+                <div className="modOpTable-thContent">Modelo {renderSortIndicator("linha_atual")}</div>
               </th>
 
-              <th onClick={()=>toggleSort("posto_atual")} className="sortableTh">
-                <div className="thContent">Posto {renderSortIndicator("posto_atual")}</div>
+              <th onClick={()=>toggleSort("posto_atual")} className="modOpTable-sortableTh">
+                <div className="modOpTable-thContent">Posto {renderSortIndicator("posto_atual")}</div>
               </th>
 
-              <th className="actionColumn">Ações</th>
+              <th className="modOpTable-actionColumn">Ações</th>
             </tr>
           </thead>
 
@@ -120,8 +124,11 @@ export default function OperatorTable({
             
             {paginatedOperators.length === 0 && (
               <tr>
-                <td colSpan={6} className="emptyState">
-                  Nenhum operador encontrado com os filtros atuais.
+                <td colSpan={6} className="modOpTable-emptyState">
+                  <div className="modOpTable-emptyContent">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    Nenhum operador encontrado com os filtros atuais.
+                  </div>
                 </td>
               </tr>
             )}
@@ -130,32 +137,32 @@ export default function OperatorTable({
         </table>
       </div>
 
-      {/* PAGINAÇÃO */}
+      {/* PAGINAÇÃO MODERNIZADA */}
       {totalPages > 0 && (
-        <div className="corporatePagination">
+        <div className="modOpTable-pagination">
           
           <button
-            className="paginationBtn"
+            className="modOpTable-paginationBtn"
             disabled={page === 1}
             onClick={()=>setPage(page-1)}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="m15 18-6-6 6-6"/>
             </svg>
             Anterior
           </button>
 
-          <span className="paginationInfo">
+          <span className="modOpTable-paginationInfo">
             Página <strong>{page}</strong> de {totalPages}
           </span>
 
           <button
-            className="paginationBtn"
+            className="modOpTable-paginationBtn"
             disabled={page === totalPages}
             onClick={()=>setPage(page+1)}
           >
             Próxima
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="m9 18 6-6-6-6"/>
             </svg>
           </button>

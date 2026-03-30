@@ -1,235 +1,319 @@
 /* src/app/login/page.css */
 
-.loginPage {
+.modLoginPage {
   height: 100vh;
   width: 100%;
-  
   display: flex;
   align-items: center;
   justify-content: center;
   
-  /* Fundo escuro e sóbrio corporativo */
-  background: #0a0a0a; 
-  background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #0a0a0a 70%);
-  
+  /* Fundo claro, limpo e minimalista para destacar o Card */
+  background: #f4f4f5; 
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
 }
 
-/* CARD EM BRANCO COM DETALHE VERMELHO */
-.loginCard {
-  width: 380px;
-  
-  /* Card Branco */
-  background: #ffffff; 
-  
-  /* Detalhe executivo superior vermelho */
-  border-top: 6px solid #d40000; 
-  border-radius: 8px;
-  
+/* CARD PRINCIPAL */
+.modLoginCard {
+  width: 100%;
+  max-width: 400px;
+  background: #ffffff;
+  border-radius: 28px; /* Cantos super arredondados */
   padding: 40px;
-  
-  /* Sombra elegante para destacar do fundo preto */
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-  
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
-  gap: 28px;
-  
-  animation: cardEnter 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  gap: 32px;
+  animation: modLoginCardEnter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
 }
 
-@keyframes cardEnter {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+@keyframes modLoginCardEnter {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 /* HEADER */
-.loginHeader {
+.modLoginHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
+  gap: 8px;
 }
 
-.loginHeader h1 {
+.modLoginIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #d40000 0%, #a30000 100%);
+  color: white;
+  border-radius: 20px;
+  box-shadow: 0 8px 16px rgba(212, 0, 0, 0.2);
+  margin-bottom: 8px;
+}
+
+.modLoginHeader h1 {
   margin: 0;
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 800;
   letter-spacing: -0.5px;
-  color: #111111; /* Preto para contraste no branco */
+  color: #111111;
 }
 
-.loginHeader span {
-  font-size: 13px;
-  color: #666666; /* Cinza médio executivo */
+.modLoginHeader span {
+  font-size: 14px;
+  color: #666666;
   font-weight: 500;
 }
 
 /* FORM E INPUTS */
-.loginForm {
+.modLoginForm {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.loginForm input {
-  padding: 14px 16px;
-  border-radius: 6px;
-  
-  /* Inputs com fundo cinza super claro */
-  border: 1px solid #e0e0e0;
-  background: #f9f9f9;
-  color: #333333;
-  font-size: 14px;
-  transition: all 0.2s ease;
+.modLoginInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
 }
 
-.loginForm input::placeholder {
+.modLoginInputIcon {
+  position: absolute;
+  left: 16px;
+  color: #999999;
+  pointer-events: none;
+  transition: color 0.3s ease;
+}
+
+.modLoginInputWrapper:focus-within .modLoginInputIcon {
+  color: #d40000;
+}
+
+.modLoginInput {
+  width: 100%;
+  padding: 16px 16px 16px 44px; /* Espaço para o ícone */
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  background: #fcfcfc;
+  color: #333333;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+.modLoginInput::placeholder {
   color: #a0a0a0;
 }
 
-/* Efeito de foco em vermelho */
-.loginForm input:focus {
+.modLoginInput:focus {
   outline: none;
   background: #ffffff;
   border-color: #d40000;
-  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
+  box-shadow: 0 0 0 4px rgba(212, 0, 0, 0.08);
 }
 
-/* PASSWORD FIELD (Agrupa input + botão) */
-.passwordField {
+/* Remove o ícone padrão de senha do Edge */
+.modLoginInput[type="password"]::-ms-reveal,
+.modLoginInput[type="password"]::-ms-clear {
+  display: none;
+}
+
+/* Botão de Toggle de Senha */
+.modLoginTogglePassword {
+  position: absolute;
+  right: 16px;
+  border: none;
+  background: transparent;
+  color: #999999;
+  cursor: pointer;
+  padding: 4px;
   display: flex;
   align-items: center;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  background: #f9f9f9;
-  transition: all 0.2s ease;
+  justify-content: center;
+  transition: color 0.2s ease;
 }
 
-.passwordField:focus-within {
-  background: #ffffff;
-  border-color: #d40000;
-  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
+.modLoginTogglePassword:hover {
+  color: #111111;
 }
 
-.passwordField input {
-  border: none;
-  flex: 1;
-  background: transparent;
-  box-shadow: none;
-}
-
-.passwordField input:focus {
-  box-shadow: none;
-}
-
-.togglePassword {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  padding: 10px 14px;
-  color: #888888;
-  font-size: 16px;
-  transition: color 0.2s;
-}
-
-.togglePassword:hover {
-  color: #d40000;
-}
-
-/* ERROR */
-.loginError {
-  color: #d40000;
-  font-size: 13px;
-  font-weight: 600;
-  background: #fff0f0;
-  padding: 10px;
-  border-radius: 6px;
-  border-left: 3px solid #d40000;
-}
-
-/* OPTIONS */
-.loginOptions {
+/* AVISO CAPS LOCK E ERRO */
+.modLoginCapsLock {
   display: flex;
-  justify-content: flex-start;
-  font-size: 13px;
-  color: #555555;
+  align-items: center;
+  gap: 6px;
+  color: #d97706;
+  background: #fffbeb;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  animation: fadeIn 0.3s ease;
+  margin-top: -6px;
 }
 
-.loginOptions label {
+.modLoginError {
   display: flex;
   align-items: center;
   gap: 8px;
-  cursor: pointer;
+  color: #d40000;
+  background: #fff0f0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  animation: fadeIn 0.3s ease;
 }
 
-.loginOptions input[type="checkbox"] {
-  cursor: pointer;
-  accent-color: #d40000; /* Checkbox vermelho */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* BUTTON */
-.loginButton {
-  margin-top: 8px;
-  padding: 14px;
-  border: none;
+/* CHECKBOX PERSONALIZADO (Lembrar Usuário) */
+.modLoginOptions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.modLoginCheckbox {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  gap: 10px;
+  transition: opacity 0.2s;
+}
+
+.modLoginCheckbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.modCheckmark {
+  height: 20px;
+  width: 20px;
+  background-color: #fff;
+  border: 2px solid #ddd;
   border-radius: 6px;
-  
-  /* Botão Vermelho Executivo */
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.modLoginCheckbox:hover input ~ .modCheckmark {
+  border-color: #bbb;
+}
+
+.modLoginCheckbox input:checked ~ .modCheckmark {
+  background-color: #d40000;
+  border-color: #d40000;
+}
+
+.modCheckmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 6px;
+  top: 2px;
+  width: 4px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.modLoginCheckbox input:checked ~ .modCheckmark:after {
+  display: block;
+}
+
+.modCheckLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555555;
+}
+
+/* BOTÃO DE LOGIN */
+.modLoginButton {
+  margin-top: 8px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  border: none;
+  border-radius: 16px;
   background: #d40000;
   color: white;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 15px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.loginButton:hover:not(:disabled) {
+.modLoginButton:hover:not(:disabled) {
   background: #b30000;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 0, 0, 0.25);
 }
 
-.loginButton:disabled {
-  background: #e0e0e0;
+.modLoginButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.modLoginButton:disabled {
+  background: #e5e5e5;
   color: #999999;
   cursor: not-allowed;
 }
 
+.modLoginSpinIcon {
+  animation: spin 1s linear infinite;
+}
+
 /* FOOTER */
-.loginFooter {
+.modLoginFooter {
   display: flex;
   justify-content: space-between;
   font-size: 12px;
-  color: #999999;
+  font-weight: 600;
+  color: #a0a0a0;
   border-top: 1px solid #f0f0f0;
   padding-top: 16px;
 }
 
-/* TRANSITION SCREEN */
-.loginTransition {
+/* TELA DE TRANSIÇÃO (LOADING) */
+.modLoginTransition {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  
-  background: #0a0a0a;
-  
+  background: rgba(244, 244, 245, 0.8);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 999;
 }
 
-.loginLoader {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(255, 255, 255, 0.1);
-  border-top: 3px solid #d40000;
+.modLoginLoader {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(212, 0, 0, 0.1);
+  border-top: 4px solid #d40000;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -239,130 +323,115 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Remove o ícone de revelar senha padrão do Edge/Navegadores */
-input[type="password"]::-ms-reveal,
-input[type="password"]::-ms-clear {
-  display: none;
-}
-
-/* Garante que o botão do SVG fique alinhado perfeitamente */
-.togglePassword {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* src/app/login/page.css */
-
-/* ... MANTENHA TODO O SEU CSS ANTERIOR AQUI ... */
-
 /* =========================================
-   MODAL DE SESSÃO EXPIRADA (Login)
+   MODAL DE SESSÃO EXPIRADA (BLUR E ROUNDED)
    ========================================= */
 
-.loginModalOverlay {
+.modLoginModalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.85); /* Fundo um pouco mais escuro para a tela de login */
-  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  animation: loginFadeIn 0.2s ease-out;
+  animation: modModalFadeIn 0.3s ease-out;
+  padding: 20px;
 }
 
-.loginCorporateModal {
+.modLoginModal {
   width: 100%;
-  max-width: 400px;
+  max-width: 440px;
   background: #ffffff;
-  border-top: 6px solid #3b82f6; /* Azul executivo (Info) */
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  animation: loginModalEnter 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: modModalEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.loginModalHeader {
+.modLoginModalHeader {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
-.loginModalIcon {
+.modLoginModalIcon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
   flex-shrink: 0;
 }
 
-.loginModalIcon.infoIcon {
-  background: #eff6ff;
-  color: #3b82f6;
+.modLoginModalIcon.infoIcon {
+  background: #f0f4ff;
+  color: #0056b3;
 }
 
-.loginModalHeader h3 {
+.modLoginModalHeader h3 {
   margin: 0;
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 800;
   color: #111111;
 }
 
-.loginModalBody {
-  margin-bottom: 24px;
+.modLoginModalBody {
+  margin-bottom: 28px;
 }
 
-.loginModalBody p {
-  margin: 0 0 8px 0;
-  font-size: 14px;
+.modLoginModalBody p {
+  margin: 0 0 10px 0;
+  font-size: 15px;
   color: #555555;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
-.loginModalFooter {
+.modLoginModalFooter {
   display: flex;
   justify-content: flex-end;
 }
 
-.loginPrimaryButton {
-  padding: 12px 20px;
+.modLoginModalPrimaryBtn {
+  padding: 14px 24px;
   border: none;
-  border-radius: 6px;
-  background: #3b82f6; /* Combinando com o topo do modal */
+  border-radius: 16px;
+  background: #0056b3; /* Azul executivo minimalista */
   color: white;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.loginPrimaryButton:hover {
-  background: #2563eb;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+.modLoginModalPrimaryBtn:hover {
+  background: #004494;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 86, 179, 0.25);
 }
 
-@keyframes loginFadeIn {
+@keyframes modModalFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-@keyframes loginModalEnter {
-  from {
-    transform: translateY(30px) scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0) scale(1);
-    opacity: 1;
+@keyframes modModalEnter {
+  from { transform: translateY(30px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* RESPONSIVIDADE BÁSICA PARA MOBILE EXTREMO */
+@media (max-width: 400px) {
+  .modLoginCard {
+    padding: 32px 24px;
+    border-radius: 20px;
   }
 }

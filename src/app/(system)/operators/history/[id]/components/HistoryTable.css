@@ -1,128 +1,167 @@
 /* src/app/(system)/operators/history/[id]/components/HistoryTable.css */
 
-.tableCard {
+/* CARD PRINCIPAL */
+.modHistTable-card {
   background: #ffffff;
-  border-top: 6px solid #d40000;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.cardHeader {
+.modHistTable-card:hover {
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.06);
+}
+
+/* CABEÇALHO DO CARD */
+.modHistTable-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
-.cardHeader h2 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 700;
-  color: #111111;
-}
-
-.tableActions {
+.modHistTable-titleWrap {
   display: flex;
+  align-items: center;
   gap: 12px;
 }
 
-.secondaryButton {
-  padding: 10px 16px;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  background: #ffffff;
-  color: #333333;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.modHistTable-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #f0f4f8; /* Cinza azulado neutro */
+  color: #555555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
 }
 
-.secondaryButton:hover {
-  background: #f9f9f9;
-  border-color: #cccccc;
+.modHistTable-card:hover .modHistTable-icon {
+  background: #fff0f0;
+  color: #d40000;
 }
 
-.iconTextButton {
+.modHistTable-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #111111;
+  letter-spacing: -0.3px;
+}
+
+/* AÇÕES E BOTÕES */
+.modHistTable-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.modHistTable-secondaryBtn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid #e5e5e5;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #555555;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.tableContainer {
+.modHistTable-secondaryBtn:hover {
+  background: #f9f9f9;
+  border-color: #cccccc;
+  color: #111111;
+}
+
+/* TABELA MODERNA ARREDONDADA */
+.modHistTable-container {
   overflow-x: auto;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
+  border-radius: 20px;
+  border: 1px solid #f0f0f0;
+  background: #ffffff;
 }
 
-.corporateTable {
+.modHistTable-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
 }
 
-.corporateTable th {
-  background: #f9f9f9;
-  color: #555555;
-  font-weight: 600;
-  font-size: 13px;
-  padding: 12px 16px;
-  border-bottom: 2px solid #e0e0e0;
+.modHistTable-table th {
+  background: #fafafa;
+  color: #888888;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.modHistTable-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f5f5f5;
+  color: #333333;
+  font-size: 14px;
+  vertical-align: middle;
+  transition: background 0.2s ease;
+}
+
+.modHistTable-table tr:hover td {
+  background: #fcfcfc;
+}
+
+.modHistTable-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* LINHAS INATIVAS */
+.inactiveRow td {
+  opacity: 0.5;
+  background-color: #fafafa;
+  filter: grayscale(100%);
+}
+.inactiveRow:hover td {
+  opacity: 0.8;
+}
+
+/* UTILITÁRIOS */
+.fw-600 {
+  font-weight: 700;
+  color: #111111;
+}
+
+/* BADGES DE SKILL/NÍVEL */
+.modHistTable-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
 }
 
-.corporateTable td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #f0f0f0;
-  color: #333333;
-  font-size: 14px;
-  vertical-align: middle;
-}
-
-.corporateTable tr:last-child td {
-  border-bottom: none;
-}
-
-.corporateTable tr:hover td {
-  background: #fafafa;
-}
-
-.inactiveRow td {
-  opacity: 0.5;
-  background: #fafafa;
-}
-
-.fontWeight500 {
-  font-weight: 500;
-}
-
-.emptyState {
-  text-align: center;
-  padding: 40px !important;
-  color: #888888 !important;
-  font-style: italic;
-  background: #fafafa;
-}
-
-/* ESTILOS DE SKILL (BADGE) */
-.skillBadge {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 700;
-  background: #f0f0f0;
-  color: #555555;
-}
-
-.skillBadge.level-1 { background: #ffebee; color: #c62828; }
-.skillBadge.level-2 { background: #fff3e0; color: #ef6c00; }
-.skillBadge.level-3 { background: #e3f2fd; color: #1565c0; }
-.skillBadge.level-4 { background: #e8f5e9; color: #2e7d32; }
-.skillBadge.level-5 { background: #f3e5f5; color: #6a1b9a; }
+.level-1 { background: #fef2f2; color: #dc2626; }
+.level-2 { background: #fffbeb; color: #d97706; }
+.level-3 { background: #eff6ff; color: #2563eb; }
+.level-4 { background: #ecfdf5; color: #059669; }
+.level-5 { background: #faf5ff; color: #9333ea; }
 
 /* AÇÕES DA TABELA */
 .actionColumn {
@@ -131,20 +170,67 @@
   white-space: nowrap;
 }
 
-.actionIconBtn {
+.modHistTable-actionBtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
+  width: 36px;
+  height: 36px;
   border: 1px solid transparent;
-  border-radius: 6px;
+  border-radius: 12px;
   background: transparent;
   cursor: pointer;
-  transition: all 0.2s ease;
+  color: #888888;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.deactivateBtn { color: #888888; }
-.deactivateBtn:hover { background: #ffebee; color: #c62828; }
+.modHistTable-actionBtn.deactivate:hover {
+  background: #fff0f0;
+  color: #d40000;
+  transform: translateY(-2px);
+}
 
-.reactivateBtn { color: #888888; }
-.reactivateBtn:hover { background: #e8f5e9; color: #2e7d32; }
+.modHistTable-actionBtn.reactivate:hover {
+  background: #ecfdf5;
+  color: #059669;
+  transform: translateY(-2px);
+}
+
+/* ESTADO VAZIO */
+.modHistTable-emptyState {
+  text-align: center;
+  padding: 60px 20px !important;
+  background: #fafafa !important;
+}
+
+.emptyStateContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: #888888;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+  .modHistTable-card {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+  .modHistTable-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .modHistTable-actions {
+    width: 100%;
+  }
+  .modHistTable-secondaryBtn {
+    flex: 1;
+    justify-content: center;
+  }
+  .modHistTable-secondaryBtn span {
+    display: none; /* Esconde texto nos botões para caber melhor no mobile */
+  }
+}

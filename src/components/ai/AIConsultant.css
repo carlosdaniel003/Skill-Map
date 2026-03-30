@@ -3,55 +3,56 @@
 /* =======================================
    FAB E JANELA BASE
    ======================================= */
-.ai-fab {
+.modAi-fab {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: #d40000;
+  width: 60px;
+  height: 60px;
+  border-radius: 20px; /* Squircle style */
+  background: linear-gradient(135deg, #d40000 0%, #a30000 100%);
   color: white;
   border: none;
-  box-shadow: 0 4px 16px rgba(212, 0, 0, 0.4);
+  box-shadow: 0 10px 24px rgba(212, 0, 0, 0.35);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
 }
 
-.ai-fab:hover {
-  transform: scale(1.1);
+.modAi-fab:hover {
+  transform: scale(1.08) translateY(-4px);
+  box-shadow: 0 14px 28px rgba(212, 0, 0, 0.45);
 }
 
-.ai-chat-window {
+.modAi-chatWindow {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  width: 380px;
-  height: 600px; 
+  width: 400px;
+  height: 640px; 
   background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  border-radius: 28px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
   z-index: 9999;
   overflow: hidden;
-  border: 1px solid #e0e0e0;
+  border: 1px solid rgba(0,0,0,0.04);
   
-  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   transform-origin: bottom right;
-  animation: slideUpChat 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation: slideUpChat 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes slideUpChat {
-  from { opacity: 0; transform: scale(0.8) translateY(40px); }
+  from { opacity: 0; transform: scale(0.9) translateY(20px); }
   to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-.ai-chat-window.fullscreen {
+.modAi-chatWindow.fullscreen {
   bottom: 0;
   right: 0;
   left: 0;
@@ -64,289 +65,322 @@
   animation: none;
 }
 
-.ai-chat-window.minimized {
-  height: 56px; 
-  width: 320px;
-  bottom: 0;
+.modAi-chatWindow.minimized {
+  height: 72px; 
+  width: 340px;
+  bottom: 24px;
   right: 24px;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
-  border-bottom: none;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
 /* =======================================
    CABEÇALHO E CONTROLES
    ======================================= */
-.ai-chat-header {
-  background: #d40000;
-  color: white;
-  padding: 0 16px;
+.modAi-chatHeader {
+  background: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  min-height: 56px;
   flex-shrink: 0; 
+  transition: background 0.2s;
 }
 
-.ai-chat-window.minimized .ai-chat-header {
+.modAi-chatWindow.minimized .modAi-chatHeader {
   cursor: pointer;
+  border-bottom: none;
+}
+.modAi-chatWindow.minimized .modAi-chatHeader:hover {
+  background: #fdfdfd;
 }
 
-.ai-header-info {
+.modAi-headerInfo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
+  gap: 12px;
 }
 
-.ai-window-controls {
+.modAi-iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #d40000 0%, #a30000 100%);
+  color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(212, 0, 0, 0.2);
+}
+
+.modAi-headerTitles {
+  display: flex;
+  flex-direction: column;
+}
+
+.modAi-headerTitles h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: #111111;
+  letter-spacing: -0.3px;
+}
+
+.modAi-headerTitles span {
+  font-size: 12px;
+  color: #888888;
+  font-weight: 500;
+}
+
+.modAi-windowControls {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.ai-control-btn {
+.modAi-controlBtn {
   background: transparent;
   border: none;
-  color: white;
+  color: #a0a0a0;
   cursor: pointer;
-  opacity: 0.8;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
 }
 
-.ai-control-btn:hover { 
-  opacity: 1; 
-  background: rgba(255, 255, 255, 0.2);
+.modAi-controlBtn:hover { 
+  background: #f0f0f0;
+  color: #111111;
 }
 
-.ai-control-btn.close:hover {
-  background: rgba(0, 0, 0, 0.2);
+.modAi-controlBtn.close:hover {
+  background: #fff0f0;
+  color: #d40000;
 }
-
 
 /* =======================================
    MENSAGENS E BOLHAS
    ======================================= */
-.ai-chat-body {
+.modAi-chatBody {
   flex: 1;
-  padding: 20px 16px;
+  padding: 24px 20px;
   overflow-y: auto;
-  background: #f8fafc;
+  background: #fcfcfc;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
-.ai-chat-body::-webkit-scrollbar { width: 6px; }
-.ai-chat-body::-webkit-scrollbar-track { background: transparent; }
-.ai-chat-body::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+.modAi-chatBody::-webkit-scrollbar { width: 6px; }
+.modAi-chatBody::-webkit-scrollbar-track { background: transparent; }
+.modAi-chatBody::-webkit-scrollbar-thumb { background-color: #dcdcdc; border-radius: 20px; }
 
-.ai-message-row {
+.modAi-messageRow {
   display: flex;
   width: 100%;
 }
-.ai-message-row.user { justify-content: flex-end; }
-.ai-message-row.ai { justify-content: flex-start; }
+.modAi-messageRow.user { justify-content: flex-end; }
+.modAi-messageRow.ai { justify-content: flex-start; }
 
-.ai-bubble-container {
+.modAi-bubbleContainer {
   display: flex;
   flex-direction: column;
   max-width: 85%;
 }
-.ai-message-row.user .ai-bubble-container { align-items: flex-end; }
+.modAi-messageRow.user .modAi-bubbleContainer { align-items: flex-end; }
 
-.ai-chat-window.fullscreen .ai-bubble-container {
+.modAi-chatWindow.fullscreen .modAi-bubbleContainer {
   max-width: 60%;
 }
 
-.ai-bubble {
-  padding: 12px 16px;
-  border-radius: 12px;
+.modAi-bubble {
+  padding: 14px 18px;
+  border-radius: 16px;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
   word-wrap: break-word;
 }
 
-.ai-bubble.user {
+.modAi-bubble.user {
   background: #d40000;
   color: white;
-  border-bottom-right-radius: 2px;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 4px 12px rgba(212,0,0,0.15);
 }
 
-.ai-bubble.ai {
+.modAi-bubble.ai {
   background: #ffffff;
-  color: #1e293b;
-  border: 1px solid #e2e8f0;
-  border-bottom-left-radius: 2px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  color: #333333;
+  border: 1px solid #f0f0f0;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.03);
 }
 
-.ai-expand-btn {
-  background: transparent;
-  border: none;
+.modAi-expandBtn {
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
   color: #d40000;
   font-size: 12px;
   font-weight: 700;
-  margin-top: 6px;
+  margin-top: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 8px;
-  border-radius: 4px;
-  transition: all 0.2s;
+  padding: 8px 12px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
   align-self: flex-start;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
 }
-.ai-expand-btn:hover {
-  background: #eff6ff;
-  color: #d40000;
+.modAi-expandBtn:hover {
+  background: #fff0f0;
+  border-color: #ffcccc;
 }
 
 /* =======================================
    RODAPÉ E INPUT DE TEXTO
    ======================================= */
-.ai-chat-footer {
-  padding: 16px;
-  background: white;
-  border-top: 1px solid #e2e8f0;
+.modAi-chatFooter {
+  padding: 16px 20px;
+  background: #ffffff;
+  border-top: 1px solid #f0f0f0;
   flex-shrink: 0;
 }
 
-.ai-input-wrapper {
+.modAi-inputWrapper {
   display: flex;
   gap: 12px;
   align-items: center;
 }
 
-.ai-input {
+.modAi-input {
   flex: 1;
-  padding: 12px 16px;
-  border: 1px solid #cbd5e1;
-  border-radius: 24px;
+  padding: 14px 20px;
+  border: 1px solid #e5e5e5;
+  border-radius: 20px;
   outline: none;
   font-size: 14px;
-  background: #f8fafc;
-  transition: border-color 0.2s, background 0.2s;
+  background: #fcfcfc;
+  color: #111111;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.ai-input:focus { 
+.modAi-input::placeholder {
+  color: #a0a0a0;
+}
+
+.modAi-input:focus { 
   border-color: #d40000; 
   background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(212, 0, 0, 0.08);
 }
 
-.ai-send-btn {
+.modAi-sendBtn {
   background: #d40000;
   color: white;
   border: none;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: background 0.2s, transform 0.1s;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.ai-send-btn:disabled { 
-  background: #cbd5e1; 
+.modAi-sendBtn:disabled { 
+  background: #f0f0f0; 
+  color: #a0a0a0;
   cursor: not-allowed; 
 }
 
-.ai-send-btn:active:not(:disabled) {
+.modAi-sendBtn:active:not(:disabled) {
   transform: scale(0.95);
 }
 
-.ai-send-btn:hover:not(:disabled) { 
+.modAi-sendBtn:hover:not(:disabled) { 
   background: #b30000; 
+  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
 }
 
 /* =======================================
    ANIMAÇÃO DE CARREGAMENTO
    ======================================= */
-.ai-bubble.loading {
+.modAi-bubble.loading {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 16px 20px;
+  gap: 6px;
+  padding: 18px 24px;
 }
 
 .dot {
   display: block;
   width: 6px;
   height: 6px;
-  background: #94a3b8;
+  background: #d40000;
   border-radius: 50%;
-  animation: bounce 1.4s infinite ease-in-out both;
+  animation: modBounce 1.4s infinite ease-in-out both;
 }
 .dot:nth-child(1) { animation-delay: -0.32s; }
 .dot:nth-child(2) { animation-delay: -0.16s; }
 
-@keyframes bounce {
-  0%, 80%, 100% { transform: scale(0); }
-  40% { transform: scale(1); }
+@keyframes modBounce {
+  0%, 80%, 100% { transform: scale(0); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
 }
 
 /* =======================================
    MARKDOWN PARSER
    ======================================= */
-.ai-bubble.ai p, .expanded-markdown p { 
-  margin: 0 0 10px 0; 
-}
-.ai-bubble.ai p:last-child, .expanded-markdown p:last-child { 
-  margin: 0; 
-}
-.ai-bubble.ai strong, .expanded-markdown strong { 
-  font-weight: 800; 
-  color: #0f172a; 
-}
+.modAi-bubble.ai p, .expanded-markdown p { margin: 0 0 10px 0; }
+.modAi-bubble.ai p:last-child, .expanded-markdown p:last-child { margin: 0; }
+.modAi-bubble.ai strong, .expanded-markdown strong { font-weight: 800; color: #111111; }
 
-/* Tabelas no Chat Pequeno */
-.ai-bubble.ai table {
+.modAi-bubble.ai table {
   width: 100%;
   border-collapse: collapse;
   margin: 12px 0;
-  font-size: 12px;
+  font-size: 13px;
   display: block;
   overflow-x: auto;
   white-space: nowrap;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
 }
 
-.ai-chat-window.fullscreen .ai-bubble.ai table {
+.modAi-chatWindow.fullscreen .modAi-bubble.ai table {
   font-size: 14px;
   display: table;
   white-space: normal;
 }
 
-.ai-bubble.ai th {
-  background: #f1f5f9;
-  padding: 8px 12px;
-  border-bottom: 2px solid #cbd5e1;
+.modAi-bubble.ai th {
+  background: #fafafa;
+  padding: 10px 14px;
+  border-bottom: 1px solid #f0f0f0;
   text-align: left;
   font-weight: 700;
-  color: #334155;
+  color: #555555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.ai-bubble.ai td {
-  padding: 8px 12px;
-  border-bottom: 1px solid #f1f5f9;
+.modAi-bubble.ai td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f5f5f5;
 }
 
 
 /* ========================================================
-   ESTILOS DO MODAL (AI Expanded View)
+   ESTILOS DO MODAL (AI Expanded View que está neste CSS)
    ======================================================== */
 .emergencyModalOverlay {
   position: fixed;
@@ -354,119 +388,164 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10000;
-  animation: fadeIn 0.2s ease-out;
+  animation: fadeIn 0.3s ease-out;
+  padding: 20px;
 }
 
 .emergencyModalCard {
-  width: 90%;
-  max-width: 600px;
+  width: 100%;
+  max-width: 700px;
   max-height: 85vh;
   background: #ffffff;
-  border-top: 6px solid #d40000;
-  border-radius: 8px;
+  border-radius: 28px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
-  animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
+  animation: slideUpModal 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
 }
 
 .emergencyHeader {
-  padding: 20px 24px;
+  padding: 24px 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #eee;
-  background: #fdfdfd;
+  border-bottom: 1px solid #f0f0f0;
+  background: #ffffff;
+  flex-shrink: 0;
 }
 
 .emergencyTitle {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .emergencyTitle h3 {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 800;
-  color: #111;
+  color: #111111;
+  letter-spacing: -0.3px;
 }
 
 .emergencyIcon {
   display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: #fff0f0;
   color: #d40000;
+  border-radius: 14px;
 }
 
 .closeEmergencyBtn {
   background: transparent;
   border: none;
-  color: #888;
+  color: #888888;
   cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  transition: all 0.2s;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .closeEmergencyBtn:hover {
-  background: #f0f0f0;
-  color: #111;
+  background: #f5f5f5;
+  color: #111111;
 }
 
 .emergencyBody {
-  padding: 24px;
+  padding: 24px 32px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  background: #fcfcfc;
 }
+
+.emergencyBody::-webkit-scrollbar { width: 6px; }
+.emergencyBody::-webkit-scrollbar-track { background: transparent; }
+.emergencyBody::-webkit-scrollbar-thumb { background-color: #dcdcdc; border-radius: 10px; }
 
 /* Tabelas e Markdown no Modal Expandido */
 .expanded-markdown table {
   width: 100%;
   border-collapse: collapse;
-  margin: 20px 0;
+  margin: 16px 0;
   background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.02);
 }
 
 .expanded-markdown th {
-  background: #f8f9fa;
-  color: #333;
+  background: #fafafa;
+  color: #888888;
   font-weight: 700;
   text-align: left;
-  padding: 12px 16px;
-  border-bottom: 2px solid #ddd;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
   text-transform: uppercase;
   font-size: 12px;
   letter-spacing: 0.5px;
 }
 
 .expanded-markdown td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #f0f0f0;
-  color: #444;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f5f5f5;
+  color: #333333;
+  font-size: 14px;
+}
+
+.expanded-markdown tr:last-child td {
+  border-bottom: none;
 }
 
 .expanded-markdown tr:hover td { 
-  background-color: #fafafa; 
+  background-color: #fcfcfc; 
 }
 
-@keyframes slideUp {
-  from { transform: translateY(40px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+@keyframes slideUpModal {
+  from { transform: translateY(40px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
 }
 
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+/* RESPONSIVIDADE CHAT/MODAL */
+@media (max-width: 768px) {
+  .modAi-chatWindow {
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+    right: 0;
+    border-radius: 0;
+    border: none;
+  }
+  .modAi-chatWindow.minimized {
+    width: calc(100% - 48px);
+    right: 24px;
+    border-radius: 24px;
+  }
+  .emergencyModalCard {
+    height: 95vh;
+  }
+  .emergencyHeader, .emergencyBody {
+    padding: 20px;
+  }
 }

@@ -1,152 +1,305 @@
 /* src/app/(system)/operators/skills/[id]/components/OperatorSkillsTable.css */
 
-.corporateCard {
+/* ========================================================
+   CARD BASE
+   ======================================================== */
+.modOpSkillTableCard {
   background: #ffffff;
-  border-top: 6px solid #d40000;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
-.cardHeader {
-  margin-bottom: 20px;
+.modOpSkillTableCard:hover {
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.06);
 }
 
-.cardHeader h2 {
+.modOpSkillCardHeader {
+  margin-bottom: 24px;
+}
+
+.modOpSkillCardHeader h2 {
   margin: 0;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 800;
+  color: #111111;
+  letter-spacing: -0.3px;
+}
+
+.modOpSkillCardSubtitle {
+  margin: 6px 0 0 0;
+  font-size: 14px;
+  color: #666666;
+}
+
+.modOpSkillCardSubtitle strong {
   color: #111111;
 }
 
-.tableContainer {
+/* ========================================================
+   TABELA MODERNA ARREDONDADA
+   ======================================================== */
+.modOpSkillTableContainer {
   overflow-x: auto;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
+  border-radius: 20px;
+  border: 1px solid #f0f0f0;
+  background: #ffffff;
 }
 
-.corporateTable {
+.modOpSkillTable {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
 }
 
-.corporateTable th {
-  background: #f9f9f9;
-  color: #555555;
-  font-weight: 600;
-  font-size: 13px;
-  padding: 12px 16px;
-  border-bottom: 2px solid #e0e0e0;
+.modOpSkillTable th {
+  background: #fafafa;
+  color: #888888;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
 
-.corporateTable td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #f0f0f0;
+.modOpSkillTable td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f5f5f5;
   color: #333333;
   font-size: 14px;
   vertical-align: middle;
+  transition: background 0.2s ease;
 }
 
-.levelColumn {
-  width: 250px;
+.modOpSkillTable tr:hover td {
+  background: #fcfcfc;
 }
 
-.corporateSelect {
-  width: 100%;
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #e0e0e0;
-  background: #f9f9f9;
-  color: #333333;
-  font-size: 13px;
+.modOpSkillTable tr:last-child td {
+  border-bottom: none;
+}
+
+.modOpSkillLevelColumn {
+  width: 320px;
+}
+
+.modOpSkillFw500 {
   font-weight: 600;
-  transition: all 0.2s ease;
-  outline: none;
+  color: #111111;
 }
 
-.corporateSelect:focus {
-  background: #ffffff;
-  border-color: #d40000;
-  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
-}
-
-.emptyState {
-  text-align: center;
-  padding: 40px !important;
-  color: #888888 !important;
-  font-style: italic;
-  background: #fafafa;
-}
-
-.fontWeight500 {
-  font-weight: 500;
-}
-
-/* RODAPÉ DE AÇÃO (ALTERAÇÕES NÃO SALVAS) */
-.actionFooter {
+/* INFO POSTO E BADGE DIFICULDADE */
+.modOpSkillPostoInfo {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  background: #fff8e1;
-  border: 1px solid #ffe0b2;
-  padding: 16px 24px;
-  border-radius: 8px;
-  margin-top: 24px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  animation: fadeIn 0.3s ease-out;
-}
-
-.warningText {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #f57c00;
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.buttonGroup {
-  display: flex;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
-.saveButton {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Adicione no final de src/app/(system)/operators/skills/[id]/components/OperatorSkillsTable.css */
-
-.cardSubtitle {
-  margin: 4px 0 0 0;
-  font-size: 13px;
-  color: #666;
-}
-
-.postoInfo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.diffBadge {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 6px;
-  border-radius: 4px;
+.modOpSkillDiffBadge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 8px;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
-.diff-simple { background: #e8f5e9; color: #2e7d32; }
-.diff-medium { background: #fff8e1; color: #f57c00; }
-.diff-complex { background: #ffebee; color: #c62828; }
+.modDiff-simple { background: #ecfdf5; color: #059669; }
+.modDiff-medium { background: #fffbeb; color: #d97706; }
+.modDiff-complex { background: #fef2f2; color: #dc2626; }
+
+/* ========================================================
+   SELECT (Nível de Habilidade)
+   ======================================================== */
+.modOpSkillInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.modOpSkillInputIcon {
+  position: absolute;
+  left: 16px;
+  color: #999999;
+  pointer-events: none;
+  transition: color 0.3s ease;
+}
+
+.modOpSkillInputWrapper:focus-within .modOpSkillInputIcon {
+  color: #d40000;
+}
+
+.modOpSkillSelect {
+  width: 100%;
+  padding: 12px 16px 12px 42px;
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  background: #fcfcfc;
+  color: #333333;
+  font-size: 13px;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  appearance: auto;
+}
+
+.modOpSkillSelect:focus {
+  background: #ffffff;
+  border-color: #d40000;
+  box-shadow: 0 0 0 4px rgba(212, 0, 0, 0.08);
+}
+
+.modOpSkillSelect:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ========================================================
+   ESTADO VAZIO
+   ======================================================== */
+.modOpSkillEmptyState {
+  text-align: center;
+  padding: 60px 20px !important;
+  background: #fafafa !important;
+}
+
+.modOpSkillEmptyContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: #888888;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+/* ========================================================
+   RODAPÉ DE AÇÃO (ALTERAÇÕES NÃO SALVAS)
+   ======================================================== */
+.modOpSkillActionFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fffafa; /* Fundo avermelhado super leve */
+  border: 1px solid #fecaca;
+  padding: 20px 32px;
+  border-radius: 20px;
+  margin-top: 24px;
+  box-shadow: 0 8px 24px rgba(212, 0, 0, 0.06);
+  animation: modFooterFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.modOpSkillWarningText {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #d40000;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.warningIconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #d40000;
+  color: white;
+  border-radius: 10px;
+}
+
+.modOpSkillButtonGroup {
+  display: flex;
+  gap: 12px;
+}
+
+.modOpSkillGhostBtn {
+  padding: 12px 20px;
+  border: none;
+  background: transparent;
+  color: #555555;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modOpSkillGhostBtn:hover:not(:disabled) {
+  background: #f0f0f0;
+  color: #111111;
+}
+
+.modOpSkillPrimaryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 16px;
+  background: #d40000;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modOpSkillPrimaryBtn:hover:not(:disabled) {
+  background: #b30000;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 0, 0, 0.25);
+}
+
+.modOpSkillPrimaryBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.modOpSkillPrimaryBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinIcon {
+  animation: spin 1s linear infinite;
+}
+
+/* ========================================================
+   KEYFRAMES E RESPONSIVIDADE
+   ======================================================== */
+@keyframes modFooterFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .modOpSkillActionFooter {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px;
+  }
+  .modOpSkillButtonGroup {
+    flex-direction: column;
+  }
+  .modOpSkillTableCard {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+}

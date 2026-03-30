@@ -1,161 +1,236 @@
 /* src/app/(system)/operators/skills/components/BaseSkillsTab.css */
 
-.skillsGrid {
+.modBase-skillsGrid {
   display: grid;
-  grid-template-columns: 340px 1fr;
+  grid-template-columns: 360px 1fr;
   gap: 24px;
   align-items: start;
 }
 
-@media (max-width: 900px) {
-  .skillsGrid {
-    grid-template-columns: 1fr;
-  }
+/* =========================================
+   CABEÇALHOS E INPUTS INTERNOS
+   ========================================= */
+.modBase-formHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
-/* Row hover e efeito de arrastar */
-.dragRow {
+.modBase-iconWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #fff0f0;
+  color: #d40000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.modBase-formHeader h2 {
+  margin: 0 !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: #111111;
+  letter-spacing: -0.3px;
+}
+
+.modBase-inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.modBase-inputIcon {
+  position: absolute;
+  left: 16px;
+  color: #999999;
+  pointer-events: none;
+  transition: color 0.3s ease;
+}
+
+.modBase-inputWrapper:focus-within .modBase-inputIcon {
+  color: #d40000;
+}
+
+.modBase-overrideInput {
+  padding-left: 44px !important; /* Abre espaço para o SVG */
+}
+
+/* =========================================
+   LINHAS E ARRASTAR (DRAG & DROP)
+   ========================================= */
+.modBase-dragRow {
   cursor: grab;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.dragRow:active {
+.modBase-dragRow:active {
   cursor: grabbing;
-  opacity: 0.6;
-  background-color: #f5f5f5;
+  transform: scale(0.995);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background-color: #fdfdfd;
 }
 
-.dragRow:hover td {
-  background: #fafafa;
-}
-
-.dragCol {
-  width: 60px;
+.modBase-dragCol {
+  width: 80px;
   text-align: center;
 }
 
-.dragHandle {
+.modBase-dragHandle {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  color: #888888;
-  font-weight: 600;
+  justify-content: center;
+  gap: 6px;
+  color: #555555;
+  font-size: 12px;
+  font-weight: 700;
+  background: #f0f4f8;
+  padding: 6px 10px;
+  border-radius: 10px;
   user-select: none;
+  transition: background 0.2s;
 }
 
-.dragHandle svg {
-  color: #cccccc;
+.modBase-dragRow:hover .modBase-dragHandle {
+  background: #e2e8f0;
+  color: #111111;
 }
 
-/* Lógica de linhas inativas */
-.inactiveRow td {
+/* LINHAS INATIVAS */
+.modBase-inactiveRow td {
   background: #fafafa;
   color: #a0a0a0;
 }
 
-/* BADGES DE STATUS (Ativo/Inativo) */
-.statusBadge {
+/* =========================================
+   BADGES DE STATUS (Pílulas modernas)
+   ========================================= */
+.modBase-badge {
   display: inline-block;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.badge-active {
-  background: #e8f5e9;
-  color: #2e7d32;
+.modBase-badge.active {
+  background: #ecfdf5;
+  color: #059669;
 }
 
-.badge-inactive {
-  background: #ffebee;
-  color: #c62828;
+.modBase-badge.inactive {
+  background: #fef2f2;
+  color: #dc2626;
 }
 
-/* AÇÕES DA TABELA */
+/* =========================================
+   AÇÕES DA TABELA
+   ========================================= */
 .actionColumn {
   text-align: right;
   width: 1%;
   white-space: nowrap;
 }
 
-.actionGroup {
+.modBase-actionGroup {
   display: inline-flex;
   align-items: center;
   gap: 8px;
 }
 
-/* BOTÕES DE ÍCONE (Edição) */
-.actionIconBtn {
-  display: flex;
+/* Botões Pequenos c/ Ícone e Texto */
+.modBase-actionBtn {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 6px;
-  background: transparent;
-  border: 1px solid transparent;
-  padding: 6px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.saveBtn {
-  background: #e8f5e9;
-  color: #2e7d32;
-  border: 1px solid #c8e6c9;
-}
-.saveBtn:hover {
-  background: #c8e6c9;
-  color: #1b5e20;
-}
-
-.cancelBtn {
-  background: #ffffff;
-  border: 1px solid #e0e0e0;
-  color: #666666;
-}
-.cancelBtn:hover {
-  background: #f5f5f5;
-  color: #333333;
-}
-
-/* Botões Pequenos (Editar / Desativar) */
-.smallButton {
-  padding: 6px 10px;
+  padding: 8px 12px;
+  border-radius: 12px;
   font-size: 12px;
-  border-radius: 6px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
+  border: 1px solid transparent;
 }
 
-.secondaryButton {
-  border: 1px solid #e0e0e0;
+.modBase-actionBtn.edit {
   background: #ffffff;
-  color: #333333;
+  border-color: #e5e5e5;
+  color: #555555;
 }
-.secondaryButton:hover {
+
+.modBase-actionBtn.edit:hover {
   background: #f9f9f9;
   border-color: #cccccc;
+  color: #111111;
 }
 
-.dangerButton {
-  border: 1px solid #ffcccc;
+.modBase-actionBtn.disable {
   background: #fff0f0;
   color: #d40000;
 }
-.dangerButton:hover {
+
+.modBase-actionBtn.disable:hover {
   background: #d40000;
   color: #ffffff;
 }
 
-.successButton {
-  border: 1px solid #c8e6c9;
-  background: #e8f5e9;
-  color: #2e7d32;
+.modBase-actionBtn.enable {
+  background: #ecfdf5;
+  color: #059669;
 }
-.successButton:hover {
-  background: #2e7d32;
+
+.modBase-actionBtn.enable:hover {
+  background: #059669;
   color: #ffffff;
+}
+
+/* Botões de Ícone (Salvar/Cancelar Edição Inline) */
+.modBase-iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modBase-iconBtn.save {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.modBase-iconBtn.save:hover {
+  background: #d1fae5;
+  transform: translateY(-2px);
+}
+
+.modBase-iconBtn.cancel {
+  background: #ffffff;
+  border-color: #e5e5e5;
+  color: #555555;
+}
+
+.modBase-iconBtn.cancel:hover {
+  background: #f5f5f5;
+  border-color: #cccccc;
+  color: #111111;
+  transform: translateY(-2px);
+}
+
+/* =========================================
+   RESPONSIVIDADE
+   ========================================= */
+@media (max-width: 1024px) {
+  .modBase-skillsGrid {
+    grid-template-columns: 1fr;
+  }
 }

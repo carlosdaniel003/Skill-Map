@@ -2,7 +2,7 @@
 "use client"
 
 import "./page.css"
-import { useEffect,useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
 import {
@@ -200,58 +200,72 @@ export default function ModelsPage(){
 
   return(
 
-    <div className="modelsPage">
+    <div className="modModelsPage">
 
-      <div className="pageHeader">
-        <button className="backButton" onClick={handleBack}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="m15 18-6-6 6-6"/>
-          </svg>
+      <div className="modModelsHeader">
+        <div className="modModelsHeaderLeft">
+          <div className="modModelsIconWrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <line x1="3" y1="9" x2="21" y2="9"/>
+              <line x1="9" y1="21" x2="9" y2="9"/>
+            </svg>
+          </div>
+          <div className="modModelsTitleBlock">
+            <h1 className="modModelsTitle">Modelos de Produção</h1>
+            <p className="modModelsSubtitle">Crie, edite e organize a ordem de exibição dos modelos de produção (Drag & Drop).</p>
+          </div>
+        </div>
+
+        <button className="modModelsSecondaryBtn" onClick={handleBack} title="Voltar para Gestão">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
           Voltar
         </button>
-
-        <div className="headerTitle">
-          <h1 className="pageTitle">Modelos de Produção</h1>
-          <p className="pageSubtitle">Crie, edite e organize a ordem de exibição dos modelos de produção (Drag & Drop).</p>
-        </div>
       </div>
 
-      <div className="modelsGrid">
+      <div className="modModelsGrid">
 
         {/* CRIAR MODELO */}
-        <div className="corporateCard formCard">
+        <div className="modModelsCard formCard">
           <h2>Novo Modelo</h2>
 
-          <div className="formGroup">
+          <div className="modModelsFormGroup">
             <label>Nome do Modelo (Linha)</label>
-            <input
-              className="corporateInput"
-              placeholder="Ex: BX-18, D-14..."
-              value={newModel}
-              onChange={e=>setNewModel(e.target.value)}
-            />
+            <div className="modModelsInputWrapper">
+              <svg className="modModelsInputIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+              <input
+                className="modModelsInput"
+                placeholder="Ex: BX-18, D-14..."
+                value={newModel}
+                onChange={e=>setNewModel(e.target.value)}
+              />
+            </div>
           </div>
 
-          <div className="formGroup mt-2 relativeGroup">
+          <div className="modModelsFormGroup mt-3 relativeGroup">
             <label>Categoria (Opcional)</label>
-            <input
-              className="corporateInput"
-              placeholder="Ex: DVD, NBX..."
-              value={newCategory}
-              onChange={(e)=>handleCategoryChange(e.target.value)}
-            />
+            <div className="modModelsInputWrapper">
+              <svg className="modModelsInputIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              <input
+                className="modModelsInput"
+                placeholder="Ex: DVD, NBX..."
+                value={newCategory}
+                onChange={(e)=>handleCategoryChange(e.target.value)}
+              />
+            </div>
 
             {categorySuggestions.length > 0 && (
-              <div className="autocompleteList">
+              <div className="modModelsAutocomplete">
                 {categorySuggestions.map(cat=>(
                   <div
                     key={cat}
-                    className="autocompleteItem"
+                    className="modModelsAutoItem"
                     onClick={()=>{
                       setNewCategory(cat)
                       setCategorySuggestions([])
                     }}
                   >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
                     {cat}
                   </div>
                 ))}
@@ -260,20 +274,21 @@ export default function ModelsPage(){
           </div>
 
           <button
-            className="primaryButton fullWidth mt-3"
+            className="modModelsPrimaryBtn fullWidth mt-4"
             onClick={handleCreateModel}
             disabled={!newModel}
           >
-            Salvar Modelo
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Salvar Novo Modelo
           </button>
         </div>
 
         {/* LISTA MODELOS */}
-        <div className="corporateCard tableCard">
+        <div className="modModelsCard tableCard">
           <h2>Modelos Cadastrados</h2>
 
-          <div className="tableContainer">
-            <table className="corporateTable">
+          <div className="modModelsTableWrapper">
+            <table className="modModelsTable">
               <thead>
                 <tr>
                   <th className="dragCol">Ordem</th>
@@ -296,24 +311,17 @@ export default function ModelsPage(){
                   >
                     
                     <td className="dragCol">
-                      <div className="dragHandle">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="8" x2="21" y1="6" y2="6"/>
-                          <line x1="8" x2="21" y1="12" y2="12"/>
-                          <line x1="8" x2="21" y1="18" y2="18"/>
-                          <line x1="3" x2="3.01" y1="6" y2="6"/>
-                          <line x1="3" x2="3.01" y1="12" y2="12"/>
-                          <line x1="3" x2="3.01" y1="18" y2="18"/>
-                        </svg>
+                      <div className="modModelsDragHandle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
                         <span>{index+1}</span>
                       </div>
                     </td>
 
-                    <td className="fontWeight600">
+                    <td className="fw-600">
                       {editingId === line.id ? (
                         <input
                           autoFocus
-                          className="corporateInput"
+                          className="modModelsInlineInput"
                           value={editName}
                           onChange={e=>setEditName(e.target.value)}
                         />
@@ -325,9 +333,10 @@ export default function ModelsPage(){
                     <td>
                       {editingId === line.id ? (
                         <input
-                          className="corporateInput"
+                          className="modModelsInlineInput"
                           value={editCategory}
                           onChange={e=>setEditCategory(e.target.value)}
+                          placeholder="Sem Categoria"
                         />
                       ) : (
                         line.categoria || <span className="emptyText">Sem categoria</span>
@@ -336,49 +345,51 @@ export default function ModelsPage(){
 
                     <td>
                       {line.ativo ? (
-                        <span className="statusBadge badge-active">Ativo</span>
+                        <span className="modModelsBadge active">Ativo</span>
                       ) : (
-                        <span className="statusBadge badge-inactive">Inativo</span>
+                        <span className="modModelsBadge inactive">Inativo</span>
                       )}
                     </td>
 
                     <td className="actionColumn">
                       {editingId === line.id ? (
-                        <div className="actionGroup">
+                        <div className="modModelsActionGroup">
                           <button
-                            className="actionIconBtn saveBtn"
+                            className="modModelsIconBtn save"
                             onClick={()=>saveEdit(line.id)}
                             title="Salvar"
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M20 6 9 17l-5-5"/>
-                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                           </button>
 
                           <button
-                            className="actionIconBtn cancelBtn"
+                            className="modModelsIconBtn cancel"
                             onClick={cancelEdit}
                             title="Cancelar"
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M18 6 6 18M6 6l12 12"/>
-                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                           </button>
                         </div>
                       ) : (
-                        <div className="actionGroup">
+                        <div className="modModelsActionGroup">
                           <button
-                            className="secondaryButton smallButton"
+                            className="modModelsActionBtn edit"
                             onClick={()=>startEdit(line)}
+                            title="Editar Modelo"
                           >
-                            Editar
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                           </button>
 
                           <button
-                            className={`smallButton ${line.ativo ? "dangerButton" : "successButton"}`}
+                            className={`modModelsActionBtn ${line.ativo ? "danger" : "success"}`}
                             onClick={()=>toggleActive(line)}
+                            title={line.ativo ? "Desativar Modelo" : "Reativar Modelo"}
                           >
-                            {line.ativo ? "Desativar" : "Reativar"}
+                            {line.ativo ? (
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                            ) : (
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                            )}
                           </button>
                         </div>
                       )}
@@ -389,8 +400,11 @@ export default function ModelsPage(){
                 
                 {lines.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="emptyState">
-                      Nenhum modelo cadastrado.
+                    <td colSpan={5} className="modModelsEmptyState">
+                      <div className="emptyStateContent">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                        Nenhum modelo cadastrado.
+                      </div>
                     </td>
                   </tr>
                 )}
@@ -403,22 +417,22 @@ export default function ModelsPage(){
       </div>
 
       {/* =========================================
-          MODAIS CORPORATIVOS
+          MODAIS CORPORATIVOS (BLUR)
           ========================================= */}
 
       {/* ALERT MODAL */}
       {alertConfig && (
-        <div className="modalOverlay">
-          <div className="corporateModal">
-            <div className="modalHeader">
-              <div className={`modalIcon ${alertConfig.title === "Sucesso" ? "successIcon" : "warningIcon"}`}>
+        <div className="modModelsModalOverlay">
+          <div className="modModelsModal">
+            <div className="modModelsModalHeader">
+              <div className={`modModelsModalIcon ${alertConfig.title === "Sucesso" ? "success" : "warning"}`}>
                 {alertConfig.title === "Sucesso" ? (
                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                      <polyline points="22 4 12 14.01 9 11.01"/>
                    </svg>
                 ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <circle cx="12" cy="12" r="10"/>
                     <line x1="12" x2="12" y1="8" y2="12"/>
                     <line x1="12" x2="12.01" y1="16" y2="16"/>
@@ -427,12 +441,12 @@ export default function ModelsPage(){
               </div>
               <h3>{alertConfig.title}</h3>
             </div>
-            <div className="modalBody">
+            <div className="modModelsModalBody">
               <p>{alertConfig.message}</p>
             </div>
-            <div className="modalFooter">
+            <div className="modModelsModalFooter">
               <button
-                className="primaryButton"
+                className="modModelsPrimaryBtn"
                 onClick={()=>setAlertConfig(null)}
               >
                 Entendi
@@ -444,11 +458,11 @@ export default function ModelsPage(){
 
       {/* CONFIRM MODAL */}
       {confirmConfig && (
-        <div className="modalOverlay">
-          <div className="corporateModal">
-            <div className="modalHeader">
-              <div className="modalIcon warningIcon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <div className="modModelsModalOverlay">
+          <div className="modModelsModal">
+            <div className="modModelsModalHeader">
+              <div className="modModelsModalIcon warning">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
                   <line x1="12" x2="12" y1="9" y2="13"/>
                   <line x1="12" x2="12.01" y1="17" y2="17"/>
@@ -456,18 +470,18 @@ export default function ModelsPage(){
               </div>
               <h3>{confirmConfig.title}</h3>
             </div>
-            <div className="modalBody">
+            <div className="modModelsModalBody">
               <p>{confirmConfig.message}</p>
             </div>
-            <div className="modalFooter">
+            <div className="modModelsModalFooter">
               <button
-                className="secondaryButton"
+                className="modModelsGhostBtn"
                 onClick={()=>setConfirmConfig(null)}
               >
                 Cancelar
               </button>
               <button
-                className="dangerButtonSolid"
+                className="modModelsDangerBtn"
                 onClick={()=>{
                   confirmConfig.onConfirm()
                   setConfirmConfig(null)
@@ -481,7 +495,5 @@ export default function ModelsPage(){
       )}
 
     </div>
-
   )
-
 }

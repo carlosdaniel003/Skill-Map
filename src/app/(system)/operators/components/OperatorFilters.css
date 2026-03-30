@@ -1,47 +1,123 @@
 /* src/app/(system)/operators/components/OperatorFilters.css */
 
-.filterCard {
+.modOpFilter-card {
   background: #ffffff;
-  border-top: 6px solid #d40000; /* Mantenho o mesmo estilo de borda superior */
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 28px; /* Cantos super arredondados */
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
-.filterCard h2 {
-  margin: 0 0 20px 0;
-  font-size: 18px;
-  font-weight: 700;
+.modOpFilter-card:hover {
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.06);
+}
+
+.modOpFilter-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.modOpFilter-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #f0f4f8; /* Cinza/azulado suave para diferenciar do vermelho do Form */
+  color: #555555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.modOpFilter-card:hover .modOpFilter-icon {
+  background: #fff0f0;
+  color: #d40000;
+}
+
+.modOpFilter-card h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
   color: #111111;
+  letter-spacing: -0.3px;
 }
 
-.filterGrid {
+.modOpFilter-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
 
-.filterInput {
-  padding: 12px 14px;
-  border-radius: 6px;
-  border: 1px solid #e0e0e0;
-  background: #f9f9f9;
+/* INPUTS E SELECTS COM ÍCONES */
+.modOpFilter-inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.modOpFilter-inputIcon {
+  position: absolute;
+  left: 16px;
+  color: #999999;
+  pointer-events: none;
+  transition: color 0.3s ease;
+}
+
+.modOpFilter-inputWrapper:focus-within .modOpFilter-inputIcon {
+  color: #d40000;
+}
+
+.modOpFilter-input,
+.modOpFilter-select {
+  width: 100%;
+  padding: 14px 16px 14px 44px; /* Espaço generoso para o ícone */
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  background: #fcfcfc;
   color: #333333;
   font-size: 14px;
-  transition: all 0.2s ease;
-  width: 100%;
+  font-weight: 500;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
 }
 
-.filterInput:focus {
-  outline: none;
-  background: #ffffff;
-  border-color: #d40000;
-  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
+.modOpFilter-select {
+  cursor: pointer;
+  appearance: auto;
 }
 
-@media (max-width: 600px) {
-  .filterGrid {
+.modOpFilter-input::placeholder {
+  color: #a0a0a0;
+}
+
+/* Quando "Todos" está selecionado, mantemos a cor mais neutra */
+.modOpFilter-select:invalid,
+.modOpFilter-select option[value=""] {
+  color: #888888;
+}
+
+.modOpFilter-input:focus,
+.modOpFilter-select:focus {
+  background: #ffffff;
+  border-color: #d40000;
+  box-shadow: 0 0 0 4px rgba(212, 0, 0, 0.08);
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 640px) {
+  .modOpFilter-grid {
     grid-template-columns: 1fr;
+  }
+  .modOpFilter-inputWrapper[style] {
+    grid-column: auto !important;
   }
 }

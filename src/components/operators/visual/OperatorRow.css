@@ -1,155 +1,168 @@
 /* src/components/operators/visual/OperatorRow.css */
 
 /* DESTAQUES DA LINHA */
-.fontWeight600 {
-  font-weight: 600;
+.modOpRow-fw700 {
+  font-weight: 700;
   color: #111111;
 }
 
-.operatorName {
-  font-weight: 500;
-}
-
-.emptyText {
-  color: #a0a0a0;
-  font-style: italic;
-  font-size: 13px;
-}
-
-/* MODO DE EDIÇÃO */
-.editingRow td {
-  background: #fff8f8; /* Leve vermelho ao editar */
-}
-
-/* SELECTS DENTRO DA TABELA */
-.corporateSelect.smallSelect {
-  padding: 6px 10px;
-  font-size: 13px;
-  height: 32px;
-  border-color: #cccccc;
-  background: #ffffff;
-}
-
-/* ALINHAMENTO DAS AÇÕES (AJUSTADO) */
-.actionsCell {
-  text-align: right;
-  width: 260px;
-  padding-right: 16px !important;
-}
-
-.actionGroup {
-  display: grid;
-  grid-auto-flow: column;
-  gap: 8px;
-  justify-content: end;
-}
-
-.divider {
-  width: 1px;
-  height: 16px;
-  background: #e0e0e0;
-  margin: 0 4px;
-}
-
-/* BOTÕES DE ÍCONE */
-.actionIconBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  background: transparent;
-  border: 1px solid transparent;
-  padding: 6px;
-  border-radius: 6px;
-  cursor: pointer;
-  color: #666666;
-  transition: all 0.2s ease;
-}
-
-.actionIconBtn svg {
-  transition: all 0.2s ease;
-}
-
-/* ESTILOS ESPECÍFICOS DE BOTÕES */
-.actionIconBtn:hover {
-  background: #f0f0f0;
-  color: #111111;
-}
-
-/* Botões com texto ao lado do ícone */
-.textBtn {
-  padding: 6px 10px;
-  font-size: 12px;
+.modOpRow-name {
   font-weight: 600;
-  border: 1px solid #e0e0e0;
-  background: #ffffff;
-}
-
-.textBtn:hover {
-  background: #f9f9f9;
-  border-color: #cccccc;
-  color: #d40000;
-}
-
-.textBtn:hover svg {
-  stroke: #d40000;
-}
-
-/* Editar */
-.editBtn:hover {
-  background: #fff0f0;
-  color: #d40000;
-}
-
-/* Salvar */
-.saveBtn {
-  background: #e8f5e9;
-  color: #2e7d32;
-  border: 1px solid #c8e6c9;
-}
-.saveBtn:hover {
-  background: #c8e6c9;
-  color: #1b5e20;
-}
-
-/* Cancelar */
-.cancelBtn {
-  background: #ffffff;
-  border: 1px solid #e0e0e0;
-}
-.cancelBtn:hover {
-  background: #f5f5f5;
   color: #333333;
 }
 
-/* Desativar/Remover */
-.deleteBtn:hover {
-  background: #ffebee;
-  color: #c62828;
+.modOpRow-emptyText {
+  color: #a0a0a0;
+  font-style: italic;
+  font-size: 13px;
+  font-weight: 500;
 }
 
-/* src/components/operators/visual/OperatorRow.css */
+/* MODO DE EDIÇÃO */
+.modOpRow-editing td {
+  background-color: #fffafa !important; /* Levíssimo tom avermelhado no fundo ao editar */
+}
 
-.postoContainer {
+/* BADGES E TAGS */
+.modOpRow-turnoBadge {
+  background-color: #f0f4f8;
+  color: #2563eb;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.modOpRow-postoContainer {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
-.postoName {
-  font-weight: 500;
-  color: #333;
+.modOpRow-fw500 {
+  font-weight: 600;
+  color: #333333;
 }
 
-.rowDiffBadge {
+.modOpRow-diffBadge {
   font-size: 10px;
-  font-weight: 700;
-  padding: 3px 6px;
-  border-radius: 4px;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 6px;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
-.diff-simple { background: #e8f5e9; color: #2e7d32; }
-.diff-medium { background: #fff8e1; color: #f57c00; }
-.diff-complex { background: #ffebee; color: #c62828; }
+.modOpRow-diffBadge.simple { background: #ecfdf5; color: #059669; }
+.modOpRow-diffBadge.medium { background: #fffbeb; color: #d97706; }
+.modOpRow-diffBadge.complex { background: #fef2f2; color: #dc2626; }
+
+/* SELECTS DENTRO DA TABELA (INLINE EDIT) */
+.modOpRow-inlineSelect {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid #d40000;
+  background: #ffffff;
+  color: #111111;
+  font-size: 13px;
+  font-weight: 600;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.08);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  appearance: auto;
+  cursor: pointer;
+}
+
+/* ALINHAMENTO DAS AÇÕES */
+.modOpRow-actionsCell {
+  text-align: right;
+  width: 1%; /* Força a ocupar apenas o espaço necessário */
+  white-space: nowrap;
+}
+
+.modOpRow-actionGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.modOpRow-divider {
+  width: 1px;
+  height: 16px;
+  background: #e5e5e5;
+  margin: 0 4px;
+}
+
+/* BOTÕES DE ÍCONE */
+.modOpRow-iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  color: #888888;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modOpRow-iconBtn.edit:hover {
+  background: #f0f0f0;
+  color: #111111;
+}
+
+.modOpRow-iconBtn.save {
+  background: #ecfdf5;
+  color: #059669;
+}
+.modOpRow-iconBtn.save:hover {
+  background: #d1fae5;
+  transform: translateY(-2px);
+}
+
+.modOpRow-iconBtn.cancel {
+  background: #ffffff;
+  border-color: #e5e5e5;
+  color: #555555;
+}
+.modOpRow-iconBtn.cancel:hover {
+  background: #f5f5f5;
+  border-color: #cccccc;
+  color: #111111;
+  transform: translateY(-2px);
+}
+
+.modOpRow-iconBtn.delete:hover {
+  background: #fff0f0;
+  color: #d40000;
+  transform: translateY(-2px);
+}
+
+/* BOTÕES COM TEXTO AO LADO DO ÍCONE */
+.modOpRow-textBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: #f9f9f9;
+  color: #555555;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modOpRow-textBtn:hover {
+  background: #fff0f0;
+  color: #d40000;
+  transform: translateY(-1px);
+}

@@ -14,45 +14,67 @@ export default function OperatorHistoryPage() {
   const { operator, modals, form, table, handleBack } = useOperatorHistory(operatorId)
 
   return (
-    <div className="historyPage">
+    <div className="modHistoryPage">
 
       {/* HEADER */}
-      <div className="pageHeader">
-        <button className="backButton" onClick={handleBack}>
+      <div className="modHistoryHeader">
+        <div className="modHistoryHeaderLeft">
+          <div className="modHistoryIconWrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          
+          <div className="modHistoryTitleBlock">
+            {operator ? (
+              <>
+                <h1 className="modHistoryTitle">{operator.nome}</h1>
+                <div className="modHistorySubtitles">
+                  <span className="modHistoryBadge">Mat: {operator.matricula}</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <h1 className="modHistoryTitle">Carregando...</h1>
+                <p className="modHistorySubtitle">Buscando informações do operador</p>
+              </>
+            )}
+          </div>
+        </div>
+
+        <button className="modHistorySecondaryBtn" onClick={handleBack} title="Voltar">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="m15 18-6-6 6-6"/>
           </svg>
           Voltar
         </button>
-
-        {operator && (
-          <div className="headerTitle">
-            <h1 className="pageTitle">{operator.nome}</h1>
-            <span className="pageSubtitle">Matrícula: {operator.matricula}</span>
-          </div>
-        )}
       </div>
 
-      <div className="historyGrid">
+      <div className="modHistoryGrid">
         <HistoryForm data={form} />
         <HistoryTable data={table} />
       </div>
 
       {/* MODAL DE ALERTA */}
       {modals.alertConfig && (
-        <div className="modalOverlay">
-          <div className="corporateModal">
-            <div className="modalHeader">
-              <div className="modalIcon warningIcon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+        <div className="modHistoryModalOverlay">
+          <div className="modHistoryModal">
+            <div className="modHistoryModalHeader">
+              <div className="modHistoryModalIcon warning">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" x2="12" y1="8" y2="12"/>
+                  <line x1="12" x2="12.01" y1="16" y2="16"/>
+                </svg>
               </div>
               <h3>{modals.alertConfig.title}</h3>
             </div>
-            <div className="modalBody">
+            <div className="modHistoryModalBody">
               <p>{modals.alertConfig.message}</p>
             </div>
-            <div className="modalFooter">
-              <button className="primaryButton" onClick={() => modals.setAlertConfig(null)}>
+            <div className="modHistoryModalFooter">
+              <button className="modHistoryPrimaryBtn" onClick={() => modals.setAlertConfig(null)}>
                 Entendi
               </button>
             </div>
@@ -62,23 +84,27 @@ export default function OperatorHistoryPage() {
 
       {/* MODAL DE CONFIRMAÇÃO */}
       {modals.confirmConfig && (
-        <div className="modalOverlay">
-          <div className="corporateModal">
-            <div className="modalHeader">
-              <div className="modalIcon warningIcon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div className="modHistoryModalOverlay">
+          <div className="modHistoryModal">
+            <div className="modHistoryModalHeader">
+              <div className="modHistoryModalIcon warning">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
               </div>
               <h3>{modals.confirmConfig.title}</h3>
             </div>
-            <div className="modalBody">
+            <div className="modHistoryModalBody">
               <p>{modals.confirmConfig.message}</p>
             </div>
-            <div className="modalFooter">
-              <button className="secondaryButton" onClick={() => modals.setConfirmConfig(null)}>
+            <div className="modHistoryModalFooter">
+              <button className="modHistoryGhostBtn" onClick={() => modals.setConfirmConfig(null)}>
                 Cancelar
               </button>
               <button 
-                className="dangerButtonSolid" 
+                className="modHistoryDangerBtn" 
                 onClick={() => {
                   modals.confirmConfig!.onConfirm();
                   modals.setConfirmConfig(null);

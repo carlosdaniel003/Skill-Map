@@ -139,31 +139,42 @@ export default function AIConsultant() {
   return (
     <>
       {!isOpen && (
-        <button className="ai-fab" onClick={() => setIsOpen(true)} title="Abrir Assistente IA">
+        <button className="modAi-fab" onClick={() => setIsOpen(true)} title="Abrir Assistente IA">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <path d="M12 8v4"/><path d="M12 16h.01"/>
           </svg>
         </button>
       )}
 
       {isOpen && (
-        <div className={`ai-chat-window ${isMinimized ? 'minimized' : ''} ${isFullscreen ? 'fullscreen' : ''}`}>
+        <div className={`modAi-chatWindow ${isMinimized ? 'minimized' : ''} ${isFullscreen ? 'fullscreen' : ''}`}>
           
           {/* CABEÇALHO */}
-          <div className="ai-chat-header" onClick={isMinimized ? toggleMinimize : undefined}>
-            <div className="ai-header-info">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
-              <span>Assistente Industrial</span>
+          <div className="modAi-chatHeader" onClick={isMinimized ? toggleMinimize : undefined}>
+            <div className="modAi-headerInfo">
+              <div className="modAi-iconWrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+              </div>
+              <div className="modAi-headerTitles">
+                <h3>Assistente IA</h3>
+                <span>SkillMap Intelligence</span>
+              </div>
             </div>
-            <div className="ai-window-controls" onClick={(e) => e.stopPropagation()}>
-              <button className="ai-control-btn" onClick={toggleMinimize} title={isMinimized ? "Restaurar" : "Minimizar"}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            
+            <div className="modAi-windowControls" onClick={(e) => e.stopPropagation()}>
+              <button className="modAi-controlBtn" onClick={toggleMinimize} title={isMinimized ? "Restaurar" : "Minimizar"}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="5" y1="12" x2="19" y2="12"/></svg>
               </button>
-              <button className="ai-control-btn" onClick={toggleFullscreen} title={isFullscreen ? "Sair da Tela Cheia" : "Tela Cheia"}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+              <button className="modAi-controlBtn" onClick={toggleFullscreen} title={isFullscreen ? "Sair da Tela Cheia" : "Tela Cheia"}>
+                {isFullscreen ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M8 3v3h-3M16 3v3h3M8 21v-3h-3M16 21v-3h3"/></svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                )}
               </button>
-              <button className="ai-control-btn close" onClick={handleClose} title="Fechar">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <button className="modAi-controlBtn close" onClick={handleClose} title="Fechar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             </div>
           </div>
@@ -171,29 +182,29 @@ export default function AIConsultant() {
           {/* CORPO DO CHAT */}
           {!isMinimized && (
             <>
-              <div className="ai-chat-body">
+              <div className="modAi-chatBody">
                 {messages.map((msg, idx) => (
-                  <div key={idx} className={`ai-message-row ${msg.role}`}>
-                    <div className="ai-bubble-container">
-                      <div className={`ai-bubble ${msg.role}`}>
+                  <div key={idx} className={`modAi-messageRow ${msg.role}`}>
+                    <div className="modAi-bubbleContainer">
+                      <div className={`modAi-bubble ${msg.role}`}>
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                           {msg.text}
                         </ReactMarkdown>
                       </div>
                       {/* Botão de Ver Detalhes no Balão */}
                       {msg.role === "ai" && isComplexResponse(msg.text) && (
-                        <button className="ai-expand-btn" onClick={() => setExpandedContent(msg.text)}>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 12h20M12 2v20"/></svg>
-                          Ver Detalhes (Tela Cheia)
+                        <button className="modAi-expandBtn" onClick={() => setExpandedContent(msg.text)}>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                          Expandir Relatório
                         </button>
                       )}
                     </div>
                   </div>
                 ))}
                 {isLoading && (
-                  <div className="ai-message-row ai">
-                    <div className="ai-bubble-container">
-                      <div className="ai-bubble ai loading">
+                  <div className="modAi-messageRow ai">
+                    <div className="modAi-bubbleContainer">
+                      <div className="modAi-bubble ai loading">
                         <span className="dot"></span>
                         <span className="dot"></span>
                         <span className="dot"></span>
@@ -205,12 +216,12 @@ export default function AIConsultant() {
               </div>
 
               {/* RODAPÉ DO CHAT */}
-              <div className="ai-chat-footer">
-                <div className="ai-input-wrapper">
+              <div className="modAi-chatFooter">
+                <div className="modAi-inputWrapper">
                   <input
                     type="text"
-                    className="ai-input"
-                    placeholder="Faça sua pergunta ao assistente..."
+                    className="modAi-input"
+                    placeholder="Faça sua pergunta à IA..."
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => {
@@ -222,7 +233,7 @@ export default function AIConsultant() {
                     disabled={isLoading}
                   />
                   <button 
-                    className="ai-send-btn" 
+                    className="modAi-sendBtn" 
                     onClick={handleSend} 
                     disabled={isLoading || !input.trim()}
                     title="Enviar Mensagem"
@@ -236,7 +247,7 @@ export default function AIConsultant() {
         </div>
       )}
 
-      {/* 🛠️ MODAL EXPANDIDO (Agora RENDERIZADO FORA DA JANELA DO CHAT) */}
+      {/* 🛠️ MODAL EXPANDIDO (RENDERIZADO FORA DA JANELA) */}
       {expandedContent && (
         <AIExpandedView content={expandedContent} onClose={() => setExpandedContent(null)} />
       )}

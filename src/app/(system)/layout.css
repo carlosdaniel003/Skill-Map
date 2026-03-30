@@ -1,31 +1,27 @@
 /* src/app/(system)/layout.css */
 
-.systemLayout {
+.modSystemLayout {
   display: flex;
   min-height: 100vh;
-  
-  /* Fundo cinza clarinho executivo para destacar os cards brancos que faremos */
-  background-color: #f4f5f7; 
+  /* Fundo cinza clarinho executivo para destacar os cards brancos super arredondados */
+  background-color: #f4f4f5; 
 }
 
-.systemMain {
+.modSystemMain {
   flex: 1;
-  
   /* Margem exata da Sidebar recolhida (76px) */
   /* Isso permite que a Sidebar expanda por cima sem "empurrar" o conteúdo */
   margin-left: 76px; 
-  
   padding: 32px 40px;
   width: calc(100% - 76px);
-  
-  /* Suaviza a entrada do conteúdo da página */
-  animation: pageFadeIn 0.4s ease-out;
+  /* Suaviza a entrada do conteúdo da página com cubic-bezier premium */
+  animation: modPageFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes pageFadeIn {
+@keyframes modPageFadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(15px);
   }
   to {
     opacity: 1;
@@ -34,110 +30,135 @@
 }
 
 /* =========================================
-   MODAL GLOBAL DO SISTEMA (Alertas)
+   MODAL GLOBAL DO SISTEMA (Alertas Críticos e Sessão)
    ========================================= */
 
-.layoutModalOverlay {
+.modLayoutModalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5); /* Fundo escurecido */
+  backdrop-filter: blur(8px); /* Desfoque Premium */
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 99999; /* Z-Index altíssimo para cobrir a Sidebar */
-  animation: fadeIn 0.2s ease-out;
+  animation: modLayoutFadeIn 0.3s ease-out forwards;
+  padding: 20px;
 }
 
-.layoutCorporateModal {
+.modLayoutModal {
   width: 100%;
-  max-width: 400px;
+  max-width: 440px;
   background: #ffffff;
-  border-top: 6px solid #d40000;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border-radius: 28px; /* Cantos super arredondados, sem borda superior dura */
+  padding: 32px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  animation: modalEnter 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: modLayoutModalEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.layoutModalHeader {
+.modLayoutModalHeader {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
-.layoutModalIcon.warningIcon {
+.modLayoutModalIcon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: #fff0f0;
-  color: #d40000;
-  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px; /* Ícone no formato "Squircle" */
   flex-shrink: 0;
 }
 
-.layoutModalHeader h3 {
+.modLayoutModalIcon.warningIcon {
+  background: #fff0f0;
+  color: #d40000;
+}
+
+.modLayoutModalHeader h3 {
   margin: 0;
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 800;
   color: #111111;
+  letter-spacing: -0.3px;
 }
 
-.layoutModalBody {
-  margin-bottom: 24px;
+.modLayoutModalBody {
+  margin-bottom: 28px;
 }
 
-.layoutModalBody p {
+.modLayoutModalBody p {
   margin: 0;
-  font-size: 14px;
+  font-size: 15px;
   color: #555555;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
-.layoutModalFooter {
+.modLayoutModalFooter {
   display: flex;
   justify-content: flex-end;
 }
 
-.layoutPrimaryButton {
-  padding: 10px 24px;
+.modLayoutPrimaryBtn {
+  padding: 14px 24px;
   border: none;
-  border-radius: 6px;
+  border-radius: 16px;
   background: #d40000;
   color: white;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.layoutPrimaryButton:hover {
+.modLayoutPrimaryBtn:hover {
   background: #b30000;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 0, 0, 0.25);
+}
+
+.modLayoutPrimaryBtn:active {
+  transform: translateY(0);
 }
 
 /* Animações do Modal de Layout */
-@keyframes fadeIn {
+@keyframes modLayoutFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-@keyframes modalEnter {
+@keyframes modLayoutModalEnter {
   from {
-    transform: translateY(20px) scale(0.95);
+    transform: translateY(30px) scale(0.95);
     opacity: 0;
   }
   to {
     transform: translateY(0) scale(1);
     opacity: 1;
+  }
+}
+
+/* Responsividade Mobile (Menor que 768px) */
+@media (max-width: 768px) {
+  .modSystemMain {
+    margin-left: 0;
+    width: 100%;
+    padding: 24px 16px;
+  }
+  .modLayoutModal {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+  .modLayoutPrimaryBtn {
+    width: 100%;
+    justify-content: center;
   }
 }

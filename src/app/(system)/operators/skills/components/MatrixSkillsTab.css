@@ -1,277 +1,504 @@
 /* src/app/(system)/operators/skills/components/MatrixSkillsTab.css */
 
-.matrixCard {
+.modMatrix-card {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0,0,0,0.02);
   min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.matrixHeader {
+.modMatrix-card:hover {
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.06);
+}
+
+/* =========================================
+   HEADER DA MATRIZ
+   ========================================= */
+.modMatrix-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
   margin-bottom: 24px;
   padding-bottom: 24px;
-  border-bottom: 1px dashed #e0e0e0;
+  border-bottom: 1px solid #f0f0f0;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-.difficultySelector {
+.modMatrix-formGroup {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  max-width: 400px;
 }
 
-.diffBtn {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  background: #fff;
-  font-weight: 700;
+.modMatrix-formGroup label {
   font-size: 13px;
-  color: #666;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.diffBtn:hover {
-  background: #f0f0f0;
-  border-color: #999;
-}
-
-/* Cores específicas para cada nível quando Ativo */
-.diffBtn.active {
-  border-color: transparent;
-  color: white;
-  transform: scale(1.05);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-}
-
-.diffBtn.active.level-1 { background: #4caf50; } /* Verde - Simples */
-.diffBtn.active.level-2 { background: #ffb300; } /* Laranja - Médio */
-.diffBtn.active.level-3 { background: #d32f2f; } /* Vermelho - Complexo */
-
-.diffLabel {
-  margin-left: 16px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #666;
-  min-width: 100px;
-}
-
-/* PAINEL DE AVISO (ALTERAÇÕES NÃO SALVAS) */
-.actionFooter {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #fff8e1;
-  border: 1px solid #ffe0b2;
-  padding: 16px 24px;
-  border-radius: 8px;
-  margin-top: 24px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  animation: fadeIn 0.3s ease-out;
-}
-
-.warningText {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #f57c00;
   font-weight: 700;
+  color: #555555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modMatrix-inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.modMatrix-inputIcon {
+  position: absolute;
+  left: 16px;
+  color: #999999;
+  pointer-events: none;
+  transition: color 0.3s ease;
+}
+
+.modMatrix-inputWrapper:focus-within .modMatrix-inputIcon {
+  color: #d40000;
+}
+
+.modMatrix-select {
+  width: 100%;
+  padding: 14px 16px 14px 44px; /* Espaço para o ícone */
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  background: #fcfcfc;
+  color: #333333;
   font-size: 14px;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  appearance: auto;
 }
 
-.buttonGroup {
-  display: flex;
-  gap: 12px;
+.modMatrix-select:focus {
+  background: #ffffff;
+  border-color: #d40000;
+  box-shadow: 0 0 0 4px rgba(212, 0, 0, 0.08);
 }
 
-.saveButton {
-  display: flex;
+/* Botão de Ação em Massa no Header */
+.modMatrix-bulkBtn {
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  padding: 14px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #333333;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+.modMatrix-bulkBtn:hover {
+  background: #f9f9f9;
+  border-color: #cccccc;
+  color: #111111;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 }
 
-/* src/app/(system)/operators/skills/components/MatrixSkillsTab.css */
+/* =========================================
+   ESTADO VAZIO (EMPTY STATE)
+   ========================================= */
+.modMatrix-emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background: #fafafa;
+  border-radius: 20px;
+  border: 1px dashed #dcdcdc;
+  text-align: center;
+}
 
-/* ... mantenha o seu CSS atual e adicione no final: ... */
+.modMatrix-emptyContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  color: #bbbbbb;
+}
 
-/* ESTILO DA TABELA DE KITS */
-.kitTable th.statusCol, .kitTable td.statusCol {
+.modMatrix-emptyContent p {
+  margin: 0;
+  color: #666666;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* =========================================
+   TABELA
+   ========================================= */
+.modMatrix-tableWrapper {
+  overflow-x: auto;
+  border-radius: 20px;
+  border: 1px solid #f0f0f0;
+  background: #ffffff;
+  margin-top: 12px;
+}
+
+.modMatrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.modMatrix-table th {
+  background: #fafafa;
+  color: #888888;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.modMatrix-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f5f5f5;
+  color: #333333;
+  font-size: 14px;
+  vertical-align: middle;
+  transition: background 0.2s ease;
+}
+
+.modMatrix-table tr:hover td {
+  background: #fcfcfc;
+}
+
+.modMatrix-table tr:last-child td {
+  border-bottom: none;
+}
+
+.modMatrix-table th.statusCol, .modMatrix-table td.statusCol {
   width: 80px;
   text-align: center;
 }
 
-.kitTable th.globalCol, .kitTable td.globalCol {
-  width: 180px;
+.modMatrix-table th.globalCol, .modMatrix-table td.globalCol {
+  width: 200px;
   text-align: right;
 }
 
+.modMatrix-fw600 {
+  font-weight: 700;
+  color: #111111;
+}
+
 .inactiveKitRow td {
-  opacity: 0.5;
   background-color: #fafafa;
 }
 
-.inactiveKitRow td.statusCol, .inactiveKitRow td.globalCol {
-  opacity: 1; /* O botão de ligar e a ação global não ficam opacos */
+.inactiveKitRow td:not(.statusCol):not(.globalCol) {
+  opacity: 0.4;
+  filter: grayscale(100%);
 }
 
-/* TOGGLE SWITCH CORPORATIVO */
-.switch {
+/* =========================================
+   TOGGLE SWITCH (ESTILO IOS MODERN)
+   ========================================= */
+.modMatrix-switch {
   position: relative;
   display: inline-block;
-  width: 44px;
-  height: 24px;
+  width: 48px;
+  height: 26px;
 }
 
-.switch input { 
+.modMatrix-switch input { 
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.slider {
+.modMatrix-slider {
   position: absolute;
   cursor: pointer;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: .4s;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-input:checked + .slider {
-  background-color: #16a34a; /* Verde quando ativado */
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px #16a34a;
-}
-
-input:checked + .slider:before {
-  transform: translateX(20px);
-}
-
-.slider.round {
+  background-color: #dcdcdc;
+  transition: .4s cubic-bezier(0.16, 1, 0.3, 1);
   border-radius: 34px;
 }
 
-.slider.round:before {
+.modMatrix-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s cubic-bezier(0.16, 1, 0.3, 1);
   border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* BOTÃO APLICAR A TODOS (GLOBAL) */
-.globalActionBtn {
-  display: inline-flex;
+input:checked + .modMatrix-slider {
+  background-color: #16a34a; /* Verde sucesso */
+}
+
+input:focus + .modMatrix-slider {
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+}
+
+input:checked + .modMatrix-slider:before {
+  transform: translateX(22px);
+}
+
+/* =========================================
+   SELETOR DE QUANTIDADE (QTD)
+   ========================================= */
+.modMatrix-qtdSelector {
+  display: flex;
   align-items: center;
-  gap: 6px;
-  background: transparent;
-  border: 1px solid #e0e0e0;
-  color: #555;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
+  gap: 10px;
 }
 
-.globalActionBtn:hover {
-  background: #f0f4ff;
-  border-color: #3b82f6;
-  color: #2563eb;
-}
-
-.difficultySelector.disabled {
+.modMatrix-qtdSelector.disabled {
   pointer-events: none;
-  filter: grayscale(100%);
 }
 
-/* src/app/(system)/operators/skills/components/MatrixSkillsTab.css */
-/* (Adicione isso ao final do arquivo existente) */
+.modMatrix-qtdInput {
+  width: 56px;
+  height: 38px;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 800;
+  color: #111111;
+  background: #ffffff;
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-/* ESTILO DO CAMPO DE QUANTIDADE */
-.qtdSelector {
+.modMatrix-qtdInput:focus {
+  border-color: #d40000;
+  box-shadow: 0 0 0 4px rgba(212, 0, 0, 0.08);
+}
+
+.modMatrix-qtdLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #666666;
+}
+
+/* Remover setas do input number */
+.modMatrix-qtdInput::-webkit-outer-spin-button,
+.modMatrix-qtdInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.modMatrix-qtdInput[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* =========================================
+   NÍVEL DE DIFICULDADE
+   ========================================= */
+.modMatrix-diffSelector {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.qtdSelector.disabled {
+.modMatrix-diffSelector.disabled {
   pointer-events: none;
-  filter: grayscale(100%);
-  opacity: 0.5;
 }
 
-.qtdInput {
-  width: 50px;
-  height: 32px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  text-align: center;
+.modMatrix-diffBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid #e5e5e5;
+  background: #ffffff;
+  font-weight: 800;
+  font-size: 14px;
+  color: #888888;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modMatrix-diffBtn:hover {
+  background: #f9f9f9;
+  border-color: #cccccc;
+  color: #333333;
+}
+
+/* Cores ativas */
+.modMatrix-diffBtn.active {
+  border-color: transparent;
+  color: white;
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.modMatrix-diffBtn.active.level-1 { background: #16a34a; } /* Verde - Simples */
+.modMatrix-diffBtn.active.level-2 { background: #f59e0b; } /* Laranja - Médio */
+.modMatrix-diffBtn.active.level-3 { background: #d40000; } /* Vermelho - Complexo */
+
+.modMatrix-diffLabel {
+  margin-left: 12px;
+  font-size: 13px;
   font-weight: 700;
-  color: #333;
-  outline: none;
-  transition: all 0.2s;
+  color: #555555;
+  min-width: 100px;
 }
 
-.qtdInput:focus {
-  border-color: #d40000;
-  box-shadow: 0 0 0 2px rgba(212, 0, 0, 0.1);
+/* =========================================
+   BOTÃO AÇÃO GLOBAL
+   ========================================= */
+.modMatrix-globalBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid #e5e5e5;
+  color: #555555;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.qtdLabel {
-  font-size: 13px;
-  font-weight: 500;
-  color: #666;
-}
-
-/* Tira as setinhas chatas do input number no Chrome/Safari */
-.qtdInput::-webkit-outer-spin-button,
-.qtdInput::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-.qtdInput[type=number] {
-  -moz-apparance: textfield;
-}
-
-/* Atualize a classe matrixHeader existente para organizar o select e o botão lado a lado */
-.matrixHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 24px;
-  padding-bottom: 24px;
-  border-bottom: 1px dashed #e0e0e0;
-}
-
-/* Novo estilo para destacar o botão de ação em massa no cabeçalho */
-.bulkActionBtn {
-  background: #f8fafc;
-  border: 1px dashed #cbd5e1;
-  padding: 8px 16px;
-  font-size: 13px;
-  color: #334155;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-}
-
-.bulkActionBtn:hover {
-  background: #eff6ff;
+.modMatrix-globalBtn:hover {
+  background: #f0f4ff;
   border-color: #3b82f6;
-  color: #1d4ed8;
+  color: #2563eb;
+}
+
+/* =========================================
+   RODAPÉ DE AVISO (ALTERAÇÕES NÃO SALVAS)
+   ========================================= */
+.modMatrix-actionFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fffafa; /* Fundo avermelhado super leve */
+  border: 1px solid #fecaca;
+  padding: 20px 32px;
+  border-radius: 20px;
+  margin-top: 24px;
+  box-shadow: 0 8px 24px rgba(212, 0, 0, 0.06);
+  animation: footerFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.modMatrix-warningText {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #d40000;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.warningIconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #d40000;
+  color: white;
+  border-radius: 10px;
+}
+
+.modMatrix-buttonGroup {
+  display: flex;
+  gap: 12px;
+}
+
+.modMatrix-ghostBtn {
+  padding: 12px 20px;
+  border: none;
+  background: transparent;
+  color: #555555;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modMatrix-ghostBtn:hover {
+  background: #f0f0f0;
+  color: #111111;
+}
+
+.modMatrix-primaryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 16px;
+  background: #d40000;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modMatrix-primaryBtn:hover {
+  background: #b30000;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 0, 0, 0.25);
+}
+
+@keyframes footerFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   RESPONSIVIDADE
+   ========================================= */
+@media (max-width: 900px) {
+  .modMatrix-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .modMatrix-formGroup {
+    max-width: 100%;
+  }
+  .modMatrix-bulkBtn {
+    width: 100%;
+    justify-content: center;
+  }
+  .modMatrix-table th.globalCol, .modMatrix-table td.globalCol {
+    text-align: center;
+  }
+  .modMatrix-globalBtn span {
+    display: none; /* Esconde o texto "Aplicar em todos" e deixa só o ícone em telas menores */
+  }
+  .modMatrix-actionFooter {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .modMatrix-buttonGroup {
+    flex-direction: column;
+  }
 }

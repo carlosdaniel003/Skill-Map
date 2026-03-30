@@ -1,209 +1,302 @@
 /* src/app/(system)/dashboard/components/DashboardFilters.css */
 
-/* CARD PRINCIPAL (Autossuficiente) */
-.filtersCard {
+.modDashFilters-card {
   background: #ffffff;
-  border-top: 6px solid #d40000;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 28px;
+  padding: 28px 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0,0,0,0.02);
   margin-bottom: 24px;
   box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
-.filtersHeader {
-  margin-bottom: 16px;
+.modDashFilters-card:hover {
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.06);
 }
 
-.filtersHeader h2 {
+.modDashFilters-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.modDashFilters-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #f0f4f8; /* Cinza azulado bem leve */
+  color: #555555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.modDashFilters-card:hover .modDashFilters-icon {
+  background: #fff0f0;
+  color: #d40000;
+}
+
+.modDashFilters-header h2 {
   margin: 0;
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 800;
   color: #111111;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: -0.3px;
 }
 
-/* GRID DO FILTRO (Ajustado para deixar a busca maior) */
-.filtersGrid {
+/* GRID DO FILTRO */
+.modDashFilters-grid {
   display: grid;
-  /* 3 partes para a busca, 1.2 partes para a linha, e os botões se ajustam automaticamente */
-  grid-template-columns: 3fr 1.2fr auto;
+  /* Proporção 3 pra busca, 1 pros dropdowns e tamanho automático pros botões */
+  grid-template-columns: 3fr 1.2fr 1.2fr auto;
   gap: 20px;
   align-items: flex-end;
 }
 
-.filterGroup {
+.modDashFilters-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   position: relative;
 }
 
-/* Garante que o input de busca não fique espremido em telas médias */
-.filterGroup.searchGroup {
-  min-width: 320px; 
+.modDashFilters-group.searchGroup {
+  min-width: 300px; 
 }
 
-.filterGroup label {
+.modDashFilters-group label {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   color: #555555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* CONTAINER DA BUSCA */
-.searchInputWrapper {
+/* INPUTS E DROPDOWNS */
+.modDashFilters-inputWrapper {
   position: relative;
-}
-
-.corporateInput {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  background: #f9f9f9;
-  font-size: 14px;
-  color: #333333;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
-}
-
-.corporateInput:focus {
-  outline: none;
-  border-color: #d40000;
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.1);
-}
-
-/* DROPDOWN AUTOSUGGEST */
-.dropdownResults {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  width: 100%;
-  max-height: 250px;
-  overflow-y: auto;
-  background: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  z-index: 100;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
-.dropdownItem {
-  padding: 12px 14px;
-  font-size: 14px;
-  color: #333333;
-  cursor: pointer;
-  border-bottom: 1px solid #f0f0f0;
-  transition: background 0.2s;
+.modDashFilters-inputIcon {
+  position: absolute;
+  left: 16px;
+  color: #999999;
+  pointer-events: none;
+  transition: color 0.3s ease;
 }
 
-.dropdownItem:last-child {
-  border-bottom: none;
-}
-
-.dropdownItem:hover {
-  background: #f9f9f9;
+.modDashFilters-inputWrapper:focus-within .modDashFilters-inputIcon {
   color: #d40000;
 }
 
-/* BOTÕES DE AÇÃO */
-.filterAction {
-  display: flex;
-  gap: 12px;
-  height: 43px;
-}
-
-.secondaryButton.clearButton {
-  height: 100%;
-  padding: 0 16px;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  background: #ffffff;
-  color: #555555;
-  font-size: 13px;
+.modDashFilters-input {
+  width: 100%;
+  padding: 14px 16px 14px 44px; /* Espaço para o ícone */
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  background: #fcfcfc;
+  color: #333333;
+  font-size: 14px;
   font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+  outline: none;
+}
+
+.modDashFilters-input::placeholder {
+  color: #a0a0a0;
+  font-weight: 500;
+}
+
+.modDashFilters-input:focus {
+  background: #ffffff;
+  border-color: #d40000;
+  box-shadow: 0 0 0 4px rgba(212, 0, 0, 0.08);
+}
+
+.modDashFilters-select {
   cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
+  appearance: auto;
 }
 
-.secondaryButton.clearButton:hover {
-  background: #f5f5f5;
-  color: #111111;
-  border-color: #cccccc;
+/* Deixa o "Todos" em cinza quando selecionado */
+.modDashFilters-select:invalid,
+.modDashFilters-select option[value=""] {
+  color: #888888;
 }
 
-.searchButton {
-  height: 100%;
+/* AUTOCOMPLETE RESULTADOS */
+.modDashFilters-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  max-height: 280px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
+  border-radius: 20px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  animation: filterDropdownFade 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modDashFilters-dropdown::-webkit-scrollbar { width: 6px; }
+.modDashFilters-dropdown::-webkit-scrollbar-track { background: transparent; margin: 8px 0; }
+.modDashFilters-dropdown::-webkit-scrollbar-thumb { background-color: #dcdcdc; border-radius: 10px; }
+
+.modDashFilters-dropdownItem {
+  padding: 14px 16px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  cursor: pointer;
+  border-bottom: 1px solid #f5f5f5;
+  transition: all 0.2s ease;
+}
+
+.modDashFilters-dropdownItem:last-child {
+  border-bottom: none;
+}
+
+.modDashFilters-dropdownItem:hover {
+  background: #fdf5f5;
+  color: #d40000;
+  padding-left: 22px; /* Microinteração */
+}
+
+.dropdownInfo {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333333;
+}
+
+.dropdownInfo strong {
+  font-weight: 800;
+  color: #111111;
+}
+
+.dropdownBadge {
+  font-size: 11px;
+  font-weight: 700;
+  background: #f0f4f8;
+  color: #555555;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+@keyframes filterDropdownFade {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   BOTÕES DE AÇÃO
+   ========================================= */
+.modDashFilters-actions {
+  display: flex;
+  gap: 12px;
+  height: 48px; /* Altura exata do input padronizado */
+}
+
+.modDashFilters-clearBtn {
+  height: 100%;
   padding: 0 20px;
   border: none;
-  border-radius: 6px;
-  background: #d40000;
-  color: white;
-  font-weight: 600;
+  background: transparent;
+  color: #555555;
+  font-weight: 700;
   font-size: 14px;
+  border-radius: 16px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
   white-space: nowrap;
 }
 
-.searchButton:hover:not(:disabled) {
+.modDashFilters-clearBtn:hover {
+  background: #f0f0f0;
+  color: #111111;
+}
+
+.modDashFilters-searchBtn {
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 16px;
+  background: #d40000;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.modDashFilters-searchBtn:hover:not(:disabled) {
   background: #b30000;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 0, 0, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 0, 0, 0.25);
 }
 
-.searchButton:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background: #cccccc;
+.modDashFilters-searchBtn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
-/* RESPONSIVIDADE */
-@media (max-width: 1024px) {
-  .filtersGrid {
-    /* Em telas um pouco menores, a busca ganha flexibilidade mas ainda é maior */
-    grid-template-columns: 2fr 1fr auto;
+/* =========================================
+   RESPONSIVIDADE
+   ========================================= */
+@media (max-width: 1400px) {
+  .modDashFilters-grid {
+    grid-template-columns: 2fr 1fr 1fr auto;
   }
 }
 
-@media (max-width: 900px) {
-  .filtersGrid {
+@media (max-width: 1100px) {
+  .modDashFilters-grid {
     grid-template-columns: 1fr 1fr;
     gap: 16px;
   }
-  
-  .filterGroup.searchGroup {
-    min-width: unset; /* Tira o min-width para não quebrar no mobile */
+  .modDashFilters-group.searchGroup {
+    grid-column: span 2; /* A busca ocupa a linha inteira primeiro */
+    min-width: unset;
   }
-
-  .filterAction {
+  .modDashFilters-actions {
     grid-column: span 2;
     justify-content: flex-end;
+    margin-top: 8px;
   }
 }
 
-@media (max-width: 600px) {
-  .filtersGrid {
+@media (max-width: 640px) {
+  .modDashFilters-grid {
     grid-template-columns: 1fr;
   }
-  
-  .filterAction {
+  .modDashFilters-group.searchGroup,
+  .modDashFilters-actions {
     grid-column: span 1;
+  }
+  .modDashFilters-actions {
     flex-direction: column-reverse;
     height: auto;
   }
-
-  .filterAction button {
+  .modDashFilters-actions button {
     width: 100%;
-    height: 44px;
+    height: 48px;
     justify-content: center;
   }
 }

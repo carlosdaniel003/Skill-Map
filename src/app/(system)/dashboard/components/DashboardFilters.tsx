@@ -106,20 +106,26 @@ export default function DashboardFilters(){
   }
 
   return(
-    <div className="filtersCard">
+    <div className="modDashFilters-card">
       
-      <div className="filtersHeader">
+      <div className="modDashFilters-header">
+        <div className="modDashFilters-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+          </svg>
+        </div>
         <h2>Filtros Analíticos</h2>
       </div>
 
-      <div className="filtersGrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', alignItems: 'end' }}>
+      <div className="modDashFilters-grid">
 
         {/* BUSCA OPERADOR */}
-        <div className="filterGroup searchGroup" ref={searchRef}>
+        <div className="modDashFilters-group searchGroup" ref={searchRef}>
           <label>Buscar Operador</label>
-          <div className="searchInputWrapper">
+          <div className="modDashFilters-inputWrapper">
+            <svg className="modDashFilters-inputIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
             <input
-              className="corporateInput"
+              className="modDashFilters-input"
               placeholder="Nome ou matrícula..."
               value={search}
               onChange={e => {
@@ -131,15 +137,17 @@ export default function DashboardFilters(){
               }}
             />
             {filteredOperators.length > 0 && (
-              <div className="dropdownResults">
+              <div className="modDashFilters-dropdown">
                 {filteredOperators.slice(0, 10).map(op => (
                   <div
                     key={op.id}
-                    className="dropdownItem"
+                    className="modDashFilters-dropdownItem"
                     onClick={() => handleSelectOperator(op)}
                   >
-                    <strong>{op.matricula}</strong> — {op.nome}
-                    <span style={{ marginLeft: '8px', fontSize: '12px', color: '#888' }}>
+                    <div className="dropdownInfo">
+                      <strong>{op.matricula}</strong> — {op.nome}
+                    </div>
+                    <span className="dropdownBadge">
                       {op.linha_atual || "Sem Linha"}
                     </span>
                   </div>
@@ -150,52 +158,56 @@ export default function DashboardFilters(){
         </div>
 
         {/* SELECT DE TURNO */}
-        <div className="filterGroup">
+        <div className="modDashFilters-group">
           <label>Turno (Equipe)</label>
-          <select
-            className="corporateInput"
-            value={pendingFilters.turno ?? ""}
-            onChange={e => setPendingTurno(e.target.value || null)}
-          >
-            <option value="">TODOS OS TURNOS</option>
-            <option value="Comercial">Comercial</option>
-            <option value="2º Turno estendido">2º Turno Estendido</option>
-          </select>
+          <div className="modDashFilters-inputWrapper">
+            <svg className="modDashFilters-inputIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <select
+              className="modDashFilters-input modDashFilters-select"
+              value={pendingFilters.turno ?? ""}
+              onChange={e => setPendingTurno(e.target.value || null)}
+            >
+              <option value="">Todos os turnos</option>
+              <option value="Comercial">Comercial</option>
+              <option value="2º Turno estendido">2º Turno Estendido</option>
+            </select>
+          </div>
         </div>
 
         {/* LINHA / MODELO */}
-        <div className="filterGroup">
+        <div className="modDashFilters-group">
           <label>Modelo de Produção</label>
-          <select
-            className="corporateInput"
-            value={pendingFilters.linha ?? ""}
-            onChange={e => setPendingLinha(e.target.value || null)}
-          >
-            <option value="">TODOS OS MODELOS</option>
-            {lines.map(line =>(
-              <option key={line.id} value={line.nome}>
-                {line.nome}
-              </option>
-            ))}
-          </select>
+          <div className="modDashFilters-inputWrapper">
+            <svg className="modDashFilters-inputIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+            <select
+              className="modDashFilters-input modDashFilters-select"
+              value={pendingFilters.linha ?? ""}
+              onChange={e => setPendingLinha(e.target.value || null)}
+            >
+              <option value="">Todos os modelos</option>
+              {lines.map(line =>(
+                <option key={line.id} value={line.nome}>
+                  {line.nome}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* BOTÕES DE AÇÃO */}
-        <div className="filterAction" style={{ display: 'flex', gap: '8px' }}>
+        <div className="modDashFilters-actions">
           <button
-            className="secondaryButton clearButton"
+            className="modDashFilters-clearBtn"
             onClick={handleClearFilters}
             title="Limpar todos os filtros"
-            style={{ padding: '12px', flex: 1 }}
           >
             Limpar Filtros
           </button>
 
           <button
-            className="primaryButton searchButton"
+            className="modDashFilters-searchBtn"
             onClick={applyFilters}
             title="Aplicar Filtros"
-            style={{ padding: '12px', flex: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8"/>

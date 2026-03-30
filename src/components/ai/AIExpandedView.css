@@ -1,0 +1,216 @@
+/* src/components/ai/AIExpandedView.css */
+
+.modAiExpanded-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: aiExpandedFadeIn 0.3s ease-out;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.modAiExpanded-card {
+  width: 100%;
+  max-height: 85vh;
+  background: #ffffff;
+  border-radius: 28px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
+  animation: aiExpandedModalEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+/* =========================================
+   CABEÇALHO
+   ========================================= */
+.modAiExpanded-header {
+  padding: 24px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.modAiExpanded-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.modAiExpanded-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: #fff0f0;
+  color: #d40000;
+  border-radius: 16px;
+  flex-shrink: 0;
+}
+
+.modAiExpanded-title h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #111111;
+  letter-spacing: -0.3px;
+}
+
+.modAiExpanded-closeBtn {
+  background: transparent;
+  border: none;
+  color: #888888;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.modAiExpanded-closeBtn:hover {
+  background: #f5f5f5;
+  color: #d40000;
+}
+
+/* =========================================
+   CORPO E MARKDOWN DA IA
+   ========================================= */
+.modAiExpanded-body {
+  padding: 24px 32px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  background: #fcfcfc;
+  color: #333333;
+}
+
+/* Custom Scrollbar */
+.modAiExpanded-body::-webkit-scrollbar { width: 8px; }
+.modAiExpanded-body::-webkit-scrollbar-track { background: transparent; margin: 10px 0; }
+.modAiExpanded-body::-webkit-scrollbar-thumb { background-color: #dcdcdc; border-radius: 10px; }
+
+/* Tipografia e espaçamentos do Markdown (ReactMarkdown) */
+.modAiExpanded-markdown {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #444444;
+}
+
+.modAiExpanded-markdown p {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.modAiExpanded-markdown strong {
+  font-weight: 700;
+  color: #111111;
+}
+
+.modAiExpanded-markdown h1,
+.modAiExpanded-markdown h2,
+.modAiExpanded-markdown h3 {
+  color: #111111;
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.modAiExpanded-markdown ul,
+.modAiExpanded-markdown ol {
+  margin-top: 0;
+  margin-bottom: 16px;
+  padding-left: 24px;
+}
+
+.modAiExpanded-markdown li {
+  margin-bottom: 8px;
+}
+
+/* TABELAS GERADAS PELA IA */
+.modAiExpanded-markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
+  border-radius: 16px; /* Tabelas também arredondadas */
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+}
+
+.modAiExpanded-markdown th {
+  background: #fafafa;
+  color: #888888;
+  font-weight: 700;
+  text-align: left;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+.modAiExpanded-markdown td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f5f5f5;
+  color: #333333;
+  font-size: 14px;
+}
+
+.modAiExpanded-markdown tr:last-child td {
+  border-bottom: none;
+}
+
+.modAiExpanded-markdown tr:hover td { 
+  background-color: #fcfcfc; 
+}
+
+/* =========================================
+   ANIMAÇÕES
+   ========================================= */
+@keyframes aiExpandedFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes aiExpandedModalEnter {
+  from { transform: translateY(40px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* =========================================
+   RESPONSIVIDADE
+   ========================================= */
+@media (max-width: 768px) {
+  .modAiExpanded-card {
+    height: 95vh;
+    border-radius: 20px;
+  }
+  .modAiExpanded-header {
+    padding: 20px 24px;
+  }
+  .modAiExpanded-body {
+    padding: 20px 24px;
+  }
+  .modAiExpanded-markdown table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}

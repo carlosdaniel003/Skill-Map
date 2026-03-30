@@ -70,25 +70,25 @@ export default function OperatorRow({
   }
 
   function renderDifficultyBadge(level: number) {
-    if (level === 1) return <span className="rowDiffBadge diff-simple">Simples</span>
-    if (level === 2) return <span className="rowDiffBadge diff-medium">Médio</span>
-    if (level === 3) return <span className="rowDiffBadge diff-complex">Complexo</span>
+    if (level === 1) return <span className="modOpRow-diffBadge simple">Simples</span>
+    if (level === 2) return <span className="modOpRow-diffBadge medium">Médio</span>
+    if (level === 3) return <span className="modOpRow-diffBadge complex">Complexo</span>
     return null
   }
 
   return(
 
-    <tr className={editing ? "editingRow" : ""}>
+    <tr className={editing ? "modOpRow-editing" : ""}>
 
-      <td className="fontWeight600">{operator.matricula}</td>
+      <td className="modOpRow-fw700">{operator.matricula}</td>
 
-      <td className="operatorName">{operator.nome}</td>
+      <td className="modOpRow-name">{operator.nome}</td>
 
-      {/* 🆕 COLUNA DO TURNO */}
+      {/* COLUNA DO TURNO */}
       <td>
         {editing ? (
           <select
-            className="corporateSelect smallSelect"
+            className="modOpRow-inlineSelect"
             value={turno}
             onChange={e=>setTurno(e.target.value)}
           >
@@ -96,14 +96,7 @@ export default function OperatorRow({
             <option value="2º Turno estendido">2º Turno estendido</option>
           </select>
         ) : (
-          <span style={{
-            backgroundColor: '#f0f0f0', 
-            color: '#555', 
-            padding: '4px 8px', 
-            borderRadius: '4px', 
-            fontSize: '12px', 
-            fontWeight: 600 
-          }}>
+          <span className="modOpRow-turnoBadge">
             {operator.turno || "Não Definido"}
           </span>
         )}
@@ -113,7 +106,7 @@ export default function OperatorRow({
       <td>
         {editing ? (
           <select
-            className="corporateSelect smallSelect"
+            className="modOpRow-inlineSelect"
             value={linha}
             onChange={e=>setLinha(e.target.value)}
           >
@@ -125,7 +118,7 @@ export default function OperatorRow({
             ))}
           </select>
         ) : (
-          <span className={!operator.linha_atual ? "emptyText" : ""}>
+          <span className={!operator.linha_atual ? "modOpRow-emptyText" : ""}>
             {operator.linha_atual || "Não alocado"}
           </span>
         )}
@@ -135,7 +128,7 @@ export default function OperatorRow({
       <td>
         {editing ? (
           <select
-            className="corporateSelect smallSelect"
+            className="modOpRow-inlineSelect"
             value={posto}
             onChange={e=>setPosto(e.target.value)}
           >
@@ -147,8 +140,8 @@ export default function OperatorRow({
             ))}
           </select>
         ) : (
-          <div className="postoContainer">
-            <span className={!operator.posto_atual ? "emptyText" : "postoName"}>
+          <div className="modOpRow-postoContainer">
+            <span className={!operator.posto_atual ? "modOpRow-emptyText" : "modOpRow-fw500"}>
               {operator.posto_atual || "Não alocado"}
             </span>
             {operator.posto_atual && dificuldade && renderDifficultyBadge(dificuldade)}
@@ -156,13 +149,14 @@ export default function OperatorRow({
         )}
       </td>
 
-      <td className="actionsCell">
-        <div className="actionGroup">
+      {/* AÇÕES */}
+      <td className="modOpRow-actionsCell">
+        <div className="modOpRow-actionGroup">
           
           {editing ? (
             <>
               <button 
-                className="actionIconBtn saveBtn" 
+                className="modOpRow-iconBtn save" 
                 onClick={handleSave}
                 title="Salvar alterações"
               >
@@ -172,7 +166,7 @@ export default function OperatorRow({
               </button>
 
               <button 
-                className="actionIconBtn cancelBtn" 
+                className="modOpRow-iconBtn cancel" 
                 onClick={handleCancel}
                 title="Cancelar edição"
               >
@@ -184,9 +178,9 @@ export default function OperatorRow({
           ) : (
             <>
               <button 
-                className="actionIconBtn editBtn" 
+                className="modOpRow-iconBtn edit" 
                 onClick={()=>setEditing(true)}
-                title="Editar locação e turno"
+                title="Editar alocação e turno"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
@@ -194,25 +188,25 @@ export default function OperatorRow({
                 </svg>
               </button>
 
-              <div className="divider"></div>
+              <div className="modOpRow-divider"></div>
 
               <button 
-                className="actionIconBtn textBtn" 
+                className="modOpRow-textBtn" 
                 onClick={openSkills}
                 title="Ver Habilidades (Skills)"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                 </svg>
                 <span>Skills</span>
               </button>
 
               <button 
-                className="actionIconBtn textBtn" 
+                className="modOpRow-textBtn" 
                 onClick={openHistory}
                 title="Ver Histórico"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
                   <path d="M3 3v5h5"/>
                   <path d="M12 7v5l4 2"/>
@@ -220,10 +214,10 @@ export default function OperatorRow({
                 <span>Histórico</span>
               </button>
 
-              <div className="divider"></div>
+              <div className="modOpRow-divider"></div>
 
               <button 
-                className="actionIconBtn deleteBtn" 
+                className="modOpRow-iconBtn delete" 
                 onClick={()=>onRemove(operator.id)}
                 title="Desativar Operador"
               >
@@ -244,5 +238,4 @@ export default function OperatorRow({
     </tr>
 
   )
-
 }
