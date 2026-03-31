@@ -10,6 +10,7 @@ import {
   getOperatorContext360,
   searchOperator,
   getOperatorsByLine,
+  getOperatorsByLineDetailed,
   queryDatabase,
   getFactorySummary,
   findSubstitutes,
@@ -46,12 +47,24 @@ export async function POST(req: NextRequest) {
         // Lista operadores de uma linha
         {
           name: "get_operators_by_line",
-          description: "Lista todos os operadores ativos de uma linha específica. Pode filtrar por turno. Use quando o usuário quer saber QUEM está em uma linha.",
+          description: "Lista todos os operadores ativos de uma linha específica. Pode filtrar por turno. Use quando o usuário quer saber QUEM está em uma linha (resposta rápida/superficial).",
           parameters: {
             type: SchemaType.OBJECT,
             properties: { 
               linha: { type: SchemaType.STRING, description: "Nome da linha (ex: TV, CM, BBS)" },
               turno: { type: SchemaType.STRING, description: "Opcional. Filtrar por turno. Os turnos da fábrica são: 'Comercial' e '2º Turno Estendido'" }
+            },
+            required: ["linha"]
+          } as any 
+        },
+        // Lista operadores de uma linha com dados completos
+        {
+          name: "get_operators_by_line_detailed",
+          description: "Lista todos os operadores ativos de uma linha com DADOS COMPLETOS: skills, analytics de risco, assiduidade e contexto 360. Use SEMPRE que o usuário pedir 'informações', 'dados', 'detalhes', 'mostre' ou 'me fala sobre os operadores de uma linha/categoria'. TV, TW, ARCON, BBS, CM, MWO e TM são LINHAS/CATEGORIAS — NUNCA são nomes de pessoas. Ao contrário de get_operators_by_line, esta ferramenta retorna o dossiê completo de cada operador.",
+          parameters: {
+            type: SchemaType.OBJECT,
+            properties: { 
+              linha: { type: SchemaType.STRING, description: "Nome ou categoria da linha. Exemplos: 'TV' (encontra TV 32, TV 43…), 'CM' (encontra CM 55…), 'BBS'" }
             },
             required: ["linha"]
           } as any 
@@ -174,14 +187,22 @@ REGRAS DE DECISÃO DE FERRAMENTAS:
 3. Se o usuário pergunta "por quê a assiduidade é X?" ou "como calculou?" → use explain_attendance_score
 4. Se o usuário pergunta "quem substitui?" ou "quem cobre?" → use find_substitutes (precisa do operator_id, busque antes com search_operator se necessário)
 5. Se o usuário pergunta "quais as melhores skills?" ou "top skills?" → use search_operator (as skills já vêm ordenadas por nível)
-6. Se o usuário quer saber QUEM ESTÁ em uma linha → use get_operators_by_line
-7. Se o usuário quer saber QUEM PODE operar um posto + linha → use get_alocacao_sugestao
-8. Se o usuário quer ver COBERTURA/SAÚDE/GAP de uma linha → use get_line_coverage
-9. Se o usuário quer saber sobre RISCO/FALTAS/ASSIDUIDADE geral → use get_operator_risk
-10. Se o usuário quer saber sobre FERRUGEM/dias sem operar → use get_operator_context_360
-11. Se o usuário quer um RESUMO GERAL da fábrica → use get_factory_summary
-12. Se o usuário pede TREINAMENTOS URGENTES → use get_critical_training_needs
-13. Para qualquer outra consulta específica → use query_database
+6. Se o usuário quer ver INFORMAÇÕES, DADOS, DETALHES ou PERFIL dos operadores de uma LINHA/CATEGORIA → use get_operators_by_line_detailed (ex: "me mostra os operadores da TV", "informações da linha CM", "dados dos operadores de BBS")
+7. Se o usuário quer apenas saber QUEM (lista simples) está em uma linha → use get_operators_by_line
+8. Se o usuário quer saber QUEM PODE operar um posto + linha → use get_alocacao_sugestao
+9. Se o usuário quer ver COBERTURA/SAÚDE/GAP de uma linha → use get_line_coverage
+10. Se o usuário quer saber sobre RISCO/FALTAS/ASSIDUIDADE geral → use get_operator_risk
+11. Se o usuário quer saber sobre FERRUGEM/dias sem operar → use get_operator_context_360
+12. Se o usuário quer um RESUMO GERAL da fábrica → use get_factory_summary
+13. Se o usuário pede TREINAMENTOS URGENTES → use get_critical_training_needs
+14. Para qualquer outra consulta específica → use query_database
+
+DISTINÇÃO CRÍTICA — LINHA vs PESSOA:
+- TV, TW, ARCON, BBS, CM, MWO, TM são CATEGORIAS DE LINHAS DE PRODUÇÃO — NUNCA são nomes de pessoas
+- "operadores da TV" → LINHA → use get_operators_by_line_detailed("TV")
+- "me mostra a TV" → LINHA → use get_operators_by_line_detailed("TV")
+- "Carlos Daniel" → PESSOA → use search_operator("Carlos Daniel")
+- Quando o usuário usa expressões como "da TV", "na linha CM", "do BBS", sempre trate como linha, nunca como nome
 
 ENCADEAMENTO INTELIGENTE (IMPORTANTE):
 - Se o usuário perguntar "quem substitui o Carlos Daniel?" → PRIMEIRO chame search_operator("Carlos Daniel") para pegar o ID, DEPOIS chame find_substitutes(id)
@@ -289,6 +310,12 @@ DADOS IMPORTANTES DO SISTEMA:
               case "get_operators_by_line": {
                 const args = call.args as { linha: string; turno?: string }
                 data = await getOperatorsByLine(args.linha, args.turno).catch(e => ({ error: e.message }))
+                break
+              }
+
+              case "get_operators_by_line_detailed": {
+                const args = call.args as { linha: string }
+                data = await getOperatorsByLineDetailed(args.linha).catch(e => ({ error: e.message }))
                 break
               }
 
