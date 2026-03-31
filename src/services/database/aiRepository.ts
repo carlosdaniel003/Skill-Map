@@ -90,16 +90,22 @@ export async function searchOperator(identificador: string) {
 // ============================================================
 // 2. LISTA TODOS OS OPERADORES DE UMA LINHA (NOVO!)
 // ============================================================
+
+// Escapes SQL LIKE/ILIKE wildcard characters to prevent unintended pattern matching
+function escapeLikePattern(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_')
+}
+
 export async function getOperatorsByLine(linha: string, turno?: string) {
   let query = supabase
     .from('operators')
     .select('id, nome, matricula, posto_atual, linha_atual, turno')
-    .eq('linha_atual', linha)
+    .ilike('linha_atual', `%${escapeLikePattern(linha)}%`)
     .eq('ativo', true)
     .order('nome')
 
   if (turno) {
-    query = query.eq('turno', turno)
+    query = query.ilike('turno', `%${escapeLikePattern(turno)}%`)
   }
 
   const { data, error } = await query
@@ -126,7 +132,15 @@ export async function queryDatabase(tabela: string, filtros?: Record<string, str
 
   if (filtros) {
     Object.entries(filtros).forEach(([coluna, valor]) => {
-      query = query.eq(coluna, valor)
+      // Use exact match for boolean values, UUIDs, and pure integers; partial match for text
+      const isBooleanValue = valor === 'true' || valor === 'false'
+      const isNumericValue = /^\d+$/.test(valor)
+      const isUuidValue = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(valor)
+      if (isBooleanValue || isNumericValue || isUuidValue) {
+        query = query.eq(coluna, valor)
+      } else {
+        query = query.ilike(coluna, `%${escapeLikePattern(valor)}%`)
+      }
     })
   }
 
@@ -179,7 +193,7 @@ export async function getLineCoverage(linha: string) {
   const { data, error } = await supabase
     .from('vw_line_coverage')
     .select('*')
-    .eq('linha', linha)
+    .ilike('linha', `%${escapeLikePattern(linha)}%`)
   
   if (error) throw new Error(`Erro ao buscar cobertura: ${error.message}`)
   return data
@@ -192,7 +206,7 @@ export async function getOperatorRisk(linha?: string) {
   let query = supabase.from('vw_operator_analytics').select('*')
   
   if (linha) {
-    query = query.eq('linha_atual', linha)
+    query = query.ilike('linha_atual', `%${escapeLikePattern(linha)}%`)
   }
   
   query = query.order('score_assiduidade', { ascending: true }).limit(20)
@@ -223,7 +237,7 @@ export async function getOperatorContext360(linha?: string) {
   let query = supabase.from('vw_operator_360_context').select('*')
   
   if (linha) {
-    query = query.eq('linha_atual', linha)
+    query = query.ilike('linha_atual', `%${escapeLikePattern(linha)}%`)
   }
   
   const { data, error } = await query
