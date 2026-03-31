@@ -105,10 +105,59 @@
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.06);
 }
 
-/* O card de tabela precisa de menos padding horizontal para preencher melhor */
+/* ==============================================
+   CARD ESPECÍFICO DA TABELA E SEU NOVO HEADER
+   ============================================== */
 .operatorsPage .opTableCard {
-  padding: 32px 0; /* O conteúdo da tabela deve ter padding interno se necessário */
+  padding: 32px 0; /* Remove padding lateral pra tabela preencher, mas mantém em cima/baixo */
   overflow: hidden;
+}
+
+.operatorsPage .opTableCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 32px 24px 32px; /* Adiciona o padding lateral devolta só no header */
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 0;
+}
+
+.operatorsPage .opTableCardIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #f0f4f8; /* Cinza azulado bem leve */
+  color: #555555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.operatorsPage .opTableCard:hover .opTableCardIcon {
+  background: #fff0f0;
+  color: #d40000;
+}
+
+.operatorsPage .opTableCardTitleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.operatorsPage .opTableCardTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111111;
+  letter-spacing: -0.3px;
+}
+
+.operatorsPage .opTableCardSubtitle {
+  margin: 0;
+  font-size: 13px;
+  color: #888888;
 }
 
 /* GRID DE AÇÕES (Formulário e Filtros) */
@@ -303,5 +352,8 @@
   .operatorsPage .opCard {
     padding: 24px 20px;
     border-radius: 20px;
+  }
+  .operatorsPage .opTableCardHeader {
+    padding: 0 20px 20px 20px;
   }
 }

@@ -10,6 +10,7 @@ import {
   getOperatorContext360,
   searchOperator,
   getOperatorsByLine,
+  getOperatorsByLineDetailed,
   queryDatabase,
   getFactorySummary,
   findSubstitutes,
@@ -56,6 +57,21 @@ export async function POST(req: NextRequest) {
             required: ["linha"]
           } as any 
         },
+
+                // Lista operadores de uma linha com DADOS COMPLETOS
+        {
+          name: "get_operators_by_line_detailed",
+          description: "Retorna informações COMPLETAS de TODOS os operadores de uma linha de produção: dados pessoais, TODAS as skills (com nível), analytics de risco/assiduidade e contexto 360. Busca parcial — 'TV' encontra 'TV 32', 'TV 43', etc. Use SEMPRE que o usuário pedir informações, dados ou detalhes sobre operadores de uma LINHA (ex: 'me mostre os operadores da TV', 'informações da equipe da CM', 'quem trabalha na BBS?', 'dados dos operadores da TV 32'). NÃO confunda com busca de pessoa — TV, CM, BBS, ARCON, TW, MWO, TM são LINHAS DE PRODUÇÃO, não nomes de pessoas.",
+          parameters: {
+            type: SchemaType.OBJECT,
+            properties: { 
+              linha: { type: SchemaType.STRING, description: "Nome ou categoria da linha de produção (ex: TV, CM, BBS, TV 32). Busca parcial." },
+              turno: { type: SchemaType.STRING, description: "Opcional. Filtrar por turno: 'Comercial' ou '2º Turno Estendido'" }
+            },
+            required: ["linha"]
+          } as any 
+        },
+
         // Consulta genérica ao banco
         {
           name: "query_database",
@@ -174,14 +190,15 @@ REGRAS DE DECISÃO DE FERRAMENTAS:
 3. Se o usuário pergunta "por quê a assiduidade é X?" ou "como calculou?" → use explain_attendance_score
 4. Se o usuário pergunta "quem substitui?" ou "quem cobre?" → use find_substitutes (precisa do operator_id, busque antes com search_operator se necessário)
 5. Se o usuário pergunta "quais as melhores skills?" ou "top skills?" → use search_operator (as skills já vêm ordenadas por nível)
-6. Se o usuário quer saber QUEM ESTÁ em uma linha → use get_operators_by_line
-7. Se o usuário quer saber QUEM PODE operar um posto + linha → use get_alocacao_sugestao
-8. Se o usuário quer ver COBERTURA/SAÚDE/GAP de uma linha → use get_line_coverage
-9. Se o usuário quer saber sobre RISCO/FALTAS/ASSIDUIDADE geral → use get_operator_risk
-10. Se o usuário quer saber sobre FERRUGEM/dias sem operar → use get_operator_context_360
-11. Se o usuário quer um RESUMO GERAL da fábrica → use get_factory_summary
-12. Se o usuário pede TREINAMENTOS URGENTES → use get_critical_training_needs
-13. Para qualquer outra consulta específica → use query_database
+6. Se o usuário quer INFORMAÇÕES/DADOS/DETALHES dos operadores de uma LINHA (ex: "me mostre os operadores da TV", "informações da equipe da CM") → use get_operators_by_line_detailed
+7. Se o usuário quer APENAS uma LISTA SIMPLES de nomes → use get_operators_by_line
+8. Se o usuário quer saber QUEM PODE operar um posto + linha → use get_alocacao_sugestao
+9. Se o usuário quer ver COBERTURA/SAÚDE/GAP de uma linha → use get_line_coverage
+10. Se o usuário quer saber sobre RISCO/FALTAS/ASSIDUIDADE geral → use get_operator_risk
+11. Se o usuário quer saber sobre FERRUGEM/dias sem operar → use get_operator_context_360
+12. Se o usuário quer um RESUMO GERAL da fábrica → use get_factory_summary
+13. Se o usuário pede TREINAMENTOS URGENTES → use get_critical_training_needs
+14. Para qualquer outra consulta específica → use query_database
 
 ENCADEAMENTO INTELIGENTE (IMPORTANTE):
 - Se o usuário perguntar "quem substitui o Carlos Daniel?" → PRIMEIRO chame search_operator("Carlos Daniel") para pegar o ID, DEPOIS chame find_substitutes(id)
@@ -289,6 +306,12 @@ DADOS IMPORTANTES DO SISTEMA:
               case "get_operators_by_line": {
                 const args = call.args as { linha: string; turno?: string }
                 data = await getOperatorsByLine(args.linha, args.turno).catch(e => ({ error: e.message }))
+                break
+              }
+
+              case "get_operators_by_line_detailed": {
+                const args = call.args as { linha: string; turno?: string }
+                data = await getOperatorsByLineDetailed(args.linha, args.turno).catch(e => ({ error: e.message }))
                 break
               }
 

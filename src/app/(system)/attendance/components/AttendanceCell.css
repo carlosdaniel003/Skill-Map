@@ -7,7 +7,7 @@ td.modInputCell {
   width: 50px;
   height: 48px;
   position: relative;
-  padding: 4px; /* Respiro interno para o input não encostar nas bordas */
+  padding: 4px; 
   border-right: 1px solid #f0f0f0;
   border-bottom: 1px solid #f0f0f0;
   background: #ffffff;
@@ -15,7 +15,7 @@ td.modInputCell {
 }
 
 td.modInputCell.weekend {
-  background: #fffafa !important; /* Fundo levemente avermelhado/cinza para FDS */
+  background: #fffafa !important; 
 }
 
 td.modInputCell .modCell-inputWrapper {
@@ -40,14 +40,14 @@ td.modInputCell .modCell-excelInput {
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: text;
   box-sizing: border-box;
-  border-radius: 8px; /* Cantos arredondados do input */
+  border-radius: 8px; 
 }
 
 td.modInputCell .modCell-excelInput:focus {
   background: #ffffff;
   border-color: #d40000;
   box-shadow: 0 0 0 3px rgba(212, 0, 0, 0.15);
-  transform: scale(1.05); /* Pequeno destaque ao clicar na célula */
+  transform: scale(1.05); 
   z-index: 10;
   position: relative;
 }
@@ -116,10 +116,10 @@ td.modInputCell .modCell-obs-triangle {
    POPOVER (BALÃO FLUTUANTE)
    ======================================================== */
 #modAttendance-popover.modStatusPopover {
-  position: absolute;
+  position: absolute; /* Já corrigido via JS, mantido aqui por garantia */
   background: #ffffff;
   border: 1px solid #f0f0f0;
-  border-radius: 20px; /* Borda bem redonda */
+  border-radius: 20px; 
   padding: 16px;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
   z-index: 99998;
@@ -218,25 +218,26 @@ td.modInputCell .modStatus-lm, #modAttendance-popover .modStatus-lm { background
    ======================================================== */
 .modObsModalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  inset: 0; /* 🛠️ CORREÇÃO: Garante tela cheia e travada independente de overflow pai */
+  width: 100vw;
+  height: 100vh;
+  background: rgba(17, 17, 17, 0.45); /* Escurecimento moderno */
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 99999;
-  animation: obsFadeOverlay 0.3s ease-out;
+  animation: obsFadeOverlay 0.3s ease-out forwards;
   padding: 20px;
+  box-sizing: border-box;
 }
 
 .modObsModalOverlay .modObsModalCard {
   width: 100%;
   max-width: 480px;
   background: #ffffff;
-  border-radius: 28px; /* Removido border-top colorido, cantos super redondos */
+  border-radius: 28px; 
   padding: 32px;
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -310,11 +311,12 @@ td.modInputCell .modStatus-lm, #modAttendance-popover .modStatus-lm { background
   color: #111111;
   background: #fcfcfc;
   border: 1px solid #f0f0f0;
-  border-radius: 16px; /* Borda do input modernizada */
+  border-radius: 16px; 
   outline: none;
   font-family: inherit;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   line-height: 1.6;
+  box-sizing: border-box;
 }
 
 .modObsModalOverlay .modObsModalTextarea:focus {

@@ -33,7 +33,7 @@ export default function AttendanceCell({ operatorId, dateStr, value, observacao,
   
   const [localValue, setLocalValue] = useState(value)
   const [localObs, setLocalObs] = useState(observacao)
-  const [tempObs, setTempObs] = useState("") // Usado apenas dentro do modal para poder cancelar sem salvar
+  const [tempObs, setTempObs] = useState("") 
 
   const [syncState, setSyncState] = useState<'idle' | 'saving' | 'error' | 'success'>('idle')
 
@@ -48,18 +48,33 @@ export default function AttendanceCell({ operatorId, dateStr, value, observacao,
   function openPopover() {
     if (cellRef.current) {
       const rect = cellRef.current.getBoundingClientRect()
+      
       setPopoverPos({
         top: rect.bottom + window.scrollY + 6,
         left: rect.left + window.scrollX + rect.width / 2,
       })
+
+      // 🌟 INTELIGÊNCIA DE SCROLL: Se o menu abrir cortado embaixo, rola a tela suavemente.
+      setTimeout(() => {
+        const popover = document.getElementById("modAttendance-popover")
+        if (popover) {
+          const popRect = popover.getBoundingClientRect()
+          if (popRect.bottom > window.innerHeight) {
+            window.scrollBy({
+              top: (popRect.bottom - window.innerHeight) + 24, // Rola o que faltou + respiro
+              behavior: 'smooth'
+            })
+          }
+        }
+      }, 50)
     }
     setIsOpen(true)
   }
 
   function openObsModal() {
-    setTempObs(localObs) // Copia o valor atual para o rascunho do modal
-    setIsOpen(false) // Fecha o balão flutuante
-    setIsObsModalOpen(true) // Abre o modal no meio da tela
+    setTempObs(localObs) 
+    setIsOpen(false) 
+    setIsObsModalOpen(true) 
   }
 
   async function executeSave(newValue: string, newObs: string) {
@@ -88,7 +103,6 @@ export default function AttendanceCell({ operatorId, dateStr, value, observacao,
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      // TRAVA: Se o modal estiver aberto, ignora cliques fora!
       if (isObsModalOpen) return
 
       if (cellRef.current && !cellRef.current.contains(event.target as Node)) {
@@ -96,7 +110,6 @@ export default function AttendanceCell({ operatorId, dateStr, value, observacao,
         if (popover && popover.contains(event.target as Node)) return
 
         setIsOpen(false)
-        // Só salva sozinho se alterou o status digitando diretamente na célula
         if (localValue !== value || localObs !== observacao) {
           executeSave(localValue, localObs)
         }
@@ -118,7 +131,6 @@ export default function AttendanceCell({ operatorId, dateStr, value, observacao,
     if (e.key === "Escape") setIsOpen(false)
   }
 
-  // Formata a data de AAAA-MM-DD para DD/MM/AAAA para exibir no Modal
   const formatDisplayDate = (d: string) => {
     const parts = d.split("-")
     if(parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`
@@ -136,7 +148,6 @@ export default function AttendanceCell({ operatorId, dateStr, value, observacao,
         </div>
       )}
 
-      {/* Triângulo indicador de observação salva */}
       {observacao && syncState === 'idle' && (
         <div className="modCell-obs-triangle" title={`Obs: ${observacao}`} />
       )}
@@ -161,7 +172,7 @@ export default function AttendanceCell({ operatorId, dateStr, value, observacao,
           id="modAttendance-popover"
           className="modStatusPopover"
           style={{
-            position: "fixed",
+            position: "absolute", // 🛠️ CORREÇÃO: "absolute" permite que acompanhe o Scroll do body
             top: popoverPos.top,
             left: popoverPos.left,
             transform: "translateX(-50%)",
@@ -176,7 +187,7 @@ export default function AttendanceCell({ operatorId, dateStr, value, observacao,
                 title={opt.label}
                 onMouseDown={e => {
                   e.preventDefault() 
-                  executeSave(opt.value, localObs) // Muda o status, preserva a observação
+                  executeSave(opt.value, localObs) 
                 }}
               >
                 {opt.value}
@@ -201,7 +212,7 @@ export default function AttendanceCell({ operatorId, dateStr, value, observacao,
             className="modPopoverClearBtn"
             onMouseDown={e => {
               e.preventDefault()
-              executeSave("", "") // Limpa status e observação
+              executeSave("", "") 
             }}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
