@@ -218,9 +218,9 @@ QUANDO EXPLICAR DECISÕES:
 - "Quem substitui?" → Para cada substituto, explique: skill nível X no posto Y, assiduidade Z%, mesmo turno (sim/não)
 
 EMOJIS DE ALERTA:
-- Assiduidade < 75%: 🔴 RISCO CRÍTICO
-- Assiduidade 75-85%: 🟡 ATENÇÃO
-- Assiduidade >= 85%: 🟢 CONFIÁVEL
+- Assiduidade < 97.5%: 🔴 RISCO CRÍTICO
+- Assiduidade 97.5%-99.99%: 🟡 ATENÇÃO
+- Assiduidade 100%: 🟢 CONFIÁVEL
 - Dias sem operar > 30: ⚠️ FERRUGEM
 - Skill nível 4-5: ⭐ ESPECIALISTA
 - Skill nível 1-2: 📚 PRECISA TREINAR

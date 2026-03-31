@@ -460,6 +460,6 @@ export async function explainAttendanceScore(operatorId: string) {
       outros: totalRegistros - presencas - faltas - atrasos - atestados - ferias
     },
     detalhes_recentes: records.slice(0, 15), // últimos 15 registros para contexto
-    explicacao_formula: `Score = (Presenças / Dias Úteis Registrados) × 100. Faltas e atrasos reduzem o score. Atestados e férias são neutros na maioria dos cálculos.`
+    explicacao_formula: `Score = (Presenças / Dias Úteis Registrados) × 100. Faltas e atrasos reduzem o score. Atestados e férias são neutros. Régua: 100% = 🟢 Verde (Confiável), 97.5% a 99.99% = 🟡 Amarelo (Atenção), abaixo de 97.5% = 🔴 Vermelho (Risco).`
   }
 }
