@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
             type: SchemaType.OBJECT,
             properties: { 
               linha: { type: SchemaType.STRING, description: "Nome da linha (ex: TV, CM, BBS)" },
-              turno: { type: SchemaType.STRING, description: "Opcional. Filtrar por turno (ex: Turno A, Turno B)" }
+              turno: { type: SchemaType.STRING, description: "Opcional. Filtrar por turno. Os turnos da fábrica são: 'Comercial' e '2º Turno Estendido'" }
             },
             required: ["linha"]
           } as any 
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
             type: SchemaType.OBJECT,
             properties: { 
               tabela: { type: SchemaType.STRING, description: "Nome da tabela (ex: operators, operator_skills)" },
-              filtros: { type: SchemaType.STRING, description: "Filtros em formato JSON. Ex: {\"linha_atual\": \"TV\", \"turno\": \"Turno A\"}" },
+              filtros: { type: SchemaType.STRING, description: "Filtros em formato JSON. Ex: {\"linha_atual\": \"TV\", \"turno\": \"Comercial\"}" },
               limite: { type: SchemaType.NUMBER, description: "Quantidade máxima de resultados (padrão: 50)" }
             },
             required: ["tabela"]
@@ -222,6 +222,14 @@ NUNCA:
 - Peça informações que você pode buscar sozinho
 - Diga "não tenho dados" sem antes chamar pelo menos 1 ferramenta
 - Recomende alguém sem explicar o porquê
+
+DADOS IMPORTANTES DO SISTEMA:
+- Os turnos da fábrica são: "Comercial" e "2º Turno Estendido" (NÃO existem Turno A, B ou C)
+- As CATEGORIAS de modelos de produção são: TV, TW, ARCON, BBS, CM, MWO, TM
+- Cada categoria contém vários MODELOS (ex: categoria "TV" contém "TV 32", "TV 43", etc.)
+- Quando o usuário diz apenas "TV", significa a CATEGORIA TV — busque usando match parcial que vai encontrar todos os modelos dessa categoria (TV 32, TV 43, etc.)
+- Os nomes das linhas/modelos são compostos (ex: "TV 32", "CM 55"). Sempre busque com match parcial.
+- As matrículas são numéricas com 6 dígitos (ex: 503070)
 `
 
     // ==========================================
