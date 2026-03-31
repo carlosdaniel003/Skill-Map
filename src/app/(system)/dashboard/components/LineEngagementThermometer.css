@@ -28,7 +28,7 @@
   width: 44px;
   height: 44px;
   border-radius: 14px;
-  background: #f0f4f8; /* Cinza azulado suave */
+  background: #f0f4f8;
   color: #555555;
   display: flex;
   align-items: center;
@@ -69,7 +69,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  flex: 1; /* Permite que a lista cresça para preencher o card se precisar */
+  flex: 1;
   overflow-y: auto; 
   max-height: 400px;
   padding-right: 8px;
@@ -80,10 +80,29 @@
 .modEng-rankingList::-webkit-scrollbar-track { background: transparent; }
 .modEng-rankingList::-webkit-scrollbar-thumb { background-color: #dcdcdc; border-radius: 10px; }
 
+/* ========================================================
+   ITEM DA LINHA — CLICÁVEL
+   ======================================================== */
 .modEng-lineItem {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  cursor: pointer;
+  padding: 10px 12px;
+  border-radius: 14px;
+  transition: background 0.2s ease;
+}
+
+.modEng-lineItem:hover {
+  background: #f7f7f7;
+}
+
+.modEng-lineItemExpanded {
+  background: #f5f5f5;
+}
+
+.modEng-lineItemExpanded:hover {
+  background: #f0f0f0;
 }
 
 .modEng-lineInfo {
@@ -114,7 +133,26 @@
   margin-left: 4px;
 }
 
-/* A BARRA DE TERMÔMETRO */
+/* ========================================================
+   CHEVRON DE EXPANSÃO
+   ======================================================== */
+.modEng-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+  color: #999999;
+  flex-shrink: 0;
+}
+
+.modEng-chevron.rotated {
+  transform: rotate(180deg);
+  color: #d40000;
+}
+
+/* ========================================================
+   A BARRA DE TERMÔMETRO (PRINCIPAL)
+   ======================================================== */
 .modEng-barTrack {
   width: 100%;
   height: 12px;
@@ -129,10 +167,10 @@
   transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Cores de Saúde - Ajustadas para a paleta */
-.modEng-healthExcellent { background-color: #16a34a; } /* Verde */
-.modEng-healthWarning { background-color: #f59e0b; } /* Laranja */
-.modEng-healthCritical { background-color: #d40000; } /* Vermelho */
+/* Cores de Saúde — reutilizadas nas barras principais e mini-barras */
+.modEng-healthExcellent { background-color: #16a34a; }
+.modEng-healthWarning { background-color: #f59e0b; }
+.modEng-healthCritical { background-color: #d40000; }
 
 .modEng-medal {
   display: flex;
@@ -141,7 +179,114 @@
 }
 
 /* ========================================================
-   ESTADOS DE LOADING E EMPTY
+   PAINEL EXPANDIDO — DETALHAMENTO POR POSTO
+   ======================================================== */
+.modEng-expandedDetail {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  margin-top: 4px;
+  background: #ffffff;
+  border-radius: 12px;
+  border-left: 3px solid #d40000;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  animation: modEng-slideDown 0.3s ease forwards;
+  cursor: default;
+}
+
+@keyframes modEng-slideDown {
+  from { 
+    opacity: 0; 
+    max-height: 0; 
+    transform: translateY(-8px); 
+  }
+  to { 
+    opacity: 1; 
+    max-height: 600px; 
+    transform: translateY(0); 
+  }
+}
+
+.modEng-postoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 0;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.modEng-postoItem:last-child {
+  border-bottom: none;
+}
+
+.modEng-postoInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modEng-postoName {
+  font-size: 12px;
+  font-weight: 600;
+  color: #555555;
+  display: flex;
+  align-items: center;
+}
+
+.modEng-postoScore {
+  font-size: 12px;
+  font-weight: 700;
+  color: #333333;
+}
+
+.modEng-postoScore span {
+  font-size: 10px;
+  font-weight: 600;
+  color: #a0a0a0;
+  margin-left: 3px;
+}
+
+/* Mini-barra do posto */
+.modEng-postoBarTrack {
+  width: 100%;
+  height: 6px;
+  background-color: #ebebeb;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.modEng-postoBarFill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Loading e Empty do painel expandido */
+.modEng-expandedLoading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  color: #999999;
+  font-size: 12px;
+  font-weight: 500;
+  gap: 8px;
+}
+
+.modEng-expandedEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  color: #aaaaaa;
+  font-size: 12px;
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* ========================================================
+   ESTADOS DE LOADING E EMPTY (GLOBAL)
    ======================================================== */
 .modEng-loadingState {
   display: flex;
@@ -185,5 +330,14 @@
   .modEng-card {
     padding: 24px 20px;
     border-radius: 20px;
+  }
+
+  .modEng-lineItem {
+    padding: 8px 8px;
+    border-radius: 10px;
+  }
+
+  .modEng-expandedDetail {
+    padding: 10px 12px;
   }
 }

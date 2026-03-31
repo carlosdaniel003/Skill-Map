@@ -12,19 +12,28 @@ interface LineHealth {
   operatorCount: number
 }
 
+interface PostoDetail {
+  posto: string
+  avgScore: number
+  operatorCount: number
+}
+
 export default function LineEngagementThermometer() {
   const { filters } = useDashboardFilters()
   const [loading, setLoading] = useState(true)
   const [ranking, setRanking] = useState<LineHealth[]>([])
 
+  // NOVO: Estados para expansão por posto
+  const [expandedLine, setExpandedLine] = useState<string | null>(null)
+  const [lineDetails, setLineDetails] = useState<Record<string, PostoDetail[]>>({})
+  const [loadingDetails, setLoadingDetails] = useState(false)
+
   useEffect(() => {
     async function fetchEngagementData() {
       setLoading(true)
       try {
-        // 1. Busca os dados essenciais
         let query = supabase.from('vw_operator_analytics').select('operator_id, linha_atual, score_assiduidade, turno')
 
-        // 2. Aplica TODOS os filtros da sidebar diretamente no Supabase (mais performance)
         if (filters.turno) query = query.eq('turno', filters.turno)
         if (filters.linha) query = query.eq('linha_atual', filters.linha)
         if (filters.operatorId) query = query.eq('operator_id', filters.operatorId)
@@ -34,17 +43,12 @@ export default function LineEngagementThermometer() {
 
         const rawData = data || []
 
-        // 3. Agrupa os scores
         const statsMap: Record<string, { totalScore: number, count: number }> = {}
 
         rawData.forEach(row => {
           if (!row.linha_atual) return
 
-          // Traduz o turno do banco para o nome amigável
           const turnoName = row.turno || "Sem Turno"
-
-          // Se o RH já filtrou um turno específico, mostramos só a Linha. 
-          // Se não houver filtro de turno, nós desmembramos a linha nos dois turnos!
           const groupKey = filters.turno ? row.linha_atual : `${row.linha_atual} (${turnoName})`
 
           if (!statsMap[groupKey]) {
@@ -55,7 +59,6 @@ export default function LineEngagementThermometer() {
           statsMap[groupKey].count += 1
         })
 
-        // 4. Converte para array, calcula a média e ordena
         const sortedRanking = Object.keys(statsMap).map(groupKey => {
           const info = statsMap[groupKey]
           return {
@@ -63,7 +66,7 @@ export default function LineEngagementThermometer() {
             avgScore: info.totalScore / info.count,
             operatorCount: info.count
           }
-        }).sort((a, b) => b.avgScore - a.avgScore) // Do maior para o menor
+        }).sort((a, b) => b.avgScore - a.avgScore)
 
         setRanking(sortedRanking)
 
@@ -74,6 +77,9 @@ export default function LineEngagementThermometer() {
       }
     }
 
+    // Limpa a expansão quando os filtros mudam
+    setExpandedLine(null)
+    setLineDetails({})
     fetchEngagementData()
   }, [filters])
 
@@ -81,6 +87,96 @@ export default function LineEngagementThermometer() {
     if (score >= 100) return "modEng-healthExcellent"
     if (score >= 97.5) return "modEng-healthWarning"
     return "modEng-healthCritical"
+  }
+
+  // NOVO: Busca dados detalhados por posto ao clicar na linha
+  async function handleToggleExpand(item: LineHealth) {
+    // Se clicar na mesma linha, fecha
+    if (expandedLine === item.linha) {
+      setExpandedLine(null)
+      return
+    }
+
+    // Se já temos os dados em cache, só abre
+    if (lineDetails[item.linha]) {
+      setExpandedLine(item.linha)
+      return
+    }
+
+    // Busca os dados no Supabase
+    setExpandedLine(item.linha)
+    setLoadingDetails(true)
+
+    try {
+      // Extrai o nome real da linha (sem o turno entre parênteses)
+      const linhaReal = item.linha.replace(/\s*\(.*\)$/, '')
+
+      // Extrai o turno do groupKey se existir (ex: "TV 32 (Comercial)" -> "Comercial")
+      const turnoMatch = item.linha.match(/\((.+)\)$/)
+      const turnoFromKey = turnoMatch ? turnoMatch[1] : null
+
+      // 1. Busca operadores da linha
+      let opQuery = supabase
+        .from('operators')
+        .select('id, posto_atual')
+        .eq('linha_atual', linhaReal)
+        .eq('ativo', true)
+
+      // Aplica filtro de turno: usa o do filtro global OU o extraído do groupKey
+      if (filters.turno) {
+        opQuery = opQuery.eq('turno', filters.turno)
+      } else if (turnoFromKey) {
+        opQuery = opQuery.eq('turno', turnoFromKey)
+      }
+
+      const { data: operators, error: opError } = await opQuery
+      if (opError) throw opError
+
+      if (!operators || operators.length === 0) {
+        setLineDetails(prev => ({ ...prev, [item.linha]: [] }))
+        setLoadingDetails(false)
+        return
+      }
+
+      const operatorIds = operators.map(op => op.id)
+
+      // 2. Busca analytics dos operadores
+      const { data: analytics, error: anError } = await supabase
+        .from('vw_operator_analytics')
+        .select('operator_id, score_assiduidade, posto_atual')
+        .in('operator_id', operatorIds)
+
+      if (anError) throw anError
+
+      // 3. Agrupa por posto_atual
+      const postoMap: Record<string, { totalScore: number, count: number }> = {}
+
+      ;(analytics || []).forEach(row => {
+        const posto = row.posto_atual || "Sem Posto"
+        if (!postoMap[posto]) {
+          postoMap[posto] = { totalScore: 0, count: 0 }
+        }
+        postoMap[posto].totalScore += Number(row.score_assiduidade || 0)
+        postoMap[posto].count += 1
+      })
+
+      // 4. Converte para array ordenado
+      const postoDetails: PostoDetail[] = Object.keys(postoMap)
+        .map(posto => ({
+          posto,
+          avgScore: postoMap[posto].totalScore / postoMap[posto].count,
+          operatorCount: postoMap[posto].count
+        }))
+        .sort((a, b) => b.avgScore - a.avgScore)
+
+      setLineDetails(prev => ({ ...prev, [item.linha]: postoDetails }))
+
+    } catch (err) {
+      console.error("Erro ao buscar detalhes por posto:", err)
+      setLineDetails(prev => ({ ...prev, [item.linha]: [] }))
+    } finally {
+      setLoadingDetails(false)
+    }
   }
 
   return (
@@ -110,10 +206,21 @@ export default function LineEngagementThermometer() {
       ) : (
         <div className="modEng-rankingList">
           {ranking.map((item, index) => (
-            <div key={item.linha} className="modEng-lineItem">
+            <div 
+              key={item.linha} 
+              className={`modEng-lineItem ${expandedLine === item.linha ? 'modEng-lineItemExpanded' : ''}`}
+              onClick={() => handleToggleExpand(item)}
+            >
               
               <div className="modEng-lineInfo">
                 <div className="modEng-lineName">
+                  {/* Chevron de expansão */}
+                  <span className={`modEng-chevron ${expandedLine === item.linha ? 'rotated' : ''}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="m6 9 6 6 6-6"/>
+                    </svg>
+                  </span>
+
                   {/* Medalhas / Avisos */}
                   {index === 0 && ranking.length > 1 && (
                     <span className="modEng-medal" title="Benchmark da Fábrica">
@@ -138,6 +245,44 @@ export default function LineEngagementThermometer() {
                   style={{ width: `${item.avgScore}%` }}
                 />
               </div>
+
+              {/* PAINEL EXPANDIDO — Detalhamento por Posto */}
+              {expandedLine === item.linha && (
+                <div className="modEng-expandedDetail" onClick={(e) => e.stopPropagation()}>
+                  {loadingDetails ? (
+                    <div className="modEng-expandedLoading">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="modEng-spinIcon"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                      Carregando postos...
+                    </div>
+                  ) : !lineDetails[item.linha] || lineDetails[item.linha].length === 0 ? (
+                    <div className="modEng-expandedEmpty">
+                      Sem dados de postos para esta linha.
+                    </div>
+                  ) : (
+                    lineDetails[item.linha].map(posto => (
+                      <div key={posto.posto} className="modEng-postoItem">
+                        <div className="modEng-postoInfo">
+                          <span className="modEng-postoName">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px', opacity: 0.5 }}>
+                              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                            </svg>
+                            {posto.posto}
+                          </span>
+                          <span className="modEng-postoScore">
+                            {posto.avgScore.toFixed(1)}% <span>({posto.operatorCount} op.)</span>
+                          </span>
+                        </div>
+                        <div className="modEng-postoBarTrack">
+                          <div 
+                            className={`modEng-postoBarFill ${getHealthClass(posto.avgScore)}`}
+                            style={{ width: `${posto.avgScore}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
 
             </div>
           ))}
