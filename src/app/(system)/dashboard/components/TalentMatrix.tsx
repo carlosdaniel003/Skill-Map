@@ -98,7 +98,7 @@ export default function TalentMatrix() {
 
         opsWithSkillCount.forEach(op => {
           const isAltaSkill = op.high_skill_count >= 2
-          const isAltaAssid = op.score_assiduidade >= 90
+          const isAltaAssid = op.score_assiduidade >= 100
 
           if (isAltaSkill && isAltaAssid) {
             q.pilares.push(op)
@@ -337,7 +337,7 @@ export default function TalentMatrix() {
                           className="modTalent-badge"
                           title="Score de Assiduidade (%)"
                           style={{ 
-                            background: op.score_assiduidade >= 90 ? '#16a34a' : op.score_assiduidade >= 75 ? '#f59e0b' : '#d40000'
+                            background: op.score_assiduidade >= 100 ? '#16a34a' : op.score_assiduidade >= 97.5 ? '#f59e0b' : '#d40000'
                           }}
                         >
                           {IconClockBadge}

@@ -129,7 +129,7 @@ export async function POST(req: NextRequest) {
         // Risco de assiduidade
         {
           name: "get_operator_risk",
-          description: "Mapa de risco de assiduidade: operadores classificados como VERMELHO (crítico), AMARELO (atenção) ou VERDE (confiável). Traz score e histórico. Use quando o usuário quer saber sobre RISCO ou FALTAS.",
+          description: "Mapa de risco de assiduidade: operadores classificados como VERMELHO (crítico), AMARELO (atenção) ou VERDE (confiável). Traz score e histórico. Use quando o usuário quer saber sobre RISCO ou FALTAS, 100% = Verde, 97.5%-99.99% = Amarelo, abaixo de 97.5% = Vermelho.",
           parameters: {
             type: SchemaType.OBJECT,
             properties: { linha: { type: SchemaType.STRING, description: "Opcional. Filtrar por linha" } }

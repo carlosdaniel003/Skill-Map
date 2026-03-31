@@ -78,8 +78,8 @@ export default function LineEngagementThermometer() {
   }, [filters])
 
   function getHealthClass(score: number) {
-    if (score >= 90) return "modEng-healthExcellent"
-    if (score >= 80) return "modEng-healthWarning"
+    if (score >= 100) return "modEng-healthExcellent"
+    if (score >= 97.5) return "modEng-healthWarning"
     return "modEng-healthCritical"
   }
 

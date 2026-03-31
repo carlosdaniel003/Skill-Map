@@ -169,7 +169,7 @@ export default function OperatorSkillGrade(){
             <div className="modOpGrade-statBox">
               <span className="modOpGrade-statLabel">Assiduidade</span>
               <div className="modOpGrade-statValueWrap">
-                <span className="modOpGrade-statValue" style={{ color: assiduidade >= 90 ? '#16a34a' : assiduidade >= 80 ? '#f59e0b' : '#d40000' }}>
+                <span className="modOpGrade-statValue" style={{ color: assiduidade >= 100 ? '#16a34a' : assiduidade >= 97.5 ? '#f59e0b' : '#d40000' }}>
                   {assiduidade}%
                 </span>
               </div>
