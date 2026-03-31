@@ -243,7 +243,7 @@ export default function TalentMatrix() {
             className="modTalent-quadrant q-estrelas"
             onClick={() => setSelectedQuadrant({ 
               title: 'Talento Inconsistente', 
-              action: 'Reduzir dependência / Advertir', 
+              action: 'Reduzir dependência / Realocar', 
               colorClass: 'q-estrelas', 
               colorHex: '#d40000', 
               icon: IconToxicos, 
@@ -259,7 +259,7 @@ export default function TalentMatrix() {
             </div>
             <span className="modTalent-quadAction">
               <span className="actionIcon">{IconToxicos}</span>
-              Ação: Advertir
+              Ação: Reduzir dependência
             </span>
           </div>
 

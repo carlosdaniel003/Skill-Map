@@ -182,7 +182,7 @@ export default function StartupBleedingChart() {
               
               <Bar dataKey="Atraso" name="Atrasos (A)" stackId="a" fill="#f59e0b" radius={[0, 0, 4, 4]} />
               <Bar dataKey="Saida" name="Saídas (S)" stackId="a" fill="#3b82f6" />
-              <Bar dataKey="Falta" name="Faltas Críticas (F)" stackId="a" fill="#d40000" />
+              <Bar dataKey="Falta" name="Faltas (F)" stackId="a" fill="#d40000" />
               <Bar dataKey="Justificado" name="Justificados / Atestados" stackId="a" fill="#94a3b8" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
