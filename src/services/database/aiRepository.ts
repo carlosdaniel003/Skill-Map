@@ -114,7 +114,64 @@ export async function getOperatorsByLine(linha: string, turno?: string) {
 }
 
 // ============================================================
-// 3. BUSCA GENÉRICA LIVRE EM QUALQUER TABELA (NOVO!)
+// 3. LISTA OPERADORES DE UMA LINHA COM DADOS COMPLETOS
+// ============================================================
+export async function getOperatorsByLineDetailed(linha: string) {
+  const { data: operators, error: opError } = await supabase
+    .from('operators')
+    .select('*')
+    .ilike('linha_atual', `%${escapeLikePattern(linha)}%`)
+    .eq('ativo', true)
+    .order('nome')
+
+  if (opError) throw new Error(`Erro ao buscar operadores: ${opError.message}`)
+
+  if (!operators || operators.length === 0) {
+    return {
+      operadores: [],
+      skills: [],
+      analytics: [],
+      context360: [],
+      _meta: { busca: linha, encontrados: 0 }
+    }
+  }
+
+  const operatorIds = operators.map(op => op.id)
+
+  // Skills ordenadas por nível (desc) para IA ver TOP skills facilmente
+  const { data: skills } = await supabase
+    .from('operator_skills')
+    .select('*')
+    .in('operator_id', operatorIds)
+    .order('skill_level', { ascending: false })
+
+  // Analytics para score de assiduidade e risco
+  const { data: analytics } = await supabase
+    .from('vw_operator_analytics')
+    .select('*')
+    .in('operator_id', operatorIds)
+
+  // Contexto 360 para dados calculados (ferrugem, etc.)
+  const { data: context360 } = await supabase
+    .from('vw_operator_360_context')
+    .select('*')
+    .in('operator_id', operatorIds)
+
+  return {
+    operadores: operators,
+    skills: skills || [],
+    analytics: analytics || [],
+    context360: context360 || [],
+    _meta: {
+      busca: linha,
+      encontrados: operators.length,
+      total_skills: skills?.length || 0
+    }
+  }
+}
+
+// ============================================================
+// 4. BUSCA GENÉRICA LIVRE EM QUALQUER TABELA (NOVO!)
 // ============================================================
 export async function queryDatabase(tabela: string, filtros?: Record<string, string>, limite?: number) {
   // Tabelas permitidas (whitelist de segurança)

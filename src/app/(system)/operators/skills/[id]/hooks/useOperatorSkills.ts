@@ -177,6 +177,88 @@ export function useOperatorSkills(operatorId: string) {
         }
       }
 
+      // 5. PROPAGAÇÃO: Se skill = 5, garantir pelo menos nível 3 nas outras linhas
+      const level5Skills = changedSkills.filter(s => s.skill_level === 5)
+
+      if (level5Skills.length > 0) {
+        const propagatedDetails: string[] = []
+        const level5Postos = level5Skills.map(s => s.posto)
+
+        // Busca todas as linhas que têm esses postos configurados (exceto a linha atual) em uma única query
+        const { data: allOtherLines } = await supabase
+          .from("line_skill_difficulty")
+          .select("linha, posto")
+          .in("posto", level5Postos)
+          .neq("linha", linha)
+
+        if (allOtherLines && allOtherLines.length > 0) {
+          const targetLinhas = [...new Set(allOtherLines.map(r => r.linha))]
+
+          // Busca todas as experiências ativas do operador nas linhas alvo + postos de nível 5 em uma única query
+          const { data: allExistingExps } = await supabase
+            .from("operator_experience")
+            .select("id, skill_level, linha, posto")
+            .eq("operator_id", operatorId)
+            .in("linha", targetLinhas)
+            .in("posto", level5Postos)
+            .eq("ativo", true)
+            .order("skill_level", { ascending: false })
+
+          for (const skill of level5Skills) {
+            const otherLines = allOtherLines.filter(r => r.posto === skill.posto)
+            if (otherLines.length === 0) continue
+
+            for (const lineRow of otherLines) {
+              const targetLinha = lineRow.linha
+
+              // Filtra a experiência existente para esta linha+posto
+              const lineExps = (allExistingExps || []).filter(
+                e => e.linha === targetLinha && e.posto === skill.posto
+              )
+              const existingExp = lineExps.length > 0 ? lineExps[0] : null
+
+              // Se já tem nível >= 3 nessa linha, não mexe
+              if (existingExp && existingExp.skill_level >= 3) continue
+
+              const previousLevel = existingExp?.skill_level || 1
+
+              // Desativa a experiência antiga se existir
+              if (existingExp) {
+                await deactivateOperatorExperience(existingExp.id)
+              }
+
+              // Insere nova experiência com nível 3
+              await addOperatorExperience({
+                operator_id: operatorId,
+                linha: targetLinha,
+                posto: skill.posto,
+                data_inicio: dataRegistro,
+                skill_level: 3
+              })
+
+              // Log de auditoria da propagação
+              await supabase.from("operator_skills_history").insert({
+                operator_id: operatorId,
+                posto: skill.posto,
+                skill_level: 3,
+                previous_level: previousLevel
+              })
+
+              propagatedDetails.push(`[${skill.posto} → ${targetLinha}: Nvl ${previousLevel}→3 (propagação)]`)
+            }
+          }
+        }
+
+        // Log geral da propagação
+        if (propagatedDetails.length > 0) {
+          await logAction(
+            sessionUser?.username || "sistema",
+            "skill_propagation",
+            `Propagação automática (skill 5 em ${linha}): ${propagatedDetails.join(", ")}`
+          )
+        }
+      }
+
       const actionDetails = changedSkills.map(skill => {
           return `[${skill.posto}: Nvl ${skill.skill_level}]`
       }).join(", ")
