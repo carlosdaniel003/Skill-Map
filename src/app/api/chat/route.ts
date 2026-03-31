@@ -10,7 +10,6 @@ import {
   getOperatorContext360,
   searchOperator,
   getOperatorsByLine,
-  getOperatorsByLineDetailed,
   queryDatabase,
   getFactorySummary,
   findSubstitutes,
@@ -44,34 +43,19 @@ export async function POST(req: NextRequest) {
             required: ["identificador"]
           } as any 
         },
-        // Lista operadores de uma linha
+        // Lista operadores de uma linha (COM detalhes de skills e analytics)
         {
           name: "get_operators_by_line",
-          description: "Lista todos os operadores ativos de uma linha específica. Pode filtrar por turno. Use quando o usuário quer saber QUEM está em uma linha.",
+          description: "Lista todos os operadores ativos de uma linha específica com informações básicas (nome, matrícula, posto, turno). Use quando o usuário quer saber QUEM está em uma linha ou pede 'informações sobre os operadores' de uma linha. Ao receber os dados, SEMPRE apresente em formato de tabela. Se a busca retornar array vazio, tente buscar novamente sem filtro de turno.",
           parameters: {
             type: SchemaType.OBJECT,
             properties: { 
-              linha: { type: SchemaType.STRING, description: "Nome da linha (ex: TV, CM, BBS)" },
-              turno: { type: SchemaType.STRING, description: "Opcional. Filtrar por turno. Os turnos da fábrica são: 'Comercial' e '2º Turno Estendido'" }
+              linha: { type: SchemaType.STRING, description: "Nome ou parte do nome da linha. Pode ser a categoria (ex: TV, CM, BBS) ou o modelo completo (ex: TV 32). A busca é parcial, então 'TV' encontra 'TV 32', 'TV 43' etc." },
+              turno: { type: SchemaType.STRING, description: "Opcional. Filtrar por turno. Os turnos da fábrica são: 'Comercial' e '2º Turno Estendido'. Só informe se o usuário pedir explicitamente." }
             },
             required: ["linha"]
           } as any 
         },
-
-                // Lista operadores de uma linha com DADOS COMPLETOS
-        {
-          name: "get_operators_by_line_detailed",
-          description: "Retorna informações COMPLETAS de TODOS os operadores de uma linha de produção: dados pessoais, TODAS as skills (com nível), analytics de risco/assiduidade e contexto 360. Busca parcial — 'TV' encontra 'TV 32', 'TV 43', etc. Use SEMPRE que o usuário pedir informações, dados ou detalhes sobre operadores de uma LINHA (ex: 'me mostre os operadores da TV', 'informações da equipe da CM', 'quem trabalha na BBS?', 'dados dos operadores da TV 32'). NÃO confunda com busca de pessoa — TV, CM, BBS, ARCON, TW, MWO, TM são LINHAS DE PRODUÇÃO, não nomes de pessoas.",
-          parameters: {
-            type: SchemaType.OBJECT,
-            properties: { 
-              linha: { type: SchemaType.STRING, description: "Nome ou categoria da linha de produção (ex: TV, CM, BBS, TV 32). Busca parcial." },
-              turno: { type: SchemaType.STRING, description: "Opcional. Filtrar por turno: 'Comercial' ou '2º Turno Estendido'" }
-            },
-            required: ["linha"]
-          } as any 
-        },
-
         // Consulta genérica ao banco
         {
           name: "query_database",
@@ -119,7 +103,7 @@ export async function POST(req: NextRequest) {
             required: ["operator_id"]
           } as any 
         },
-        // EXISTENTE: Sugestão de alocação
+        // Sugestão de alocação
         {
           name: "get_alocacao_sugestao",
           description: "Busca os 3 melhores operadores para um posto específico em uma linha. Traz Skill, Assiduidade e dias sem operar. Use quando o usuário quer saber QUEM PODE operar um posto.",
@@ -132,7 +116,7 @@ export async function POST(req: NextRequest) {
             required: ["linha", "posto"]
           } as any 
         },
-        // EXISTENTE: Cobertura da linha
+        // Cobertura da linha
         {
           name: "get_line_coverage",
           description: "Analisa cobertura de uma linha: quantas pessoas tem, quantas faltam (GAP), postos descobertos, criticidade. Use quando o usuário quer ver a SAÚDE ou COBERTURA de uma linha.",
@@ -142,7 +126,7 @@ export async function POST(req: NextRequest) {
             required: ["linha"]
           } as any 
         },
-        // EXISTENTE: Risco de assiduidade
+        // Risco de assiduidade
         {
           name: "get_operator_risk",
           description: "Mapa de risco de assiduidade: operadores classificados como VERMELHO (crítico), AMARELO (atenção) ou VERDE (confiável). Traz score e histórico. Use quando o usuário quer saber sobre RISCO ou FALTAS.",
@@ -151,7 +135,7 @@ export async function POST(req: NextRequest) {
             properties: { linha: { type: SchemaType.STRING, description: "Opcional. Filtrar por linha" } }
           } as any 
         },
-        // EXISTENTE: Treinamentos críticos
+        // Treinamentos críticos
         {
           name: "get_critical_training_needs",
           description: "Relatório de postos com GAP (falta de pessoas treinadas) e linhas com criticidade alta. Use quando o usuário quer saber onde precisa de TREINAMENTO.",
@@ -160,7 +144,7 @@ export async function POST(req: NextRequest) {
             properties: {}
           } as any 
         },
-        // EXISTENTE: Contexto 360
+        // Contexto 360
         {
           name: "get_operator_context_360",
           description: "Visão 360º de todos os operadores: skills por posto, dias sem operar (ferrugem), assiduidade. Filtro opcional por linha. Use para análises gerais ou quando quer ver a FERRUGEM dos operadores.",
@@ -173,7 +157,7 @@ export async function POST(req: NextRequest) {
     }]
 
     // ==========================================
-    // 2. INSTRUÇÃO DO SISTEMA (INTELIGENTE)
+    // 2. INSTRUÇÃO DO SISTEMA (MELHORADA)
     // ==========================================
     const systemInstruction = `Você é o Assistente de Inteligência Industrial do Skill Map — um sistema de gestão de competências de uma fábrica.
 
@@ -184,21 +168,28 @@ PERSONALIDADE:
 - Se o usuário dá informação parcial, use as ferramentas para completar
 - Quando recomendar alguém, SEMPRE explique O PORQUÊ da recomendação
 
+REGRA MAIS IMPORTANTE — AÇÃO PRIMEIRO, PERGUNTAS DEPOIS:
+- Se o usuário menciona uma LINHA (ex: "TV", "CM") → CHAME a ferramenta IMEDIATAMENTE, não pergunte turno ou posto
+- Se o usuário menciona um NOME ou MATRÍCULA → CHAME search_operator IMEDIATAMENTE
+- Se o usuário diz "informações dos operadores" ou "quem está na linha" → CHAME get_operators_by_line IMEDIATAMENTE
+- NUNCA pergunte "qual turno?", "qual posto?", "qual linha?" se você pode buscar TODOS e filtrar depois
+- Se retornar vazio, tente variações (ex: se "TV" não achou, tente "TV 32", "TV 43" etc.)
+- Só pergunte algo ao usuário SE a ferramenta retornou resultado vazio E você já tentou variações
+
 REGRAS DE DECISÃO DE FERRAMENTAS:
 1. Se o usuário menciona um NÚMERO (ex: 503070) → é matrícula → use search_operator com o número
 2. Se o usuário menciona o NOME de uma pessoa → use search_operator com o nome
 3. Se o usuário pergunta "por quê a assiduidade é X?" ou "como calculou?" → use explain_attendance_score
 4. Se o usuário pergunta "quem substitui?" ou "quem cobre?" → use find_substitutes (precisa do operator_id, busque antes com search_operator se necessário)
 5. Se o usuário pergunta "quais as melhores skills?" ou "top skills?" → use search_operator (as skills já vêm ordenadas por nível)
-6. Se o usuário quer INFORMAÇÕES/DADOS/DETALHES dos operadores de uma LINHA (ex: "me mostre os operadores da TV", "informações da equipe da CM") → use get_operators_by_line_detailed
-7. Se o usuário quer APENAS uma LISTA SIMPLES de nomes → use get_operators_by_line
-8. Se o usuário quer saber QUEM PODE operar um posto + linha → use get_alocacao_sugestao
-9. Se o usuário quer ver COBERTURA/SAÚDE/GAP de uma linha → use get_line_coverage
-10. Se o usuário quer saber sobre RISCO/FALTAS/ASSIDUIDADE geral → use get_operator_risk
-11. Se o usuário quer saber sobre FERRUGEM/dias sem operar → use get_operator_context_360
-12. Se o usuário quer um RESUMO GERAL da fábrica → use get_factory_summary
-13. Se o usuário pede TREINAMENTOS URGENTES → use get_critical_training_needs
-14. Para qualquer outra consulta específica → use query_database
+6. Se o usuário quer saber QUEM ESTÁ em uma linha OU pede "informações dos operadores" → use get_operators_by_line
+7. Se o usuário quer saber QUEM PODE operar um posto + linha → use get_alocacao_sugestao
+8. Se o usuário quer ver COBERTURA/SAÚDE/GAP de uma linha → use get_line_coverage
+9. Se o usuário quer saber sobre RISCO/FALTAS/ASSIDUIDADE geral → use get_operator_risk
+10. Se o usuário quer saber sobre FERRUGEM/dias sem operar → use get_operator_context_360
+11. Se o usuário quer um RESUMO GERAL da fábrica → use get_factory_summary
+12. Se o usuário pede TREINAMENTOS URGENTES → use get_critical_training_needs
+13. Para qualquer outra consulta específica → use query_database
 
 ENCADEAMENTO INTELIGENTE (IMPORTANTE):
 - Se o usuário perguntar "quem substitui o Carlos Daniel?" → PRIMEIRO chame search_operator("Carlos Daniel") para pegar o ID, DEPOIS chame find_substitutes(id)
@@ -207,6 +198,10 @@ ENCADEAMENTO INTELIGENTE (IMPORTANTE):
 
 REGRA DE OURO: Se você tem uma ferramenta que pode responder a pergunta, USE-A IMEDIATAMENTE. NUNCA peça informações extras ao usuário se você pode buscar os dados primeiro.
 
+REGRA DE FALLBACK: Se uma ferramenta retornou array vazio ([]) ou dados vazios:
+1. ANTES de dizer "não encontrei", tente OUTRA ferramenta (ex: se get_operators_by_line retornou vazio, tente query_database na tabela operators com filtro ilike)
+2. Se todas as tentativas falharem, diga ao usuário o que tentou e sugira alternativas
+
 FORMATO DE RESPOSTA:
 - Para LISTAS de operadores: use TABELA Markdown
 - Para ANÁLISES: use bullets com emojis de alerta
@@ -214,6 +209,7 @@ FORMATO DE RESPOSTA:
 - Para EXPLICAÇÕES de score: mostre a fórmula, os números e a conclusão
 - Para RECOMENDAÇÕES de substitutos: explique POR QUÊ cada um foi escolhido
 - Sempre conclua com 1 RECOMENDAÇÃO em negrito
+- SEMPRE gere texto de resposta ao usuário. NUNCA retorne resposta vazia.
 
 QUANDO EXPLICAR DECISÕES:
 - "Por que recomendei X?" → Explique: Skill no posto (nível), Assiduidade (%), mesmo turno/linha, dias sem operar
@@ -235,9 +231,9 @@ ${dashboardContext.turno ? `⏰ Turno: ${dashboardContext.turno}` : "Turno não 
 ${dashboardContext.operatorId ? `👤 Operador selecionado no filtro: ${dashboardContext.operatorId}` : ""}
 
 NUNCA:
-- Retorne texto vazio
+- Retorne texto vazio — se processou dados, SEMPRE gere uma resposta formatada
 - Peça informações que você pode buscar sozinho
-- Diga "não tenho dados" sem antes chamar pelo menos 1 ferramenta
+- Diga "não tenho dados" sem antes chamar pelo menos 2 ferramentas diferentes
 - Recomende alguém sem explicar o porquê
 
 DADOS IMPORTANTES DO SISTEMA:
@@ -253,8 +249,12 @@ DADOS IMPORTANTES DO SISTEMA:
     // 3. INICIALIZAR CHAT COM HISTÓRICO
     // ==========================================
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash-lite",
-      systemInstruction
+      model: "gemini-2.5-flash",
+      systemInstruction,
+      generationConfig: {
+        temperature: 0.3,
+        maxOutputTokens: 4096,
+      }
     })
 
     const conversationHistory = history.map((msg: any) => ({
@@ -274,7 +274,8 @@ DADOS IMPORTANTES DO SISTEMA:
     let functionCalls = result.response.functionCalls()
 
     let callCount = 0
-    const MAX_TOOL_CALLS = 8 // Permite encadeamento de ferramentas (ex: buscar operador → buscar substitutos → explicar score)
+    const MAX_TOOL_CALLS = 8
+    let lastToolData: any = null // Guarda os últimos dados retornados pelas ferramentas
 
     while (functionCalls && functionCalls.length > 0 && callCount < MAX_TOOL_CALLS) {
       callCount++
@@ -306,12 +307,18 @@ DADOS IMPORTANTES DO SISTEMA:
               case "get_operators_by_line": {
                 const args = call.args as { linha: string; turno?: string }
                 data = await getOperatorsByLine(args.linha, args.turno).catch(e => ({ error: e.message }))
-                break
-              }
-
-              case "get_operators_by_line_detailed": {
-                const args = call.args as { linha: string; turno?: string }
-                data = await getOperatorsByLineDetailed(args.linha, args.turno).catch(e => ({ error: e.message }))
+                
+                // FALLBACK: se retornou vazio e tinha filtro de turno, tenta sem turno
+                if (Array.isArray(data) && data.length === 0 && args.turno) {
+                  console.log(`[AI] get_operators_by_line retornou vazio com turno "${args.turno}", tentando sem turno...`)
+                  data = await getOperatorsByLine(args.linha).catch(e => ({ error: e.message }))
+                  if (Array.isArray(data) && data.length > 0) {
+                    data = { 
+                      operadores: data, 
+                      _aviso: `Nenhum operador encontrado no turno "${args.turno}". Mostrando todos os turnos da linha "${args.linha}".` 
+                    }
+                  }
+                }
                 break
               }
 
@@ -334,7 +341,6 @@ DADOS IMPORTANTES DO SISTEMA:
                 break
               }
 
-              // FERRAMENTAS EXISTENTES
               case "get_alocacao_sugestao": {
                 const argsAloc = call.args as { linha: string; posto: string }
                 const resAloc = await supabase.rpc('get_alocacao_sugestao', { 
@@ -380,6 +386,9 @@ DADOS IMPORTANTES DO SISTEMA:
             data = { error: err.message || "Erro ao executar ferramenta" }
           }
 
+          // Salva os últimos dados para uso no fallback
+          lastToolData = { tool: call.name, data }
+
           return {
             functionResponse: {
               name: call.name,
@@ -396,24 +405,71 @@ DADOS IMPORTANTES DO SISTEMA:
     // ==========================================
     // 5. EXTRAIR E VALIDAR RESPOSTA FINAL
     // ==========================================
-    let finalReply = result.response.text()
+    let finalReply = ""
+    
+    try {
+      finalReply = result.response.text()
+    } catch (textError) {
+      console.warn("Erro ao extrair texto da resposta:", textError)
+      finalReply = ""
+    }
 
+    // FALLBACK INTELIGENTE: Se a IA retornou vazio mas temos dados das ferramentas
     if (!finalReply || finalReply.trim() === "") {
-      console.warn("IA retornou resposta vazia após", callCount, "chamadas de ferramenta")
+      console.warn("IA retornou resposta vazia após", callCount, "chamadas de ferramenta. Último tool:", lastToolData?.tool)
       
-      finalReply = `Consegui acessar os dados da fábrica, mas tive dificuldade em formular a análise.
+      // Tenta formatar os dados diretamente se temos resultado de ferramenta
+      if (lastToolData && lastToolData.data) {
+        const toolData = lastToolData.data
+        
+        // Se era busca de operadores por linha e retornou dados
+        if (lastToolData.tool === "get_operators_by_line") {
+          const ops = Array.isArray(toolData) ? toolData : toolData?.operadores || []
+          if (ops.length > 0) {
+            finalReply = `## 👥 Operadores encontrados\n\n`
+            finalReply += `| # | Nome | Matrícula | Posto Atual | Linha | Turno |\n`
+            finalReply += `|---|------|-----------|-------------|-------|-------|\n`
+            ops.forEach((op: any, i: number) => {
+              finalReply += `| ${i + 1} | ${op.nome || '-'} | ${op.matricula || '-'} | ${op.posto_atual || '-'} | ${op.linha_atual || '-'} | ${op.turno || '-'} |\n`
+            })
+            finalReply += `\n**Total: ${ops.length} operador(es) encontrado(s).**`
+            if (toolData?._aviso) {
+              finalReply += `\n\n⚠️ ${toolData._aviso}`
+            }
+          }
+        }
+        
+        // Se era busca de operador individual
+        if (lastToolData.tool === "search_operator" && toolData.operadores?.length > 0) {
+          const op = toolData.operadores[0]
+          finalReply = `## 📋 ${op.nome}\n`
+          finalReply += `- **Matrícula:** ${op.matricula}\n`
+          finalReply += `- **Linha:** ${op.linha_atual || 'N/A'}\n`
+          finalReply += `- **Posto:** ${op.posto_atual || 'N/A'}\n`
+          finalReply += `- **Turno:** ${op.turno || 'N/A'}\n`
+          if (toolData.skills?.length > 0) {
+            finalReply += `\n### 🎯 Skills (Top 5)\n`
+            toolData.skills.slice(0, 5).forEach((s: any) => {
+              finalReply += `- **${s.posto}**: Nível ${s.skill_level}/5 ${s.skill_level >= 4 ? '⭐' : s.skill_level <= 2 ? '📚' : ''}\n`
+            })
+          }
+        }
+      }
+      
+      // Se ainda vazio após fallback direto
+      if (!finalReply || finalReply.trim() === "") {
+        finalReply = `Encontrei dados mas tive dificuldade em formular a análise. Tente reformular sua pergunta.
 
-**Tente perguntar de outra forma. Exemplos:**
+**Exemplos que funcionam bem:**
+- "Quem está na linha **TV**?"
 - "Me mostra tudo sobre o operador **Carlos Daniel**" ou "**503070**"
 - "Quais as **melhores skills** do operador 503070?"
 - "**Por que** a assiduidade dele é 90%?"
-- "**Quem pode substituir** o Carlos Daniel no posto dele?"
 - "Quem pode fazer **Soldagem** na linha **TV**?"
-- "Qual a **cobertura** da linha **CM** hoje?"
-- "Quem está **em risco** de falta?"
 - "Me dá um **resumo geral** da fábrica"
 
 Ou me diga direto o que precisa!`
+      }
     }
 
     return NextResponse.json({ reply: finalReply })
