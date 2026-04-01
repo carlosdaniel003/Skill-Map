@@ -201,45 +201,43 @@
 .modOpKPI-emptyState p { margin: 0; }
 
 /* ========================================================
-   MODAL CORPORATIVO (BLUR & ROUNDED)
+   MODAL CORPORATIVO IDÊNTICO À SIDEBAR
    ======================================================== */
 .modOpKPI-modalOverlay {
   position: fixed;
-  inset: 0; /* Substitui top/left/width/height 100% garantindo tela cheia real */
+  inset: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(17, 17, 17, 0.45); /* Escurecido para melhor contraste */
+  background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px); /* Safari */
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 99999; /* 🆕 Z-index Supremo */
-  animation: modOpKPIFadeIn 0.3s ease-out forwards;
+  z-index: 99999;
+  animation: opModalFadeIn 0.3s ease-out forwards;
   padding: 20px;
   box-sizing: border-box;
 }
 
 .modOpKPI-modalCard {
   width: 100%;
-  max-width: 500px;
-  max-height: 90vh; /* Limita a altura para que não saia da tela */
+  max-width: 440px; /* Alinhado ao tamanho max-width do modal da Sidebar */
+  max-height: 90vh; 
   background: #ffffff;
   border-radius: 28px;
+  padding: 32px; /* Padding interno igual ao da Sidebar */
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
-  animation: modOpKPISlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  overflow: hidden;
+  animation: opModalEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .modOpKPI-modalHeader {
-  padding: 24px 32px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #f0f0f0;
-  background: #ffffff;
+  justify-content: space-between;
+  margin-bottom: 20px; /* Igual ao SidebarModalHeader */
   flex-shrink: 0;
 }
 
@@ -251,18 +249,19 @@
 
 .modOpKPI-modalTitle h3 {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px; /* Igual ao SidebarModalHeader h3 */
   font-weight: 800;
   color: #111111;
 }
 
+/* O ícone do Header do Modal */
 .modOpKPI-modalIcon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
+  width: 48px; /* Igual ao SidebarModalIcon */
+  height: 48px;
+  border-radius: 16px;
 }
 
 .modOpKPI-closeBtn {
@@ -270,50 +269,53 @@
   border: none;
   color: #888888;
   cursor: pointer;
-  padding: 8px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  margin-left: auto;
 }
 
 .modOpKPI-closeBtn:hover {
   background: #f5f5f5;
-  color: #111111;
+  color: #d40000;
 }
 
+/* Corpo do Modal */
 .modOpKPI-modalBody {
-  padding: 24px 32px;
+  margin-bottom: 28px; /* Igual ao SidebarModalBody */
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  background: #fcfcfc;
-  overflow: hidden; /* O scroll fica na lista interna */
-  flex: 1;
+  gap: 16px;
+  flex: 1; /* Permite esticar */
+  min-height: 0; /* Ajuda a conter a rolagem no flexbox filho */
 }
 
 .modOpKPI-modalDesc {
-  color: #666666;
-  font-size: 14px;
-  line-height: 1.5;
+  margin: 0;
+  color: #555555; /* Igual ao SidebarModalBody p */
+  font-size: 15px; /* Igual ao SidebarModalBody p */
+  line-height: 1.6;
 }
 
 .modOpKPI-modalDesc strong {
-  color: #111111;
+  color: #d40000; /* Igual ao SidebarModalBody strong */
+  font-weight: 800;
 }
 
-/* 🆕 LIMITADOR DA LISTA (SCROLLBAR) */
+/* Scrollable List - Onde os operadores ficam dentro do modalBody */
 .modOpKPI-scrollableList {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: 400px;
   overflow-y: auto;
   padding-right: 8px;
+  /* O flex-1 e min-height:0 no pai permite que essa div scrolle sem quebrar a tela */
 }
 
-/* Custom Scrollbar da Lista Interna */
 .modOpKPI-scrollableList::-webkit-scrollbar { width: 6px; }
 .modOpKPI-scrollableList::-webkit-scrollbar-track { background: transparent; margin: 4px 0; }
 .modOpKPI-scrollableList::-webkit-scrollbar-thumb { background-color: #dcdcdc; border-radius: 10px; }
@@ -326,19 +328,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #ffffff;
+  background: #fcfcfc; /* Levemente mais escuro para contrastar com o modal branco */
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .modOpKPI-suggestionCard:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+  background: #ffffff;
 }
 
 .modOpKPI-suggestionInfo {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .modOpKPI-suggestionName {
@@ -390,13 +393,13 @@
   border-radius: 6px;
 }
 
-/* Animações */
-@keyframes modOpKPISlideUp {
-  from { transform: translateY(40px) scale(0.95); opacity: 0; }
+/* Animações (Iguais às da Sidebar) */
+@keyframes opModalEnter {
+  from { transform: translateY(30px) scale(0.95); opacity: 0; }
   to { transform: translateY(0) scale(1); opacity: 1; }
 }
 
-@keyframes modOpKPIFadeIn {
+@keyframes opModalFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
@@ -409,6 +412,9 @@
   }
   .modOpKPI-cardsGrid {
     grid-template-columns: 1fr 1fr;
+  }
+  .modOpKPI-modalCard {
+    padding: 24px;
   }
   .modOpKPI-suggestionCard {
     flex-direction: column;

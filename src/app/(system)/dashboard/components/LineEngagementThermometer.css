@@ -189,7 +189,6 @@
   margin-top: 4px;
   background: #ffffff;
   border-radius: 12px;
-  border-left: 3px solid #d40000;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
   animation: modEng-slideDown 0.3s ease forwards;
   cursor: default;
